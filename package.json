@@ -1,0 +1,30 @@
+{
+  "name": "route-node",
+  "version": "0.0.0",
+  "description": "A package to create a tree of named routes#",
+  "main": "index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/_mocha",
+    "build": "./node_modules/.bin/babel -m common lib/RouteNode.js > index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/troch/route-node.git"
+  },
+  "keywords": [
+    "route tree",
+    "named route",
+    "route matching"
+  ],
+  "author": "Thomas Roch",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/troch/route-node/issues"
+  },
+  "homepage": "https://github.com/troch/route-node",
+  "devDependencies": {
+    "babel": "^5.5.8",
+    "should": "^6.0.3",
+    "mocha": "^2.2.5"
+  }
+}

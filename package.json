@@ -26,5 +26,8 @@
     "babel": "^5.5.8",
     "should": "^6.0.3",
     "mocha": "^2.2.5"
+  },
+  "dependencies": {
+    "path-parser": "0.0.2"
   }
 }

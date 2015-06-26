@@ -6,7 +6,13 @@ Object.defineProperty(exports, '__esModule', {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _pathParser = require('path-parser');
+
+var _pathParser2 = _interopRequireDefault(_pathParser);
 
 var RouteNode = (function () {
     function RouteNode() {
@@ -18,7 +24,11 @@ var RouteNode = (function () {
 
         this.name = name;
         this.path = path;
+        if (path) {
+            this.parser = new _pathParser2['default'](path);
+        }
         this.children = [];
+
         this.add(childRoutes);
     }
 
@@ -43,19 +53,24 @@ var RouteNode = (function () {
                 }
                 route = new RouteNode(route.name, route.path, route.children);
             }
+            // Check duplicated routes
+            if (this.children.map(function (child) {
+                return child.name;
+            }).indexOf(route.name) !== -1) {
+                throw new Error('Alias "' + route.name + '" is already defined in route node');
+            }
+            // Check duplicated paths
+            if (this.children.map(function (child) {
+                return child.path;
+            }).indexOf(route.path) !== -1) {
+                throw new Error('Path "' + route.path + '" is already defined in route node');
+            }
 
-            // if (this.nameMap[route.name]) {
-            //     throw new Error(`Alias $route.name is already defined in route node`)
-            // }
-
-            // if (this.pathMap[route.name]) {
-            //     throw new Error(`Path $route.path is already defined in route node`)
-            // }
             this.children.push(route);
         }
     }, {
-        key: 'findRoute',
-        value: function findRoute(path) {}
+        key: 'findRouteByPath',
+        value: function findRouteByPath(path) {}
     }, {
         key: 'findRouteByName',
         value: function findRouteByName(routeName) {
@@ -88,6 +103,17 @@ var RouteNode = (function () {
 
             return segments.map(function (segment) {
                 return segment.path;
+            }).join('');
+        }
+    }, {
+        key: 'buildPath',
+        value: function buildPath(routeName) {
+            var params = arguments[1] === undefined ? {} : arguments[1];
+
+            var segments = this.findRouteByName(routeName);
+
+            return segments.map(function (segment) {
+                return segment.parser.build(params);
             }).join('');
         }
     }]);

@@ -35,6 +35,20 @@ describe('RouteNode', function () {
         }).should.throw();
     });
 
+    it('should throw an error when trying to add a route to a node with an already existing alias or path', function () {
+        var root = new RouteNode('', '', [
+            {name: 'home', path: '/home'}
+        ]);
+
+        (function () {
+            root.add({name: 'home', path: '/profile'})
+        }).should.throw('Alias "home" is already defined in route node');
+
+        (function () {
+            root.add({name: 'profile', path: '/home'})
+        }).should.throw('Path "/home" is already defined in route node');
+    });
+
     it('should instanciate a RouteNode object from RouteNode objects', function () {
         var node = new RouteNode('', '', [
             new RouteNode('home', '/home'),
@@ -59,5 +73,6 @@ describe('RouteNode', function () {
         node.getPath('users').should.equal('/users');
         node.getPath('users.list').should.equal('/users/list');
         node.getPath('users.view').should.equal('/users/view/:id');
+        node.buildPath('users.view', {id: 1}).should.equal('/users/view/1');
     });
 });

@@ -10,6 +10,8 @@ A package to create a tree (trie) of named routes. It is similar to [routington]
 
 ## Usage
 
+Configure your route tree:
+
 ```javascript
 var RootNode = require('route-node');
 
@@ -33,6 +35,11 @@ var rootNode = new RouteNode('', '', [
 
 // Add nodes programmatically
 rootNode.add(new RouteNode('home', '/home'));
+```
+
+And then build paths, or match your paths against your tree:
+
+```javascript
 
 rootNode.getPath('users.view');                // => "/users/view/:id"
 rootNode.buildPath('users.view', {id: 1});     // => "/users/view/1"

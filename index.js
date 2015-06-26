@@ -24,9 +24,7 @@ var RouteNode = (function () {
 
         this.name = name;
         this.path = path;
-        if (path) {
-            this.parser = new _pathParser2['default'](path);
-        }
+        this.parser = path ? new _pathParser2['default'](path) : {};
         this.children = [];
 
         this.add(childRoutes);
@@ -69,11 +67,8 @@ var RouteNode = (function () {
             this.children.push(route);
         }
     }, {
-        key: 'findRouteByPath',
-        value: function findRouteByPath(path) {}
-    }, {
-        key: 'findRouteByName',
-        value: function findRouteByName(routeName) {
+        key: '_findRouteByName',
+        value: function _findRouteByName(routeName) {
             var findSegmentByName = function findSegmentByName(name, routes) {
                 var filteredRoutes = routes.filter(function (r) {
                     return r.name === name;
@@ -97,9 +92,56 @@ var RouteNode = (function () {
             return matched ? segments : [];
         }
     }, {
+        key: 'matchRoute',
+        value: function matchRoute(path) {
+            var segments = [];
+
+            var matchChildren = function matchChildren(node, pathSegment, matched) {
+                var _loop = function (i) {
+                    var child = node.children[i];
+                    var match = child.parser.partialMatch(pathSegment);
+                    if (match) {
+                        // Append name and extend params
+                        matched.name += (matched.name ? '.' : '') + child.name;
+                        Object.keys(match).forEach(function (p) {
+                            return matched.params[p] = match[p];
+                        });
+                        // Remove consumed segment from path
+                        var remainingPath = pathSegment.replace(child.parser.build(match), '');
+                        // If fully matched
+                        if (!remainingPath.length && !child.children.length) {
+                            return {
+                                v: matched
+                            };
+                        }
+                        // If no children to match against but segment left
+                        if (!child.children.length) {
+                            return {
+                                v: false
+                            };
+                        }
+                        // Else: remaining path and children
+                        return {
+                            v: matchChildren(child, remainingPath, matched)
+                        };
+                    }
+                };
+
+                // for (child of node.children) {
+                for (var i in node.children) {
+                    var _ret = _loop(i);
+
+                    if (typeof _ret === 'object') return _ret.v;
+                }
+                return false;
+            };
+
+            return matchChildren(this, path, { name: '', params: {} });
+        }
+    }, {
         key: 'getPath',
         value: function getPath(routeName) {
-            var segments = this.findRouteByName(routeName);
+            var segments = this._findRouteByName(routeName);
 
             return segments.map(function (segment) {
                 return segment.path;
@@ -110,7 +152,7 @@ var RouteNode = (function () {
         value: function buildPath(routeName) {
             var params = arguments[1] === undefined ? {} : arguments[1];
 
-            var segments = this.findRouteByName(routeName);
+            var segments = this._findRouteByName(routeName);
 
             return segments.map(function (segment) {
                 return segment.parser.build(params);

@@ -58,21 +58,46 @@ describe('RouteNode', function () {
         node.children.length.should.equal(2);
     });
 
-    it('should find route path by name', function () {
-        var usersNode = new RouteNode('users', '/users', [
-            new RouteNode('list', '/list'),
-            new RouteNode('view', '/view/:id')
-        ])
-
-        var node = new RouteNode('', '', [
-            new RouteNode('home', '/home'),
-            usersNode
-        ]);
+    it('should find a nested route by name', function () {
+        var node = getRoutes();
 
         node.getPath('home').should.equal('/home');
         node.getPath('users').should.equal('/users');
         node.getPath('users.list').should.equal('/users/list');
         node.getPath('users.view').should.equal('/users/view/:id');
+    });
+
+    it('should build the path of a nested route', function () {
+        var node = getRoutes();
+        // Building paths
+        node.buildPath('home').should.equal('/home');
+        node.buildPath('users').should.equal('/users');
+        node.buildPath('users.list').should.equal('/users/list');
         node.buildPath('users.view', {id: 1}).should.equal('/users/view/1');
+        // Missing parameters
+        (function () {
+            node.buildPath('users.view');
+        }).should.throw();
+    });
+
+    it('should find a nested route by path', function () {
+        var node = getRoutes();
+        // Building paths
+        node.matchRoute('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
+        node.matchRoute('/users/profile/1').should.be.false;
+        node.matchRoute('/users/view/profile/1').should.be.false;
     });
 });
+
+
+function getRoutes() {
+    var usersNode = new RouteNode('users', '/users', [
+            new RouteNode('list', '/list'),
+            new RouteNode('view', '/view/:id')
+        ])
+
+    return new RouteNode('', '', [
+        new RouteNode('home', '/home'),
+        usersNode
+    ]);
+}

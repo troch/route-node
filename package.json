@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A package to create a tree of named routes#",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,6 @@
     "mocha": "^2.2.5"
   },
   "dependencies": {
-    "path-parser": "0.0.2"
+    "path-parser": "~0.0.3"
   }
 }

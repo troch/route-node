@@ -65,6 +65,10 @@ var RouteNode = (function () {
             }
 
             this.children.push(route);
+            // Push greedy splats to the bottom of the pile
+            this.children.sort(function (childA, childB) {
+                return childA.hasSplatParam ? -1 : 1;
+            });
         }
     }, {
         key: '_findRouteByName',
@@ -92,13 +96,14 @@ var RouteNode = (function () {
             return matched ? segments : [];
         }
     }, {
-        key: 'matchRoute',
-        value: function matchRoute(path) {
+        key: 'matchPath',
+        value: function matchPath(path) {
             var segments = [];
 
             var matchChildren = function matchChildren(node, pathSegment, matched) {
                 var _loop = function (i) {
                     var child = node.children[i];
+                    // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
                     if (match) {
                         // Append name and extend params
@@ -114,7 +119,7 @@ var RouteNode = (function () {
                                 v: matched
                             };
                         }
-                        // If no children to match against but segment left
+                        // If no children to match against but unmatched path left
                         if (!child.children.length) {
                             return {
                                 v: false

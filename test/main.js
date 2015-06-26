@@ -80,24 +80,44 @@ describe('RouteNode', function () {
         }).should.throw();
     });
 
-    it('should find a nested route by path', function () {
+    it('should find a nested route by matching a path', function () {
         var node = getRoutes();
         // Building paths
-        node.matchRoute('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
-        node.matchRoute('/users/profile/1').should.be.false;
-        node.matchRoute('/users/view/profile/1').should.be.false;
+        node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
+        node.matchPath('/users/profile/1').should.be.false;
+        node.matchPath('/users/view/profile/1').should.be.false;
+    });
+
+    it('should find a nested route by matching a path with a splat', function () {
+        var node = getRoutesWithSplat();
+        // Building paths
+        node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
+        node.matchPath('/users/profile/1').should.eql({name: 'users.splat', params: {id: 'profile/1'}});
+        node.matchPath('/users/view/profile/1').should.be.false;
     });
 });
 
 
 function getRoutes() {
     var usersNode = new RouteNode('users', '/users', [
-            new RouteNode('list', '/list'),
-            new RouteNode('view', '/view/:id')
-        ])
+        new RouteNode('list', '/list'),
+        new RouteNode('view', '/view/:id')
+    ]);
 
     return new RouteNode('', '', [
         new RouteNode('home', '/home'),
+        usersNode
+    ]);
+}
+
+function getRoutesWithSplat() {
+    var usersNode = new RouteNode('users', '/users', [
+        new RouteNode('splat', '/*id'),
+        new RouteNode('list', '/list'),
+        new RouteNode('view', '/view/:id')
+    ]);
+
+    return new RouteNode('', '', [
         usersNode
     ]);
 }

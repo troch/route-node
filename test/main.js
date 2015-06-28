@@ -12,6 +12,14 @@ describe('RouteNode', function () {
         node.children.length.should.equal(0);
     });
 
+    it('should throw an error when RouteNode is not used as a constructor', function () {
+        (function () {
+            RouteNode('', '', [
+                {name: 'home'}
+            ]);
+        }).should.throw();
+    });
+
     it('should instanciate a RouteNode object from plain objects', function () {
         var node = new RouteNode('', '', [
             {name: 'home', path: '/home'},
@@ -32,6 +40,14 @@ describe('RouteNode', function () {
             new RouteNode('', '', [
                 {path: '/profile'}
             ]);
+        }).should.throw();
+    });
+
+    it('should throw an error when trying to add a node which is not an instance of RouteNode or Object', function () {
+        var rootNode = new RouteNode('', '');
+
+        (function () {
+            rootNode.add('users');
         }).should.throw();
     });
 
@@ -65,6 +81,12 @@ describe('RouteNode', function () {
         node.getPath('users').should.equal('/users');
         node.getPath('users.list').should.equal('/users/list');
         node.getPath('users.view').should.equal('/users/view/:id');
+    });
+
+    it('should find a nested route by name', function () {
+        var node = getRoutes();
+
+        node.getPath('users.manage').should.be.false;
     });
 
     it('should build the path of a nested route', function () {

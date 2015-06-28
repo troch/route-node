@@ -71,8 +71,8 @@ var RouteNode = (function () {
             });
         }
     }, {
-        key: '_findRouteByName',
-        value: function _findRouteByName(routeName) {
+        key: 'getSegmentsByName',
+        value: function getSegmentsByName(routeName) {
             var findSegmentByName = function findSegmentByName(name, routes) {
                 var filteredRoutes = routes.filter(function (r) {
                     return r.name === name;
@@ -93,30 +93,27 @@ var RouteNode = (function () {
                 return false;
             });
 
-            return matched ? segments : [];
+            return matched ? segments : false;
         }
     }, {
-        key: 'matchPath',
-        value: function matchPath(path) {
-            var segments = [];
-
-            var matchChildren = function matchChildren(node, pathSegment, matched) {
+        key: 'getSegmentsByPath',
+        value: function getSegmentsByPath(path) {
+            var matchChildren = function matchChildren(node, pathSegment, segments) {
                 var _loop = function (i) {
                     var child = node.children[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
                     if (match) {
-                        // Append name and extend params
-                        matched.name += (matched.name ? '.' : '') + child.name;
-                        Object.keys(match).forEach(function (p) {
-                            return matched.params[p] = match[p];
+                        segments.push(child);
+                        Object.keys(match).forEach(function (param) {
+                            return segments.params[param] = match[param];
                         });
                         // Remove consumed segment from path
                         var remainingPath = pathSegment.replace(child.parser.build(match), '');
                         // If fully matched
                         if (!remainingPath.length && !child.children.length) {
                             return {
-                                v: matched
+                                v: segments
                             };
                         }
                         // If no children to match against but unmatched path left
@@ -127,7 +124,7 @@ var RouteNode = (function () {
                         }
                         // Else: remaining path and children
                         return {
-                            v: matchChildren(child, remainingPath, matched)
+                            v: matchChildren(child, remainingPath, segments)
                         };
                     }
                 };
@@ -141,27 +138,44 @@ var RouteNode = (function () {
                 return false;
             };
 
-            return matchChildren(this, path, { name: '', params: {} });
+            var segments = [];
+            segments.params = {};
+
+            return matchChildren(this, path, segments);
         }
     }, {
         key: 'getPath',
         value: function getPath(routeName) {
-            var segments = this._findRouteByName(routeName);
+            var segments = this.getSegmentsByName(routeName);
 
-            return segments.map(function (segment) {
+            return segments ? segments.map(function (segment) {
                 return segment.path;
-            }).join('');
+            }).join('') : false;
         }
     }, {
         key: 'buildPath',
         value: function buildPath(routeName) {
             var params = arguments[1] === undefined ? {} : arguments[1];
 
-            var segments = this._findRouteByName(routeName);
+            var segments = this.getSegmentsByName(routeName);
 
-            return segments.map(function (segment) {
+            return segments ? segments.map(function (segment) {
                 return segment.parser.build(params);
-            }).join('');
+            }).join('') : false;
+        }
+    }, {
+        key: 'matchPath',
+        value: function matchPath(path) {
+            var segments = this.getSegmentsByPath(path);
+
+            if (!segments) return false;
+
+            var name = segments.map(function (segment) {
+                return segment.name;
+            }).join('.');
+            var params = segments.params;
+
+            return { name: name, params: params };
         }
     }]);
 

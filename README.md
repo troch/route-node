@@ -2,9 +2,9 @@
 
 # route-node
 
-A package to create a tree (trie) of named routes. It is similar to [routington](https://www.npmjs.com/package/routington) except that nodes are not added by splitting path by segment ("/"). Instead the trie is built with the supplied nodes, meaning each node is a valid route.
+A package to create a tree (trie) of named routes. It is similar to [routington](https://www.npmjs.com/package/routington) except that nodes are not added by splitting path by segment ("/"). Instead the tree is built with the supplied nodes, meaning each node is a valid route.
 
-**The API is subject to change, as a router will be designed on top of it**
+**This module is being used for developing a router, API is subject to change without notice**
 
 ## Install
 
@@ -12,7 +12,7 @@ A package to create a tree (trie) of named routes. It is similar to [routington]
 
 ## Usage
 
-Configure your route tree:
+Building your route tree:
 
 ```javascript
 var RootNode = require('route-node');

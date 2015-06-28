@@ -24,7 +24,7 @@ var RouteNode = (function () {
 
         this.name = name;
         this.path = path;
-        this.parser = path ? new _pathParser2['default'](path) : {};
+        this.parser = path ? new _pathParser2['default'](path) : null;
         this.children = [];
 
         this.add(childRoutes);
@@ -96,11 +96,11 @@ var RouteNode = (function () {
             return matched ? segments : false;
         }
     }, {
-        key: 'getSegmentsByPath',
-        value: function getSegmentsByPath(path) {
-            var matchChildren = function matchChildren(node, pathSegment, segments) {
+        key: 'getSegmentsMatchingPath',
+        value: function getSegmentsMatchingPath(path) {
+            var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                 var _loop = function (i) {
-                    var child = node.children[i];
+                    var child = nodes[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
                     if (match) {
@@ -124,13 +124,13 @@ var RouteNode = (function () {
                         }
                         // Else: remaining path and children
                         return {
-                            v: matchChildren(child, remainingPath, segments)
+                            v: matchChildren(child.children, remainingPath, segments)
                         };
                     }
                 };
 
                 // for (child of node.children) {
-                for (var i in node.children) {
+                for (var i in nodes) {
                     var _ret = _loop(i);
 
                     if (typeof _ret === 'object') return _ret.v;
@@ -138,10 +138,11 @@ var RouteNode = (function () {
                 return false;
             };
 
+            var startingNodes = this.parser ? [this] : this.children;
             var segments = [];
             segments.params = {};
 
-            return matchChildren(this, path, segments);
+            return matchChildren(startingNodes, path, segments);
         }
     }, {
         key: 'getPath',
@@ -166,7 +167,7 @@ var RouteNode = (function () {
     }, {
         key: 'matchPath',
         value: function matchPath(path) {
-            var segments = this.getSegmentsByPath(path);
+            var segments = this.getSegmentsMatchingPath(path);
 
             if (!segments) return false;
 

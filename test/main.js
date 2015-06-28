@@ -117,6 +117,16 @@ describe('RouteNode', function () {
         node.matchPath('/users/profile/1').should.eql({name: 'users.splat', params: {id: 'profile/1'}});
         node.matchPath('/users/view/profile/1').should.be.false;
     });
+
+    it('should work on a tree without a root node', function () {
+        var usersNode = new RouteNode('users', '/users', [
+            new RouteNode('list', '/list'),
+            new RouteNode('view', '/view/:id')
+        ]);
+
+        usersNode.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
+        usersNode.matchPath('/users/list').should.eql({name: 'users.list', params: {}});
+    })
 });
 
 

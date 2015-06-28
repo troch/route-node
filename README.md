@@ -1,4 +1,7 @@
+[![npm version](https://badge.fury.io/js/route-node.svg)](http://badge.fury.io/js/route-node)
 [![Build Status](https://travis-ci.org/troch/route-node.svg?branch=master)](https://travis-ci.org/troch/route-node)
+[![Coverage Status](https://coveralls.io/repos/troch/route-node/badge.svg?branch=master)](https://coveralls.io/r/troch/route-node?branch=master)
+
 
 # route-node
 

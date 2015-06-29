@@ -145,12 +145,24 @@ var RouteNode = (function () {
             return matchChildren(startingNodes, path, segments);
         }
     }, {
-        key: 'getPath',
-        value: function getPath(routeName) {
-            var segments = this.getSegmentsByName(routeName);
-
+        key: 'getPathFromSegments',
+        value: function getPathFromSegments(segments) {
             return segments ? segments.map(function (segment) {
                 return segment.path;
+            }).join('') : false;
+        }
+    }, {
+        key: 'getPath',
+        value: function getPath(routeName) {
+            return this.getPathFromSegments(this.getSegmentsByName(routeName));
+        }
+    }, {
+        key: 'buildPathFromSegments',
+        value: function buildPathFromSegments(segments) {
+            var params = arguments[1] === undefined ? {} : arguments[1];
+
+            return segments ? segments.map(function (segment) {
+                return segment.parser.build(params);
             }).join('') : false;
         }
     }, {
@@ -158,17 +170,11 @@ var RouteNode = (function () {
         value: function buildPath(routeName) {
             var params = arguments[1] === undefined ? {} : arguments[1];
 
-            var segments = this.getSegmentsByName(routeName);
-
-            return segments ? segments.map(function (segment) {
-                return segment.parser.build(params);
-            }).join('') : false;
+            return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
         }
     }, {
-        key: 'matchPath',
-        value: function matchPath(path) {
-            var segments = this.getSegmentsMatchingPath(path);
-
+        key: 'getMatchPathFromSegments',
+        value: function getMatchPathFromSegments(segments) {
             if (!segments) return false;
 
             var name = segments.map(function (segment) {
@@ -177,6 +183,11 @@ var RouteNode = (function () {
             var params = segments.params;
 
             return { name: name, params: params };
+        }
+    }, {
+        key: 'matchPath',
+        value: function matchPath(path) {
+            return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path));
         }
     }]);
 

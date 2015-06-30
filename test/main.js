@@ -1,6 +1,8 @@
 'use strict';
 
-var RouteNode = require('../');
+var path      = require('path');
+var pkg       = require('../package.json');
+var RouteNode = require(path.join('..', pkg.main));
 var should    = require('should');
 
 require('mocha');

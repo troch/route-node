@@ -1,16 +1,23 @@
 var babel       = require('babel');
 var path        = require('path');
 var fs          = require('fs');
-var options     = require('./babel-options');
+var async       = require('async');
 
-options.modules = 'common';
+var getOptions  = require('./babel-options');
+var fileName    = path.join(__dirname, '../modules/RouteNode.js');
 
-babel.transformFile(path.join(__dirname, '../modules/RouteNode.js'), options, function (err, result) {
-    if (!err) {
-        fs.writeFile(path.join(__dirname, '../index.js'), result.code, function () {
-            process.exit();
+function buildFactory(module, dest) {
+    return function buildCommonJsModuel(done) {
+        babel.transformFile(fileName, getOptions(module), function (err, result) {
+            if (!err) fs.writeFile(path.join(__dirname, '..', dest), result.code, done);
+            else done(err);
         });
-    } else {
-        process.exit(1);
-    }
-});
+    };
+}
+
+async.parallel([
+    buildFactory('common', 'dist/commonjs/route-node.js'),
+    buildFactory('umd', 'dist/umd/route-node.js')
+], function (err) {
+    process.exit(err ? 1 : 0);
+})

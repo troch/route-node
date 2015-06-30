@@ -2,7 +2,7 @@
 
 var path      = require('path');
 var pkg       = require('../package.json');
-var RouteNode = require(path.join('..', pkg.main));
+var RouteNode = require(path.join(__dirname, '..', pkg.main));
 var should    = require('should');
 
 require('mocha');

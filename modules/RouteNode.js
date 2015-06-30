@@ -1,4 +1,4 @@
-import Path from 'path-parser'
+import Path from 'path-parser/modules/Path'
 
 export default class RouteNode {
     constructor(name = '', path = '', childRoutes = []) {

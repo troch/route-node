@@ -196,4 +196,3 @@ var RouteNode = (function () {
 
 exports['default'] = RouteNode;
 module.exports = exports['default'];
-

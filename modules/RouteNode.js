@@ -58,7 +58,7 @@ export default class RouteNode {
             return false
         })
 
-        return matched ? segments : false
+        return matched ? segments : null
     }
 
     getSegmentsMatchingPath(path) {
@@ -79,13 +79,13 @@ export default class RouteNode {
                     }
                     // If no children to match against but unmatched path left
                     if (!child.children.length) {
-                        return false
+                        return null
                     }
                     // Else: remaining path and children
                     return matchChildren(child.children, remainingPath, segments);
                 }
             }
-            return false;
+            return null;
         }
 
         let startingNodes = this.parser ? [this] : this.children
@@ -96,7 +96,7 @@ export default class RouteNode {
     }
 
     getPathFromSegments(segments) {
-        return segments ? segments.map(segment => segment.path).join('') : false
+        return segments ? segments.map(segment => segment.path).join('') : null
     }
 
     getPath(routeName) {
@@ -104,7 +104,7 @@ export default class RouteNode {
     }
 
     buildPathFromSegments(segments, params = {}) {
-        return segments ? segments.map(segment => segment.parser.build(params)).join('') : false
+        return segments ? segments.map(segment => segment.parser.build(params)).join('') : null
     }
 
     buildPath(routeName, params = {}) {
@@ -112,7 +112,7 @@ export default class RouteNode {
     }
 
     getMatchPathFromSegments(segments) {
-        if (!segments) return false
+        if (!segments) return null
 
         let name = segments.map(segment => segment.name).join('.')
         let params = segments.params

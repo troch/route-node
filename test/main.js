@@ -88,7 +88,7 @@ describe('RouteNode', function () {
     it('should find a nested route by name', function () {
         var node = getRoutes();
 
-        node.getPath('users.manage').should.be.false;
+        should.not.exists(node.getPath('users.manage'));
     });
 
     it('should build the path of a nested route', function () {
@@ -109,8 +109,8 @@ describe('RouteNode', function () {
         // Building paths
         node.matchPath('/users').should.eql({name: 'users', params: {}});
         node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
-        node.matchPath('/users/profile/1').should.be.false;
-        node.matchPath('/users/view/profile/1').should.be.false;
+        should.not.exists(node.matchPath('/users/profile/1'));
+        should.not.exists(node.matchPath('/users/view/profile/1'));
     });
 
     it('should find a nested route by matching a path with a splat', function () {
@@ -118,7 +118,7 @@ describe('RouteNode', function () {
         // Building paths
         node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
         node.matchPath('/users/profile/1').should.eql({name: 'users.splat', params: {id: 'profile/1'}});
-        node.matchPath('/users/view/profile/1').should.be.false;
+        should.not.exists(node.matchPath('/users/view/profile/1'));
     });
 
     it('should work on a tree without a root node', function () {

@@ -93,7 +93,7 @@ var RouteNode = (function () {
                 return false;
             });
 
-            return matched ? segments : false;
+            return matched ? segments : null;
         }
     }, {
         key: 'getSegmentsMatchingPath',
@@ -119,7 +119,7 @@ var RouteNode = (function () {
                         // If no children to match against but unmatched path left
                         if (!child.children.length) {
                             return {
-                                v: false
+                                v: null
                             };
                         }
                         // Else: remaining path and children
@@ -135,7 +135,7 @@ var RouteNode = (function () {
 
                     if (typeof _ret === 'object') return _ret.v;
                 }
-                return false;
+                return null;
             };
 
             var startingNodes = this.parser ? [this] : this.children;
@@ -149,7 +149,7 @@ var RouteNode = (function () {
         value: function getPathFromSegments(segments) {
             return segments ? segments.map(function (segment) {
                 return segment.path;
-            }).join('') : false;
+            }).join('') : null;
         }
     }, {
         key: 'getPath',
@@ -163,7 +163,7 @@ var RouteNode = (function () {
 
             return segments ? segments.map(function (segment) {
                 return segment.parser.build(params);
-            }).join('') : false;
+            }).join('') : null;
         }
     }, {
         key: 'buildPath',
@@ -175,7 +175,7 @@ var RouteNode = (function () {
     }, {
         key: 'getMatchPathFromSegments',
         value: function getMatchPathFromSegments(segments) {
-            if (!segments) return false;
+            if (!segments) return null;
 
             var name = segments.map(function (segment) {
                 return segment.name;

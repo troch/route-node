@@ -100,7 +100,7 @@
                     return false;
                 });
 
-                return matched ? segments : false;
+                return matched ? segments : null;
             }
         }, {
             key: 'getSegmentsMatchingPath',
@@ -126,7 +126,7 @@
                             // If no children to match against but unmatched path left
                             if (!child.children.length) {
                                 return {
-                                    v: false
+                                    v: null
                                 };
                             }
                             // Else: remaining path and children
@@ -142,7 +142,7 @@
 
                         if (typeof _ret === 'object') return _ret.v;
                     }
-                    return false;
+                    return null;
                 };
 
                 var startingNodes = this.parser ? [this] : this.children;
@@ -156,7 +156,7 @@
             value: function getPathFromSegments(segments) {
                 return segments ? segments.map(function (segment) {
                     return segment.path;
-                }).join('') : false;
+                }).join('') : null;
             }
         }, {
             key: 'getPath',
@@ -170,7 +170,7 @@
 
                 return segments ? segments.map(function (segment) {
                     return segment.parser.build(params);
-                }).join('') : false;
+                }).join('') : null;
             }
         }, {
             key: 'buildPath',
@@ -182,7 +182,7 @@
         }, {
             key: 'getMatchPathFromSegments',
             value: function getMatchPathFromSegments(segments) {
-                if (!segments) return false;
+                if (!segments) return null;
 
                 var name = segments.map(function (segment) {
                     return segment.name;

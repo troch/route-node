@@ -107,6 +107,7 @@ describe('RouteNode', function () {
     it('should find a nested route by matching a path', function () {
         var node = getRoutes();
         // Building paths
+        node.matchPath('/users').should.eql({name: 'users', params: {}});
         node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
         node.matchPath('/users/profile/1').should.be.false;
         node.matchPath('/users/view/profile/1').should.be.false;

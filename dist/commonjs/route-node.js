@@ -111,7 +111,7 @@ var RouteNode = (function () {
                         // Remove consumed segment from path
                         var remainingPath = pathSegment.replace(child.parser.build(match), '');
                         // If fully matched
-                        if (!remainingPath.length && !child.children.length) {
+                        if (!remainingPath.length) {
                             return {
                                 v: segments
                             };

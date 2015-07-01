@@ -74,7 +74,7 @@ export default class RouteNode {
                     // Remove consumed segment from path
                     let remainingPath = pathSegment.replace(child.parser.build(match), '')
                     // If fully matched
-                    if (!remainingPath.length && !child.children.length) {
+                    if (!remainingPath.length) {
                         return segments
                     }
                     // If no children to match against but unmatched path left

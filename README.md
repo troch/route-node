@@ -26,11 +26,11 @@ var usersNode = new RouteNode('users', '/users', [
     new RouteNode('view', '/view/:id')
 ]);
 
+// You can also use plain objects
 var ordersNode = new RouteNode('orders', '/orders', [
-    new RouteNode('pending', '/pending'),
-    // You can also use plain objects
+    {name: 'pending',   path: '/pending'},
     {name: 'completed', path: '/completed'},
-    new RouteNode('view', '/view/:id')
+    {name: 'view',      path: '/view/:id'}
 ]);
 
 // Creating a top node

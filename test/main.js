@@ -130,6 +130,16 @@ describe('RouteNode', function () {
         usersNode.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
         usersNode.matchPath('/users/list').should.eql({name: 'users.list', params: {}});
     })
+
+    it('should be able to add deep nodes', function () {
+        var rootNode = new RouteNode('', '')
+            .addNode('users', '/users')
+            .addNode('users.view', '/view/:id')
+            .addNode('users.list', '/list');
+
+        rootNode.buildPath('users.view', {id: 1}).should.equal('/users/view/1');
+        rootNode.buildPath('users.list', {id: 1}).should.equal('/users/list');
+    });
 });
 
 

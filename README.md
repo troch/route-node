@@ -18,7 +18,7 @@ A package to create a tree (trie) of named routes. It is similar to [routington]
 Building your route tree:
 
 ```javascript
-var RootNode = require('route-node');
+var rootNode = require('route-node');
 
 // Create nodes
 var usersNode = new RouteNode('users', '/users', [
@@ -28,7 +28,8 @@ var usersNode = new RouteNode('users', '/users', [
 
 var ordersNode = new RouteNode('orders', '/orders', [
     new RouteNode('pending', '/pending'),
-    new RouteNode('completed', '/completed'),
+    // You can also use plain objects
+    {name: 'completed', path: '/completed'},
     new RouteNode('view', '/view/:id')
 ]);
 
@@ -40,6 +41,18 @@ var rootNode = new RouteNode('', '', [
 
 // Add nodes programmatically
 rootNode.add(new RouteNode('home', '/home'));
+```
+You can chain constructor with `add` and `addNode` functions, making the example above shorter:
+
+```javascript
+var rootNode = new RouteNode()
+    .addNode('users',            '/users'))
+    .addNode('users.view',       '/view/:id')
+    .addNode('users.list',       '/list')
+    .addNode('orders',           '/orders')
+    .addNode('orders.pending',   '/pending')
+    .addNode('orders.completed', '/completed')
+    .addNode('orders.view',      '/view/:id')
 ```
 
 And then build paths, or match your paths against your tree:

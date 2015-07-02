@@ -35,6 +35,8 @@
             this.children = [];
 
             this.add(childRoutes);
+
+            return this;
         }
 
         _createClass(RouteNode, [{
@@ -71,11 +73,31 @@
                     throw new Error('Path "' + route.path + '" is already defined in route node');
                 }
 
-                this.children.push(route);
-                // Push greedy splats to the bottom of the pile
-                this.children.sort(function (childA, childB) {
-                    return childA.hasSplatParam ? -1 : 1;
-                });
+                var names = route.name.split('.');
+
+                if (names.length === 1) {
+                    this.children.push(route);
+                    // Push greedy splats to the bottom of the pile
+                    this.children.sort(function (childA, childB) {
+                        return childA.hasSplatParam ? -1 : 1;
+                    });
+                } else {
+                    // Locate parent node
+                    var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
+                    if (segments) {
+                        segments[segments.length - 1].add(new RouteNode(names[names.length - 1], route.path, route.children));
+                    } else {
+                        throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
+                    }
+                }
+
+                return this;
+            }
+        }, {
+            key: 'addNode',
+            value: function addNode(name, params) {
+                this.add(new RouteNode(name, params));
+                return this;
             }
         }, {
             key: 'getSegmentsByName',

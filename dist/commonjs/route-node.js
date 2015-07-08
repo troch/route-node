@@ -70,9 +70,13 @@ var RouteNode = (function () {
 
             if (names.length === 1) {
                 this.children.push(route);
-                // Push greedy splats to the bottom of the pile
-                this.children.sort(function (childA, childB) {
-                    return childA.hasSplatParam ? -1 : 1;
+                // Push greedy spats to the bottom of the pile
+                this.children.sort(function (a, b) {
+                    if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
+                    if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
+                    if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
+                    if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
+                    return 0;
                 });
             } else {
                 // Locate parent node

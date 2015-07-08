@@ -158,8 +158,8 @@ function getRoutes() {
 function getRoutesWithSplat() {
     var usersNode = new RouteNode('users', '/users', [
         new RouteNode('splat', '/*id'),
-        new RouteNode('list', '/list'),
-        new RouteNode('view', '/view/:id')
+        new RouteNode('view', '/view/:id'),
+        new RouteNode('list', '/list')
     ]);
 
     return new RouteNode('', '', [

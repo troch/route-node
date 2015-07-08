@@ -40,8 +40,14 @@ export default class RouteNode {
 
         if (names.length === 1) {
             this.children.push(route)
-            // Push greedy splats to the bottom of the pile
-            this.children.sort((childA, childB) => childA.hasSplatParam ? -1 : 1)
+            // Push greedy spats to the bottom of the pile
+            this.children.sort((a, b) => {
+                if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1
+                if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1
+                if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1
+                if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1
+                return 0;
+            })
         } else {
             // Locate parent node
             let segments = this.getSegmentsByName(names.slice(0, -1).join('.'))

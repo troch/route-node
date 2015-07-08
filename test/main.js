@@ -67,6 +67,16 @@ describe('RouteNode', function () {
         }).should.throw('Path "/home" is already defined in route node');
     });
 
+    it('should throw an error when trying to add a route which parent doesn\'t exist', function () {
+        var root = new RouteNode('', '', [
+            {name: 'home', path: '/home'}
+        ]);
+
+        (function () {
+            root.add({name: 'nested.route', path: '/route'})
+        }).should.throw();
+    });
+
     it('should instanciate a RouteNode object from RouteNode objects', function () {
         var node = new RouteNode('', '', [
             new RouteNode('home', '/home'),

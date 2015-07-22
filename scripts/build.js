@@ -17,6 +17,7 @@ function buildFactory(module, dest) {
 
 async.parallel([
     buildFactory('common', 'dist/commonjs/route-node.js'),
+    buildFactory('amd', 'dist/amd/route-node.js'),
     buildFactory('umd', 'dist/umd/route-node.js')
 ], function (err) {
     process.exit(err ? 1 : 0);

@@ -76,7 +76,7 @@ var RouteNode = (function () {
                     if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
                     if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
                     if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                    return 0;
+                    return a.path.length < b.path.length;
                 });
             } else {
                 // Locate parent node

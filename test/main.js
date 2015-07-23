@@ -150,6 +150,17 @@ describe('RouteNode', function () {
         rootNode.buildPath('users.view', {id: 1}).should.equal('/users/view/1');
         rootNode.buildPath('users.list', {id: 1}).should.equal('/users/list');
     });
+
+    it('should sort paths by length', function () {
+        var rootNode = new RouteNode('', '')
+            .addNode('index', '/')
+            .addNode('abo', '/abo')
+            .addNode('about', '/about');
+
+        rootNode.matchPath('/').should.eql({name: 'index', params: {}});
+        rootNode.matchPath('/abo').should.eql({name: 'abo', params: {}});
+        rootNode.matchPath('/about').should.eql({name: 'about', params: {}});
+    });
 });
 
 

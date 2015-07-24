@@ -46,7 +46,7 @@ export default class RouteNode {
                 if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1
                 if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1
                 if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1
-                return a.path && b.path ? a.path.length < b.path.length : 0;
+                return a.path && b.path ? (a.path.length < b.path.length ? 1 : -1) : 0;
             })
         } else {
             // Locate parent node

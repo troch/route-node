@@ -79,11 +79,26 @@
                     this.children.push(route);
                     // Push greedy spats to the bottom of the pile
                     this.children.sort(function (a, b) {
+                        // '/' last
+                        if (a.path === '/') return 1;
+                        if (b.path === '/') return -1;
+                        var aHasParams = a.parser.hasUrlParams || a.parser.hasSpatParam;
+                        var bHasParams = b.parser.hasUrlParams || b.parser.hasSpatParam;
+                        // No params first, sort by length descending
+                        if (!aHasParams && !bHasParams) {
+                            return a.path && b.path ? a.path.length < b.path.length ? 1 : -1 : 0;
+                        }
+                        // Params
+                        if (aHasParams && !bHasParams) return 1;
+                        if (!aHasParams && bHasParams) return -1;
+                        // Spat params
                         if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
                         if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
-                        if (!a.parser.hasUrlParams && b.parser.hasUrlParams) return -1;
-                        if (!b.parser.hasUrlParams && a.parser.hasUrlParams) return 1;
-                        return a.path && b.path ? a.path.length < b.path.length ? 1 : -1 : 0;
+                        // Number of segments
+                        var aSegments = (a.path.match(/\//g) || []).length;
+                        var bSegments = (b.path.match(/\//g) || []).length;
+                        if (aSegments < bSegments) return 1;
+                        return 0;
                     });
                 } else {
                     // Locate parent node

@@ -153,13 +153,17 @@ describe('RouteNode', function () {
 
     it('should sort paths by length', function () {
         var rootNode = new RouteNode('', '')
+            .addNode('section', '/section/:id')
             .addNode('index', '/')
+            .addNode('id', '/:id')
             .addNode('abo', '/abo')
             .addNode('about', '/about');
 
         rootNode.matchPath('/').should.eql({name: 'index', params: {}});
         rootNode.matchPath('/abo').should.eql({name: 'abo', params: {}});
         rootNode.matchPath('/about').should.eql({name: 'about', params: {}});
+        rootNode.matchPath('/abc').should.eql({name: 'id', params: {id: 'abc'}});
+        rootNode.matchPath('/section/abc').should.eql({name: 'section', params: {id: 'abc'}});
     });
 });
 

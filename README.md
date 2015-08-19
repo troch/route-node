@@ -65,6 +65,14 @@ rootNode.buildPath('users.view', {id: 1});     // => "/users/view/1"
 rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
 ```
 
+Trailing slash can be optional:
+
+```javascript
+rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
+rootNode.matchPath('/users/view/1/');          // => null
+rootNode.matchPath('/users/view/1/', true);    // => {name: "users.view", params: {id: "1"}}
+```
+
 ## Related packages
 
 - [routington](https://www.npmjs.com/package/routington)

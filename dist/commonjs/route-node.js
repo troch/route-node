@@ -81,13 +81,13 @@ var RouteNode = (function () {
                     if (!aHasParams && !bHasParams) {
                         return a.path && b.path ? a.path.length < b.path.length ? 1 : -1 : 0;
                     }
-                    // Params
+                    // Params last
                     if (aHasParams && !bHasParams) return 1;
                     if (!aHasParams && bHasParams) return -1;
-                    // Spat params
+                    // Spat params last
                     if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
                     if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
-                    // Number of segments
+                    // Sort by number of segments descending
                     var aSegments = (a.path.match(/\//g) || []).length;
                     var bSegments = (b.path.match(/\//g) || []).length;
                     if (aSegments < bSegments) return 1;
@@ -139,18 +139,33 @@ var RouteNode = (function () {
     }, {
         key: 'getSegmentsMatchingPath',
         value: function getSegmentsMatchingPath(path) {
+            var trailingSlash = arguments[1] === undefined ? false : arguments[1];
+
             var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                 var _loop = function (i) {
                     var child = nodes[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
+                    var remainingPath = undefined;
+
+                    if (!match && trailingSlash) {
+                        // Try with optional trailing slash
+                        match = child.parser.match(pathSegment, true);
+                        remainingPath = '';
+                    } else if (match) {
+                        // Remove consumed segment from path
+                        var consumedPath = child.parser.build(match);
+                        remainingPath = pathSegment.replace(consumedPath, '');
+                        if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                            remainingPath = '';
+                        }
+                    }
+
                     if (match) {
                         segments.push(child);
                         Object.keys(match).forEach(function (param) {
                             return segments.params[param] = match[param];
                         });
-                        // Remove consumed segment from path
-                        var remainingPath = pathSegment.replace(child.parser.build(match), '');
                         // If fully matched
                         if (!remainingPath.length) {
                             return {
@@ -216,7 +231,7 @@ var RouteNode = (function () {
     }, {
         key: 'getMatchPathFromSegments',
         value: function getMatchPathFromSegments(segments) {
-            if (!segments) return null;
+            if (!segments || !segments.length) return null;
 
             var name = segments.map(function (segment) {
                 return segment.name;
@@ -228,7 +243,9 @@ var RouteNode = (function () {
     }, {
         key: 'matchPath',
         value: function matchPath(path) {
-            return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path));
+            var trailingSlash = arguments[1] === undefined ? false : arguments[1];
+
+            return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
         }
     }]);
 

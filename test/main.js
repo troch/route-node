@@ -165,13 +165,30 @@ describe('RouteNode', function () {
         rootNode.matchPath('/abc').should.eql({name: 'id', params: {id: 'abc'}});
         rootNode.matchPath('/section/abc').should.eql({name: 'section', params: {id: 'abc'}});
     });
+
+    it('should match paths with optional trailing slashes', function () {
+        var rootNode = getRoutes();
+        should.not.exists(rootNode.matchPath('/users/list/'));
+        rootNode.matchPath('/users/list', true).should.eql({name: 'users.list', params: {}});
+        rootNode.matchPath('/users/list').should.eql({name: 'users.list', params: {}});
+        rootNode.matchPath('/users/list/', true).should.eql({name: 'users.list', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list//', true));
+
+        var rootNode = getRoutes(true);
+        should.not.exists(rootNode.matchPath('/users/list'));
+        rootNode.matchPath('/users/list', true).should.eql({name: 'users.list', params: {}});
+        rootNode.matchPath('/users/list/', true).should.eql({name: 'users.list', params: {}});
+        rootNode.matchPath('/users/list/').should.eql({name: 'users.list', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list//', true));
+    });
 });
 
 
-function getRoutes() {
+function getRoutes(trailingSlash) {
+    var suffix = trailingSlash ? '/' : '';
     var usersNode = new RouteNode('users', '/users', [
-        new RouteNode('list', '/list'),
-        new RouteNode('view', '/view/:id')
+        new RouteNode('list', '/list' + suffix),
+        new RouteNode('view', '/view/:id' + suffix)
     ]);
 
     return new RouteNode('', '', [

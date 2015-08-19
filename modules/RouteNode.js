@@ -103,18 +103,31 @@ export default class RouteNode {
         return matched ? segments : null
     }
 
-    getSegmentsMatchingPath(path) {
+    getSegmentsMatchingPath(path, trailingSlash = false) {
         let matchChildren = (nodes, pathSegment, segments) => {
             // for (child of node.children) {
             for (let i in nodes) {
                 let child = nodes[i]
                 // Partially match path
                 let match = child.parser.partialMatch(pathSegment)
+                let remainingPath
+
+                if (!match && trailingSlash) {
+                    // Try with optional trailing slash
+                    match = child.parser.match(pathSegment, true)
+                    remainingPath = ''
+                } else if (match) {
+                    // Remove consumed segment from path
+                    let consumedPath = child.parser.build(match)
+                    remainingPath = pathSegment.replace(consumedPath, '')
+                    if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                        remainingPath = ''
+                    }
+                }
+
                 if (match) {
                     segments.push(child)
                     Object.keys(match).forEach(param => segments.params[param] = match[param])
-                    // Remove consumed segment from path
-                    let remainingPath = pathSegment.replace(child.parser.build(match), '')
                     // If fully matched
                     if (!remainingPath.length) {
                         return segments
@@ -154,7 +167,7 @@ export default class RouteNode {
     }
 
     getMatchPathFromSegments(segments) {
-        if (!segments) return null
+        if (!segments || !segments.length) return null
 
         let name = segments.map(segment => segment.name).join('.')
         let params = segments.params
@@ -162,7 +175,7 @@ export default class RouteNode {
         return {name, params}
     }
 
-    matchPath(path) {
-        return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path))
+    matchPath(path, trailingSlash = false) {
+        return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash))
     }
 }

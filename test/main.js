@@ -179,6 +179,8 @@ describe('RouteNode', function () {
         rootNode.matchPath('/users/list', true).should.eql({name: 'users.list', params: {}});
         rootNode.matchPath('/users/list/', true).should.eql({name: 'users.list', params: {}});
         rootNode.matchPath('/users/list/').should.eql({name: 'users.list', params: {}});
+        rootNode.matchPath('/').should.eql({name: 'default', params: {}});
+        rootNode.matchPath('', true).should.eql({name: 'default', params: {}});
         should.not.exists(rootNode.matchPath('/users/list//', true));
     });
 });
@@ -192,7 +194,8 @@ function getRoutes(trailingSlash) {
     ]);
 
     return new RouteNode('', '', [
-        new RouteNode('home', '/home'),
+        new RouteNode('home', '/home' + suffix),
+        new RouteNode('default', '/'),
         usersNode
     ]);
 }

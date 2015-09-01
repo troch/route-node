@@ -23,9 +23,9 @@
 
     var RouteNode = (function () {
         function RouteNode() {
-            var name = arguments[0] === undefined ? '' : arguments[0];
-            var path = arguments[1] === undefined ? '' : arguments[1];
-            var childRoutes = arguments[2] === undefined ? [] : arguments[2];
+            var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+            var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
+            var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
             _classCallCheck(this, RouteNode);
 
@@ -146,7 +146,7 @@
         }, {
             key: 'getSegmentsMatchingPath',
             value: function getSegmentsMatchingPath(path) {
-                var trailingSlash = arguments[1] === undefined ? false : arguments[1];
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var _loop = function (i) {
@@ -222,7 +222,7 @@
         }, {
             key: 'buildPathFromSegments',
             value: function buildPathFromSegments(segments) {
-                var params = arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
                 return segments ? segments.map(function (segment) {
                     return segment.parser.build(params);
@@ -231,7 +231,7 @@
         }, {
             key: 'buildPath',
             value: function buildPath(routeName) {
-                var params = arguments[1] === undefined ? {} : arguments[1];
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
                 return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
             }
@@ -250,7 +250,7 @@
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
-                var trailingSlash = arguments[1] === undefined ? false : arguments[1];
+                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
                 return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
             }

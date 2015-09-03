@@ -159,9 +159,11 @@ export default class RouteNode {
     }
 
     buildPathFromSegments(segments, params = {}) {
-        let searchPart = segments
+        let searchParams = segments
             .filter(s => s.parser.hasQueryParams)
-            .map(s => s.parser.queryParams)
+            .map(s => s.parser.queryParams);
+
+        let searchPart = !searchParams.length ? null : searchParams
             .reduce((queryParams, params) => queryParams.concat(params))
             .filter(p => Object.keys(params).indexOf(p) !== -1)
             .map(p => p + '=' + params[p])

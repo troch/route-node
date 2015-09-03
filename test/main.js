@@ -132,11 +132,12 @@ describe('RouteNode', function () {
             ])
         ]);
 
-        // node.buildPath('grandParent', {nickame: 'gran'}).should.equal('/grand-parent?nickame=gran');
-        // node.buildPath('grandParent.parent', {nickame: 'gran', name: 'maman'}).should.equal('/grand-parent/parent?nickame=gran&name=maman');
-        // node.buildPath('grandParent.parent', {nickame: 'gran'}).should.equal('/grand-parent/parent?nickame=gran');
-        // node.buildPath('grandParent.parent', {name: 'maman'}).should.equal('/grand-parent/parent?name=maman');
+        node.buildPath('grandParent', {nickame: 'gran'}).should.equal('/grand-parent?nickame=gran');
+        node.buildPath('grandParent.parent', {nickame: 'gran', name: 'maman'}).should.equal('/grand-parent/parent?nickame=gran&name=maman');
+        node.buildPath('grandParent.parent', {nickame: 'gran'}).should.equal('/grand-parent/parent?nickame=gran');
+        node.buildPath('grandParent.parent', {name: 'maman'}).should.equal('/grand-parent/parent?name=maman');
         node.buildPath('grandParent.parent.child', {name: 'maman', age: 3}).should.equal('/grand-parent/parent/child?name=maman&age=3');
+        node.buildPath('grandParent.parent.child', {}).should.equal('/grand-parent/parent/child');
     });
 
     it('should find a nested route by matching a path with a splat', function () {

@@ -212,9 +212,23 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
             value: function buildPathFromSegments(segments) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
+                var searchParams = segments.filter(function (s) {
+                    return s.parser.hasQueryParams;
+                }).map(function (s) {
+                    return s.parser.queryParams;
+                });
+
+                var searchPart = !searchParams.length ? null : searchParams.reduce(function (queryParams, params) {
+                    return queryParams.concat(params);
+                }).filter(function (p) {
+                    return Object.keys(params).indexOf(p) !== -1;
+                }).map(function (p) {
+                    return p + '=' + params[p];
+                }).join('&');
+
                 return segments ? segments.map(function (segment) {
-                    return segment.parser.build(params);
-                }).join('') : null;
+                    return segment.parser.build(params, { ignoreSearch: true });
+                }).join('') + (searchPart ? '?' + searchPart : '') : null;
             }
         }, {
             key: 'buildPath',

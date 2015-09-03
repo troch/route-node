@@ -123,6 +123,21 @@ describe('RouteNode', function () {
         should.not.exists(node.matchPath('/users/view/profile/1'));
     });
 
+    it('should find build a path with nested query parameters', function () {
+        var node = new RouteNode('', '', [
+            new RouteNode('grandParent', '/grand-parent?nickame', [
+                new RouteNode('parent', '/parent?name', [
+                    new RouteNode('child', '/child?age')
+                ])
+            ])
+        ]);
+
+        node.buildPath('grandParent', {nickame: 'gran'}).should.equal('/grand-parent?nickame=gran');
+        node.buildPath('grandParent.parent', {nickame: 'gran', name: 'maman'}).should.equal('/grand-parent/parent?nickame=gran&name=maman');
+        node.buildPath('grandParent.parent', {nickame: 'gran'}).should.equal('/grand-parent/parent?nickame=gran');
+        node.buildPath('grandParent.parent', {name: 'maman'}).should.equal('/grand-parent/parent?name=maman');
+    });
+
     it('should find a nested route by matching a path with a splat', function () {
         var node = getRoutesWithSplat();
         // Building paths

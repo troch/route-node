@@ -1,5 +1,27 @@
 import Path from 'path-parser/modules/Path'
 
+let isSerialisable = val => val !== undefined && val !== null && val !== ''
+
+let removeQueryParamsFromPath = (path, params) => {
+    if (path.indexOf('?') === -1) return path
+    let [pathPart, searchPart] = path.split('?')
+
+    let remainingSearchParams = searchPart
+        .split('&')
+        .reduce((obj, p) => {
+            let [key, val] = p.split('=')
+            if (params.indexOf(key) === -1) obj[key] = val || ''
+            return obj
+        }, {})
+
+    let remainingSearchPart = Object.keys(remainingSearchParams)
+        .map(p => [p].concat(isSerialisable(remainingSearchParams[p]) ? remainingSearchParams[p] : []))
+        .map(p => p.join('='))
+        .join('&')
+
+    return pathPart + (remainingSearchPart ? `?${remainingSearchPart}` : '')
+}
+
 export default class RouteNode {
     constructor(name = '', path = '', childRoutes = []) {
         this.name     = name
@@ -23,7 +45,7 @@ export default class RouteNode {
         }
         if (route instanceof Object) {
             if (!route.name || !route.path) {
-                throw new Error('Route constructor expects routes to have an name and a path defined.')
+                throw new Error('Route constructor expects routes to have a name and a path defined.')
             }
             route = new RouteNode(route.name, route.path, route.children)
         }
@@ -110,7 +132,7 @@ export default class RouteNode {
                 let child = nodes[i]
                 // Partially match path
                 let match = child.parser.partialMatch(pathSegment)
-                let remainingPath
+                let remainingPath, remainingSearch
 
                 if (!match && trailingSlash) {
                     // Try with optional trailing slash
@@ -118,8 +140,9 @@ export default class RouteNode {
                     remainingPath = ''
                 } else if (match) {
                     // Remove consumed segment from path
-                    let consumedPath = child.parser.build(match)
-                    remainingPath = pathSegment.replace(consumedPath, '')
+                    let consumedPath = child.parser.build(match, {ignoreSearch: true})
+                    remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams)
+
                     if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                         remainingPath = ''
                     }

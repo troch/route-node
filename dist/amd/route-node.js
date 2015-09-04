@@ -69,6 +69,8 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
             value: function add(route) {
                 var _this = this;
 
+                if (route === undefined || route === null) return;
+
                 if (route instanceof Array) {
                     route.forEach(function (r) {
                         return _this.add(r);
@@ -77,11 +79,11 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                 }
 
                 if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-                    throw new Error('Route constructor expects routes to be an Object or an instance of Route.');
+                    throw new Error('RouteNode constructor expects routes to be an Object or an instance of Route.');
                 }
                 if (route instanceof Object) {
                     if (!route.name || !route.path) {
-                        throw new Error('Route constructor expects routes to have a name and a path defined.');
+                        throw new Error('RouteNode constructor expects routes to have a name and a path defined.');
                     }
                     route = new RouteNode(route.name, route.path, route.children);
                 }

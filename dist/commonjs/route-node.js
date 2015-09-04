@@ -4,6 +4,8 @@ Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }; })();
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -13,6 +15,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var _pathParser = require('path-parser');
 
 var _pathParser2 = _interopRequireDefault(_pathParser);
+
+var isSerialisable = function isSerialisable(val) {
+    return val !== undefined && val !== null && val !== '';
+};
+
+var removeQueryParamsFromPath = function removeQueryParamsFromPath(path, params) {
+    if (path.indexOf('?') === -1) return path;
+
+    var _path$split = path.split('?');
+
+    var _path$split2 = _slicedToArray(_path$split, 2);
+
+    var pathPart = _path$split2[0];
+    var searchPart = _path$split2[1];
+
+    var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
+        var _p$split = p.split('=');
+
+        var _p$split2 = _slicedToArray(_p$split, 2);
+
+        var key = _p$split2[0];
+        var val = _p$split2[1];
+
+        if (params.indexOf(key) === -1) obj[key] = val || '';
+        return obj;
+    }, {});
+
+    var remainingSearchPart = Object.keys(remainingSearchParams).map(function (p) {
+        return [p].concat(isSerialisable(remainingSearchParams[p]) ? remainingSearchParams[p] : []);
+    }).map(function (p) {
+        return p.join('=');
+    }).join('&');
+
+    return pathPart + (remainingSearchPart ? '?' + remainingSearchPart : '');
+};
 
 var RouteNode = (function () {
     function RouteNode() {
@@ -49,7 +86,7 @@ var RouteNode = (function () {
             }
             if (route instanceof Object) {
                 if (!route.name || !route.path) {
-                    throw new Error('Route constructor expects routes to have an name and a path defined.');
+                    throw new Error('Route constructor expects routes to have a name and a path defined.');
                 }
                 route = new RouteNode(route.name, route.path, route.children);
             }
@@ -146,7 +183,8 @@ var RouteNode = (function () {
                     var child = nodes[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
-                    var remainingPath = undefined;
+                    var remainingPath = undefined,
+                        remainingSearch = undefined;
 
                     if (!match && trailingSlash) {
                         // Try with optional trailing slash
@@ -154,8 +192,9 @@ var RouteNode = (function () {
                         remainingPath = '';
                     } else if (match) {
                         // Remove consumed segment from path
-                        var consumedPath = child.parser.build(match);
-                        remainingPath = pathSegment.replace(consumedPath, '');
+                        var consumedPath = child.parser.build(match, { ignoreSearch: true });
+                        remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams);
+
                         if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                             remainingPath = '';
                         }

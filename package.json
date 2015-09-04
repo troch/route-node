@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "A package to create a tree of named routes#",
   "main": "dist/commonjs/route-node.js",
   "scripts": {
@@ -37,6 +37,6 @@
     "vinyl-source-stream2": "^0.1.1"
   },
   "dependencies": {
-    "path-parser": "~0.3.1"
+    "path-parser": "~0.3.2"
   }
 }

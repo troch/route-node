@@ -1,3 +1,13 @@
+<a name="0.3.2"></a>
+## 0.3.2 (2015-09-04)
+
+
+### Bug Fixes
+
+* don't try to build a path out of a null list of segments ([d1817c3](https://github.com/troch/route-node/commit/d1817c3))
+
+
+
 <a name="0.3.1"></a>
 ## 0.3.1 (2015-09-04)
 

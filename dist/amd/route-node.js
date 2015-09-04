@@ -79,11 +79,11 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                 }
 
                 if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-                    throw new Error('RouteNode constructor expects routes to be an Object or an instance of Route.');
+                    throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
                 }
                 if (route instanceof Object) {
                     if (!route.name || !route.path) {
-                        throw new Error('RouteNode constructor expects routes to have a name and a path defined.');
+                        throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                     }
                     route = new RouteNode(route.name, route.path, route.children);
                 }
@@ -253,6 +253,8 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
             value: function buildPathFromSegments(segments) {
                 var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
+                if (!segments) return null;
+
                 var searchParams = segments.filter(function (s) {
                     return s.parser.hasQueryParams;
                 }).map(function (s) {
@@ -267,9 +269,9 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                     return p + '=' + params[p];
                 }).join('&');
 
-                return segments ? segments.map(function (segment) {
+                return segments.map(function (segment) {
                     return segment.parser.build(params, { ignoreSearch: true });
-                }).join('') + (searchPart ? '?' + searchPart : '') : null;
+                }).join('') + (searchPart ? '?' + searchPart : '');
             }
         }, {
             key: 'buildPath',

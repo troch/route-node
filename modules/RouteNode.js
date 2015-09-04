@@ -184,6 +184,8 @@ export default class RouteNode {
     }
 
     buildPathFromSegments(segments, params = {}) {
+        if (!segments) return null
+
         let searchParams = segments
             .filter(s => s.parser.hasQueryParams)
             .map(s => s.parser.queryParams);
@@ -194,7 +196,7 @@ export default class RouteNode {
             .map(p => p + '=' + params[p])
             .join('&')
 
-        return segments ? segments.map(segment => segment.parser.build(params, {ignoreSearch: true})).join('') + (searchPart ? '?' + searchPart : '') : null
+        return segments.map(segment => segment.parser.build(params, {ignoreSearch: true})).join('') + (searchPart ? '?' + searchPart : '')
     }
 
     buildPath(routeName, params = {}) {

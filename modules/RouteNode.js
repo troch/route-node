@@ -35,17 +35,19 @@ export default class RouteNode {
     }
 
     add(route) {
+        if (route === undefined || route === null) return
+
         if (route instanceof Array) {
             route.forEach(r => this.add(r))
             return
         }
 
         if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-            throw new Error('Route constructor expects routes to be an Object or an instance of Route.')
+            throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.')
         }
         if (route instanceof Object) {
             if (!route.name || !route.path) {
-                throw new Error('Route constructor expects routes to have a name and a path defined.')
+                throw new Error('RouteNode.add() expects routes to have a name and a path defined.')
             }
             route = new RouteNode(route.name, route.path, route.children)
         }

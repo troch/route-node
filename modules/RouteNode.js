@@ -1,4 +1,4 @@
-import Path from 'path-parser/modules/Path'
+import Path from 'path-parser'
 
 let isSerialisable = val => val !== undefined && val !== null && val !== ''
 

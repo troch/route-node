@@ -3,6 +3,7 @@
   "version": "0.3.2",
   "description": "A package to create a tree of named routes#",
   "main": "dist/commonjs/route-node.js",
+  "jsnext:main": "modules/RouteNode.js",
   "scripts": {
     "test": "./node_modules/.bin/_mocha",
     "test-cover": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",

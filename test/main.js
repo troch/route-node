@@ -125,7 +125,7 @@ describe('RouteNode', function () {
 
     it('should match build build paths with nested query parameters', function () {
         var node = new RouteNode('', '', [
-            new RouteNode('grandParent', '/grand-parent?nickame', [
+            new RouteNode('grandParent', '/grand-parent?nickname', [
                 new RouteNode('parent', '/parent?name', [
                     new RouteNode('child', '/child?age')
                 ])
@@ -133,23 +133,25 @@ describe('RouteNode', function () {
         ]);
 
         // Building
-        node.buildPath('grandParent', {nickame: 'gran'}).should.equal('/grand-parent?nickame=gran');
-        node.buildPath('grandParent.parent', {nickame: 'gran', name: 'maman'}).should.equal('/grand-parent/parent?nickame=gran&name=maman');
-        node.buildPath('grandParent.parent', {nickame: 'gran'}).should.equal('/grand-parent/parent?nickame=gran');
+        node.buildPath('grandParent', {nickname: 'gran'}).should.equal('/grand-parent?nickname=gran');
+        node.buildPath('grandParent.parent', {nickname: 'gran', name: 'maman'}).should.equal('/grand-parent/parent?nickname=gran&name=maman');
+        node.buildPath('grandParent.parent', {nickname: 'gran'}).should.equal('/grand-parent/parent?nickname=gran');
         node.buildPath('grandParent.parent', {name: 'maman'}).should.equal('/grand-parent/parent?name=maman');
         node.buildPath('grandParent.parent.child', {name: 'maman', age: 3}).should.equal('/grand-parent/parent/child?name=maman&age=3');
         node.buildPath('grandParent.parent.child', {}).should.equal('/grand-parent/parent/child');
+        node.buildPath('grandParent.parent.child', {nickname: ['gran', 'granny']}).should.equal('/grand-parent/parent/child?nickname=gran&nickname=granny');
 
         // Matching
         node.matchPath('/grand-parent').should.eql({name: 'grandParent', params: {}});
-        node.matchPath('/grand-parent?nickame=gran').should.eql({name: 'grandParent', params: {nickame: 'gran'}});
-        node.matchPath('/grand-parent/parent?nickame=gran&name=maman').should.eql({name: 'grandParent.parent', params: {nickame: 'gran', name: 'maman'}});
-        node.matchPath('/grand-parent/parent/child?nickame=gran&name=maman').should.eql({name: 'grandParent.parent.child', params: {nickame: 'gran', name: 'maman'}});
-        node.matchPath('/grand-parent/parent/child?nickame=gran&name=maman&age=3').should.eql({name: 'grandParent.parent.child', params: {nickame: 'gran', name: 'maman', age: '3'}});
+        node.matchPath('/grand-parent?nickname=gran').should.eql({name: 'grandParent', params: {nickname: 'gran'}});
+        node.matchPath('/grand-parent/parent?nickname=gran&name=maman').should.eql({name: 'grandParent.parent', params: {nickname: 'gran', name: 'maman'}});
+        node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman').should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman'}});
+        node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman&age=3').should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman', age: '3'}});
+        node.matchPath('/grand-parent/parent/child?nickname=gran&nickname=granny&name=maman&age=3').should.eql({name: 'grandParent.parent.child', params: {nickname: ['gran', 'granny'], name: 'maman', age: '3'}});
 
         // Unsuccessful matching
-        should.not.exist(node.matchPath('/grand-parent?nickame=gran&name=papa'));
-        should.not.exist(node.matchPath('/grand-parent/parent/child?nickame=gran&names=papa-maman'));
+        should.not.exist(node.matchPath('/grand-parent?nickname=gran&name=papa'));
+        should.not.exist(node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman'));
     });
 
     it('should find a nested route by matching a path with a splat', function () {

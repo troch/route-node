@@ -193,7 +193,7 @@ export default class RouteNode {
         let searchPart = !searchParams.length ? null : searchParams
             .reduce((queryParams, params) => queryParams.concat(params))
             .filter(p => Object.keys(params).indexOf(p) !== -1)
-            .map(p => p + '=' + params[p])
+            .map(p => Path.serialise(p, params[p]))
             .join('&')
 
         return segments.map(segment => segment.parser.build(params, {ignoreSearch: true})).join('') + (searchPart ? '?' + searchPart : '')

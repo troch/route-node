@@ -1,3 +1,13 @@
+<a name="0.4.0"></a>
+# 0.4.0 (2015-10-11)
+
+
+### Features
+
+* add support for arrays in query parameters (path-parser 0.4.x) ([951f8ae](https://github.com/troch/route-node/commit/951f8ae))
+
+
+
 <a name="0.3.2"></a>
 ## 0.3.2 (2015-09-04)
 

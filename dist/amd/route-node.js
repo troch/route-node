@@ -266,7 +266,7 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                 }).filter(function (p) {
                     return Object.keys(params).indexOf(p) !== -1;
                 }).map(function (p) {
-                    return p + '=' + params[p];
+                    return _Path['default'].serialise(p, params[p]);
                 }).join('&');
 
                 return segments.map(function (segment) {

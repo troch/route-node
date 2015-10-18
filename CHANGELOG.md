@@ -1,3 +1,13 @@
+<a name="0.4.2"></a>
+## 0.4.2 (2015-10-18)
+
+
+### Bug Fixes
+
+* don't use array destructuring to avoid the use of Symbol ([f9dfd57](https://github.com/troch/route-node/commit/f9dfd57))
+
+
+
 <a name="0.4.1"></a>
 ## 0.4.1 (2015-10-11)
 

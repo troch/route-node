@@ -4,12 +4,16 @@ let isSerialisable = val => val !== undefined && val !== null && val !== ''
 
 let removeQueryParamsFromPath = (path, params) => {
     if (path.indexOf('?') === -1) return path
-    let [pathPart, searchPart] = path.split('?')
+    const splitPath = path.split('?')
+    const pathPart = splitPath[0]
+    const searchPart = splitPath[1]
 
     let remainingSearchParams = searchPart
         .split('&')
         .reduce((obj, p) => {
-            let [key, val] = p.split('=')
+            const splitParam = p.split('=')
+            const key = splitParam[0]
+            const val = splitParam[1]
             if (params.indexOf(key) === -1) obj[key] = val || ''
             return obj
         }, {})

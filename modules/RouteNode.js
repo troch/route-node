@@ -13,13 +13,13 @@ let removeQueryParamsFromPath = (path, params) => {
         .reduce((obj, p) => {
             const splitParam = p.split('=')
             const key = splitParam[0]
-            const val = splitParam[1]
+            const val = decodeURIComponent(splitParam[1])
             if (params.indexOf(key) === -1) obj[key] = val || ''
             return obj
         }, {})
 
     let remainingSearchPart = Object.keys(remainingSearchParams)
-        .map(p => [p].concat(isSerialisable(remainingSearchParams[p]) ? remainingSearchParams[p] : []))
+        .map(p => [p].concat(isSerialisable(remainingSearchParams[p]) ? encodeURIComponent(remainingSearchParams[p]) : []))
         .map(p => p.join('='))
         .join('&')
 

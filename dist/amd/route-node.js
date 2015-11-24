@@ -22,13 +22,13 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
         var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
             var splitParam = p.split('=');
             var key = splitParam[0];
-            var val = splitParam[1];
+            var val = decodeURIComponent(splitParam[1]);
             if (params.indexOf(key) === -1) obj[key] = val || '';
             return obj;
         }, {});
 
         var remainingSearchPart = Object.keys(remainingSearchParams).map(function (p) {
-            return [p].concat(isSerialisable(remainingSearchParams[p]) ? remainingSearchParams[p] : []);
+            return [p].concat(isSerialisable(remainingSearchParams[p]) ? encodeURIComponent(remainingSearchParams[p]) : []);
         }).map(function (p) {
             return p.join('=');
         }).join('&');

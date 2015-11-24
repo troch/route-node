@@ -1,3 +1,13 @@
+<a name="0.4.3"></a>
+## 0.4.3 (2015-11-24)
+
+
+### Bug Fixes
+
+* encode and decode query parameters special characters ([6ac4196](https://github.com/troch/route-node/commit/6ac4196))
+
+
+
 <a name="0.4.2"></a>
 ## 0.4.2 (2015-10-18)
 

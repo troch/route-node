@@ -4,6 +4,11 @@ var path      = require('path');
 var pkg       = require('../package.json');
 var RouteNode = require(path.join(__dirname, '..', pkg.main));
 var should    = require('should');
+var omit      = require('lodash.omit');
+
+function withoutMeta(obj) {
+    return omit(obj, '_meta');
+}
 
 require('mocha');
 
@@ -117,8 +122,19 @@ describe('RouteNode', function () {
     it('should find a nested route by matching a path', function () {
         var node = getRoutes();
         // Building paths
-        node.matchPath('/users').should.eql({name: 'users', params: {}});
-        node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
+        withoutMeta(node.matchPath('/users')).should.eql({name: 'users', params: {}});
+
+        node.matchPath('/users/view/1').should.eql({
+            _meta: {
+                users: {},
+                view: {
+                    id: 'url'
+                }
+            },
+            name: 'users.view',
+            params: {id: '1'}
+        });
+
         should.not.exists(node.matchPath('/users/profile/1'));
         should.not.exists(node.matchPath('/users/view/profile/1'));
     });
@@ -142,12 +158,22 @@ describe('RouteNode', function () {
         node.buildPath('grandParent.parent.child', {nickname: ['gran', 'granny']}).should.equal('/grand-parent/parent/child?nickname=gran&nickname=granny');
 
         // Matching
-        node.matchPath('/grand-parent').should.eql({name: 'grandParent', params: {}});
-        node.matchPath('/grand-parent?nickname=gran').should.eql({name: 'grandParent', params: {nickname: 'gran'}});
-        node.matchPath('/grand-parent/parent?nickname=gran&name=maman%20man').should.eql({name: 'grandParent.parent', params: {nickname: 'gran', name: 'maman man'}});
-        node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman').should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman'}});
-        node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman&age=3').should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman', age: '3'}});
-        node.matchPath('/grand-parent/parent/child?nickname=gran&nickname=granny&name=maman&age=3').should.eql({name: 'grandParent.parent.child', params: {nickname: ['gran', 'granny'], name: 'maman', age: '3'}});
+        withoutMeta(node.matchPath('/grand-parent')).should.eql({name: 'grandParent', params: {}});
+
+        node.matchPath('/grand-parent?nickname=gran').should.eql({
+            _meta: {
+                grandParent: {
+                    nickname: 'query'
+                }
+            },
+            name: 'grandParent',
+            params: {nickname: 'gran'}
+        });
+
+        withoutMeta(node.matchPath('/grand-parent/parent?nickname=gran&name=maman%20man')).should.eql({name: 'grandParent.parent', params: {nickname: 'gran', name: 'maman man'}});
+        withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman')).should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman'}});
+        withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman&age=3')).should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman', age: '3'}});
+        withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&nickname=granny&name=maman&age=3')).should.eql({name: 'grandParent.parent.child', params: {nickname: ['gran', 'granny'], name: 'maman', age: '3'}});
 
         // Unsuccessful matching
         should.not.exist(node.matchPath('/grand-parent?nickname=gran&name=papa'));
@@ -157,8 +183,8 @@ describe('RouteNode', function () {
     it('should find a nested route by matching a path with a splat', function () {
         var node = getRoutesWithSplat();
         // Building paths
-        node.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
-        node.matchPath('/users/profile/1').should.eql({name: 'users.splat', params: {id: 'profile/1'}});
+        withoutMeta(node.matchPath('/users/view/1')).should.eql({name: 'users.view', params: {id: '1'}});
+        withoutMeta(node.matchPath('/users/profile/1')).should.eql({name: 'users.splat', params: {id: 'profile/1'}});
         should.not.exists(node.matchPath('/users/view/profile/1'));
     });
 
@@ -168,8 +194,8 @@ describe('RouteNode', function () {
             new RouteNode('view', '/view/:id')
         ]);
 
-        usersNode.matchPath('/users/view/1').should.eql({name: 'users.view', params: {id: '1'}});
-        usersNode.matchPath('/users/list').should.eql({name: 'users.list', params: {}});
+        withoutMeta(usersNode.matchPath('/users/view/1')).should.eql({name: 'users.view', params: {id: '1'}});
+        withoutMeta(usersNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
     })
 
     it('should be able to add deep nodes', function () {
@@ -190,28 +216,28 @@ describe('RouteNode', function () {
             .addNode('abo', '/abo')
             .addNode('about', '/about');
 
-        rootNode.matchPath('/').should.eql({name: 'index', params: {}});
-        rootNode.matchPath('/abo').should.eql({name: 'abo', params: {}});
-        rootNode.matchPath('/about').should.eql({name: 'about', params: {}});
-        rootNode.matchPath('/abc').should.eql({name: 'id', params: {id: 'abc'}});
-        rootNode.matchPath('/section/abc').should.eql({name: 'section', params: {id: 'abc'}});
+        withoutMeta(rootNode.matchPath('/')).should.eql({name: 'index', params: {}});
+        withoutMeta(rootNode.matchPath('/abo')).should.eql({name: 'abo', params: {}});
+        withoutMeta(rootNode.matchPath('/about')).should.eql({name: 'about', params: {}});
+        withoutMeta(rootNode.matchPath('/abc')).should.eql({name: 'id', params: {id: 'abc'}});
+        withoutMeta(rootNode.matchPath('/section/abc')).should.eql({name: 'section', params: {id: 'abc'}});
     });
 
     it('should match paths with optional trailing slashes', function () {
         var rootNode = getRoutes();
         should.not.exists(rootNode.matchPath('/users/list/'));
-        rootNode.matchPath('/users/list', true).should.eql({name: 'users.list', params: {}});
-        rootNode.matchPath('/users/list').should.eql({name: 'users.list', params: {}});
-        rootNode.matchPath('/users/list/', true).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list', true)).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', true)).should.eql({name: 'users.list', params: {}});
         should.not.exists(rootNode.matchPath('/users/list//', true));
 
         var rootNode = getRoutes(true);
         should.not.exists(rootNode.matchPath('/users/list'));
-        rootNode.matchPath('/users/list', true).should.eql({name: 'users.list', params: {}});
-        rootNode.matchPath('/users/list/', true).should.eql({name: 'users.list', params: {}});
-        rootNode.matchPath('/users/list/').should.eql({name: 'users.list', params: {}});
-        rootNode.matchPath('/').should.eql({name: 'default', params: {}});
-        rootNode.matchPath('', true).should.eql({name: 'default', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list', true)).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', true)).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/')).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/')).should.eql({name: 'default', params: {}});
+        withoutMeta(rootNode.matchPath('', true)).should.eql({name: 'default', params: {}});
         should.not.exists(rootNode.matchPath('/users/list//', true));
     });
 });

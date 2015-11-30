@@ -210,10 +210,25 @@ export default class RouteNode {
     getMatchPathFromSegments(segments) {
         if (!segments || !segments.length) return null
 
-        let name = segments.map(segment => segment.name).join('.')
-        let params = segments.params
+        const _meta = segments.reduce((meta, segment) => {
+            const urlParams = segment.parser.urlParams.reduce((params, p) => {
+                params[p] = 'url';
+                return params;
+            }, {});
 
-        return {name, params}
+            const allParams = segment.parser.queryParams.reduce((params, p) => {
+                params[p] = 'query';
+                return params;
+            }, urlParams);
+
+            meta[segment.name] = allParams;
+            return meta;
+        }, {});
+
+        const name = segments.map(segment => segment.name).join('.')
+        const params = segments.params
+
+        return {name, params, _meta}
     }
 
     matchPath(path, trailingSlash = false) {

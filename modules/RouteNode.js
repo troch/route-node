@@ -203,14 +203,8 @@ export default class RouteNode {
         return segments.map(segment => segment.parser.build(params, {ignoreSearch: true})).join('') + (searchPart ? '?' + searchPart : '')
     }
 
-    buildPath(routeName, params = {}) {
-        return this.buildPathFromSegments(this.getSegmentsByName(routeName), params)
-    }
-
-    getMatchPathFromSegments(segments) {
-        if (!segments || !segments.length) return null
-
-        const _meta = segments.reduce((meta, segment) => {
+    getMetaFromSegments(segments) {
+        return segments.reduce((meta, segment) => {
             const urlParams = segment.parser.urlParams.reduce((params, p) => {
                 params[p] = 'url';
                 return params;
@@ -224,14 +218,37 @@ export default class RouteNode {
             meta[segment.name] = allParams;
             return meta;
         }, {});
+    }
 
-        const name = segments.map(segment => segment.name).join('.')
-        const params = segments.params
+    buildPath(routeName, params = {}) {
+        return this.buildPathFromSegments(this.getSegmentsByName(routeName), params)
+    }
 
-        return {name, params, _meta}
+    buildStateFromSegments(segments) {
+        if (!segments || !segments.length) return null;
+
+        const name = segments.map(segment => segment.name).join('.');
+        const params = segments.params;
+
+        return {
+            name,
+            params,
+            _meta: this.getMetaFromSegments(segments)
+        };
+    }
+
+    buildState(name, params = {}) {
+        const segments = this.getSegmentsByName(name);
+        if (!segments || !segments.length) return null;
+
+        return {
+            name,
+            params,
+            _meta: this.getMetaFromSegments(segments)
+        };
     }
 
     matchPath(path, trailingSlash = false) {
-        return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash))
+        return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash))
     }
 }

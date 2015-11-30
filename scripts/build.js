@@ -20,5 +20,6 @@ async.parallel([
     buildFactory('amd', 'dist/amd/route-node.js'),
     buildFactory('umd', 'dist/umd/route-node.js')
 ], function (err) {
+    if (err) console.log(err);
     process.exit(err ? 1 : 0);
 })

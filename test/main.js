@@ -119,6 +119,27 @@ describe('RouteNode', function () {
         }).should.throw();
     });
 
+    it('should build the state object of a nested route', function () {
+        var node = getRoutes();
+        // Building paths
+        node.buildState('home').should.eql({
+            _meta: { home: {} },
+            name: 'home',
+            params: {}
+        });
+
+        node.buildState('users.view', {id: 1}).should.eql({
+            _meta: {
+                users: {},
+                view: {
+                    id: 'url'
+                }
+            },
+            name: 'users.view',
+            params: {id: 1}
+        });
+    });
+
     it('should find a nested route by matching a path', function () {
         var node = getRoutes();
         // Building paths

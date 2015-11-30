@@ -276,18 +276,9 @@
                 }).join('') + (searchPart ? '?' + searchPart : '');
             }
         }, {
-            key: 'buildPath',
-            value: function buildPath(routeName) {
-                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-                return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
-            }
-        }, {
-            key: 'getMatchPathFromSegments',
-            value: function getMatchPathFromSegments(segments) {
-                if (!segments || !segments.length) return null;
-
-                var _meta = segments.reduce(function (meta, segment) {
+            key: 'getMetaFromSegments',
+            value: function getMetaFromSegments(segments) {
+                return segments.reduce(function (meta, segment) {
                     var urlParams = segment.parser.urlParams.reduce(function (params, p) {
                         params[p] = 'url';
                         return params;
@@ -301,20 +292,50 @@
                     meta[segment.name] = allParams;
                     return meta;
                 }, {});
+            }
+        }, {
+            key: 'buildPath',
+            value: function buildPath(routeName) {
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+                return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+            }
+        }, {
+            key: 'buildStateFromSegments',
+            value: function buildStateFromSegments(segments) {
+                if (!segments || !segments.length) return null;
 
                 var name = segments.map(function (segment) {
                     return segment.name;
                 }).join('.');
                 var params = segments.params;
 
-                return { name: name, params: params, _meta: _meta };
+                return {
+                    name: name,
+                    params: params,
+                    _meta: this.getMetaFromSegments(segments)
+                };
+            }
+        }, {
+            key: 'buildState',
+            value: function buildState(name) {
+                var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+                var segments = this.getSegmentsByName(name);
+                if (!segments || !segments.length) return null;
+
+                return {
+                    name: name,
+                    params: params,
+                    _meta: this.getMetaFromSegments(segments)
+                };
             }
         }, {
             key: 'matchPath',
             value: function matchPath(path) {
                 var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
 
-                return this.getMatchPathFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
+                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
             }
         }]);
 

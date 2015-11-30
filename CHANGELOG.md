@@ -1,3 +1,13 @@
+<a name="0.5.1"></a>
+## 0.5.1 (2015-11-30)
+
+
+### Features
+
+* add buildState function ([6378331](https://github.com/troch/route-node/commit/6378331))
+
+
+
 <a name="0.5.0"></a>
 # 0.5.0 (2015-11-30)
 

@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "A package to create a tree of named routes#",
   "main": "dist/commonjs/route-node.js",
   "jsnext:main": "modules/RouteNode.js",
@@ -26,13 +26,14 @@
   },
   "homepage": "https://github.com/troch/route-node",
   "devDependencies": {
+    "async": "^1.3.0",
     "babel": "^5.5.8",
     "conventional-changelog": "^0.2.0",
-    "should": "^6.0.3",
-    "mocha": "^2.2.5",
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.16",
-    "async": "^1.3.0",
+    "lodash.omit": "^3.1.0",
+    "mocha": "^2.2.5",
+    "should": "^6.0.3",
     "through2": "^2.0.0",
     "vinyl-fs": "^1.0.0",
     "vinyl-source-stream2": "^0.1.1"

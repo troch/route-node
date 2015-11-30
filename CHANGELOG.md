@@ -1,3 +1,13 @@
+<a name="0.5.0"></a>
+# 0.5.0 (2015-11-30)
+
+
+### Features
+
+* add meta data about parameters and their position in match object ([d95fb92](https://github.com/troch/route-node/commit/d95fb92))
+
+
+
 <a name="0.4.3"></a>
 ## 0.4.3 (2015-11-24)
 

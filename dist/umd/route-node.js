@@ -287,12 +287,27 @@
             value: function getMatchPathFromSegments(segments) {
                 if (!segments || !segments.length) return null;
 
+                var _meta = segments.reduce(function (meta, segment) {
+                    var urlParams = segment.parser.urlParams.reduce(function (params, p) {
+                        params[p] = 'url';
+                        return params;
+                    }, {});
+
+                    var allParams = segment.parser.queryParams.reduce(function (params, p) {
+                        params[p] = 'query';
+                        return params;
+                    }, urlParams);
+
+                    meta[segment.name] = allParams;
+                    return meta;
+                }, {});
+
                 var name = segments.map(function (segment) {
                     return segment.name;
                 }).join('.');
                 var params = segments.params;
 
-                return { name: name, params: params };
+                return { name: name, params: params, _meta: _meta };
             }
         }, {
             key: 'matchPath',

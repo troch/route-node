@@ -1,3 +1,13 @@
+<a name="0.5.2"></a>
+## 0.5.2 (2015-12-01)
+
+
+### Bug Fixes
+
+* use full names in meta data to avoid collisions ([038fa1e](https://github.com/troch/route-node/commit/038fa1e))
+
+
+
 <a name="0.5.1"></a>
 ## 0.5.1 (2015-11-30)
 

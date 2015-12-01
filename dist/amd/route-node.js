@@ -266,7 +266,9 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
         }, {
             key: 'getMetaFromSegments',
             value: function getMetaFromSegments(segments) {
-                return segments.reduce(function (meta, segment) {
+                var accName = '';
+
+                return segments.reduce(function (meta, segment, i) {
                     var urlParams = segment.parser.urlParams.reduce(function (params, p) {
                         params[p] = 'url';
                         return params;
@@ -277,7 +279,8 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                         return params;
                     }, urlParams);
 
-                    meta[segment.name] = allParams;
+                    accName = accName ? accName + '.' + segment.name : segment.name;
+                    meta[accName] = allParams;
                     return meta;
                 }, {});
             }

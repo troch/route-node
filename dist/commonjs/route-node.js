@@ -271,7 +271,9 @@ var RouteNode = (function () {
     }, {
         key: 'getMetaFromSegments',
         value: function getMetaFromSegments(segments) {
-            return segments.reduce(function (meta, segment) {
+            var accName = '';
+
+            return segments.reduce(function (meta, segment, i) {
                 var urlParams = segment.parser.urlParams.reduce(function (params, p) {
                     params[p] = 'url';
                     return params;
@@ -282,7 +284,8 @@ var RouteNode = (function () {
                     return params;
                 }, urlParams);
 
-                meta[segment.name] = allParams;
+                accName = accName ? accName + '.' + segment.name : segment.name;
+                meta[accName] = allParams;
                 return meta;
             }, {});
         }

@@ -131,7 +131,7 @@ describe('RouteNode', function () {
         node.buildState('users.view', {id: 1}).should.eql({
             _meta: {
                 users: {},
-                view: {
+                'users.view': {
                     id: 'url'
                 }
             },
@@ -148,7 +148,7 @@ describe('RouteNode', function () {
         node.matchPath('/users/view/1').should.eql({
             _meta: {
                 users: {},
-                view: {
+                'users.view': {
                     id: 'url'
                 }
             },

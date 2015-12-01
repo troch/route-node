@@ -204,7 +204,9 @@ export default class RouteNode {
     }
 
     getMetaFromSegments(segments) {
-        return segments.reduce((meta, segment) => {
+        let accName = '';
+
+        return segments.reduce((meta, segment, i) => {
             const urlParams = segment.parser.urlParams.reduce((params, p) => {
                 params[p] = 'url';
                 return params;
@@ -215,7 +217,8 @@ export default class RouteNode {
                 return params;
             }, urlParams);
 
-            meta[segment.name] = allParams;
+            accName = accName ? accName + '.' + segment.name : segment.name;
+            meta[accName] = allParams;
             return meta;
         }, {});
     }

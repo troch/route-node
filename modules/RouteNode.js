@@ -157,9 +157,11 @@ export default class RouteNode {
                 if (match) {
                     segments.push(child)
                     Object.keys(match).forEach(param => segments.params[param] = match[param])
-                    // If fully matched
-                    if (!remainingPath.length) {
-                        return segments
+
+                    if (!remainingPath.length || // fully matched
+                        remainingPath.indexOf('?') === 0 // we only got unmatched queryParams
+                    ) {
+                      return segments
                     }
                     // If no children to match against but unmatched path left
                     if (!child.children.length) {

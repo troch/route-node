@@ -196,9 +196,31 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&name=maman&age=3')).should.eql({name: 'grandParent.parent.child', params: {nickname: 'gran', name: 'maman', age: '3'}});
         withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&nickname=granny&name=maman&age=3')).should.eql({name: 'grandParent.parent.child', params: {nickname: ['gran', 'granny'], name: 'maman', age: '3'}});
 
-        // Unsuccessful matching
-        should.not.exist(node.matchPath('/grand-parent?nickname=gran&name=papa'));
-        should.not.exist(node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman'));
+        // still matching remainingPath only consist of unknown qsParams
+        node.matchPath('/grand-parent?nickname=gran&name=papa').should.eql({
+          _meta: {
+              grandParent: {
+                  nickname: 'query'
+              }
+          },
+          name: 'grandParent',
+          params: {nickname: 'gran'}
+        });
+        node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman').should.eql({
+          _meta: {
+              grandParent: {
+                  nickname: 'query'
+              },
+              'grandParent.parent': {
+                  name: 'query'
+              },
+              'grandParent.parent.child': {
+                  age: 'query'
+              }
+          },
+          name: 'grandParent.parent.child',
+          params: {nickname: 'gran'}
+        });
     });
 
     it('should find a nested route by matching a path with a splat', function () {

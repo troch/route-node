@@ -197,12 +197,14 @@ var RouteNode = (function () {
                         Object.keys(match).forEach(function (param) {
                             return segments.params[param] = match[param];
                         });
-                        // If fully matched
-                        if (!remainingPath.length) {
-                            return {
-                                v: segments
-                            };
-                        }
+
+                        if (!remainingPath.length || // fully matched
+                        remainingPath.indexOf('?') === 0 // we only got unmatched queryParams
+                        ) {
+                                return {
+                                    v: segments
+                                };
+                            }
                         // If no children to match against but unmatched path left
                         if (!child.children.length) {
                             return {

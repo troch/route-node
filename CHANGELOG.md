@@ -1,3 +1,13 @@
+<a name="0.6.0"></a>
+# 0.6.0 (2016-01-01)
+
+
+### Features
+
+* add support for non strict query parameters ([9fc326b](https://github.com/troch/route-node/commit/9fc326b))
+
+
+
 <a name="0.5.2"></a>
 ## 0.5.2 (2015-12-01)
 

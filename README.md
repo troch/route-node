@@ -70,8 +70,12 @@ Trailing slash can be optional:
 ```javascript
 rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
 rootNode.matchPath('/users/view/1/');          // => null
-rootNode.matchPath('/users/view/1/', true);    // => {name: "users.view", params: {id: "1"}}
+
+rootNode.matchPath('/users/view/1/', { trailingSlash: true });
+// => {name: "users.view", params: {id: "1"}}
 ```
+
+Query parameters are optional, however a match will fail if the URL contains non-expected query parameters. This can be prevented by setting `strictQueryParams` to false.
 
 ## Related packages
 

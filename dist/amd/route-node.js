@@ -1,6 +1,8 @@
 define(['exports', 'module', 'path-parser'], function (exports, module, _pathParser) {
     'use strict';
 
+    var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
     var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
     function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -162,8 +164,9 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
             }
         }, {
             key: 'getSegmentsMatchingPath',
-            value: function getSegmentsMatchingPath(path) {
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+            value: function getSegmentsMatchingPath(path, options) {
+                var trailingSlash = options.trailingSlash;
+                var strictQueryParams = options.strictQueryParams;
 
                 var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                     var _loop = function (i) {
@@ -194,7 +197,7 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
                             });
 
                             if (!remainingPath.length || // fully matched
-                            remainingPath.indexOf('?') === 0 // we only got unmatched queryParams
+                            !strictQueryParams && remainingPath.indexOf('?') === 0 // unmatched queryParams in non strict mode
                             ) {
                                     return {
                                         v: segments
@@ -325,10 +328,10 @@ define(['exports', 'module', 'path-parser'], function (exports, module, _pathPar
             }
         }, {
             key: 'matchPath',
-            value: function matchPath(path) {
-                var trailingSlash = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-
-                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash));
+            value: function matchPath(path, options) {
+                var defaultOptions = { trailingSlash: false, strictQueryParams: true };
+                options = _extends({}, defaultOptions, options);
+                return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options));
             }
         }]);
 

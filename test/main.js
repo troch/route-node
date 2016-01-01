@@ -197,7 +197,7 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/grand-parent/parent/child?nickname=gran&nickname=granny&name=maman&age=3')).should.eql({name: 'grandParent.parent.child', params: {nickname: ['gran', 'granny'], name: 'maman', age: '3'}});
 
         // still matching remainingPath only consist of unknown qsParams
-        node.matchPath('/grand-parent?nickname=gran&name=papa').should.eql({
+        node.matchPath('/grand-parent?nickname=gran&name=papa', { strictQueryParams: false }).should.eql({
           _meta: {
               grandParent: {
                   nickname: 'query'
@@ -206,7 +206,7 @@ describe('RouteNode', function () {
           name: 'grandParent',
           params: {nickname: 'gran'}
         });
-        node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman').should.eql({
+        node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman', { strictQueryParams: false }).should.eql({
           _meta: {
               grandParent: {
                   nickname: 'query'
@@ -269,19 +269,19 @@ describe('RouteNode', function () {
     it('should match paths with optional trailing slashes', function () {
         var rootNode = getRoutes();
         should.not.exists(rootNode.matchPath('/users/list/'));
-        withoutMeta(rootNode.matchPath('/users/list', true)).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list/', true)).should.eql({name: 'users.list', params: {}});
-        should.not.exists(rootNode.matchPath('/users/list//', true));
+        withoutMeta(rootNode.matchPath('/users/list/', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
 
         var rootNode = getRoutes(true);
         should.not.exists(rootNode.matchPath('/users/list'));
-        withoutMeta(rootNode.matchPath('/users/list', true)).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list/', true)).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/users/list/')).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'default', params: {}});
-        withoutMeta(rootNode.matchPath('', true)).should.eql({name: 'default', params: {}});
-        should.not.exists(rootNode.matchPath('/users/list//', true));
+        withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql({name: 'default', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
 });
 

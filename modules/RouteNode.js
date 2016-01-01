@@ -131,7 +131,8 @@ export default class RouteNode {
         return matched ? segments : null
     }
 
-    getSegmentsMatchingPath(path, trailingSlash = false) {
+    getSegmentsMatchingPath(path, options) {
+        const { trailingSlash, strictQueryParams } = options;
         let matchChildren = (nodes, pathSegment, segments) => {
             // for (child of node.children) {
             for (let i in nodes) {
@@ -159,7 +160,7 @@ export default class RouteNode {
                     Object.keys(match).forEach(param => segments.params[param] = match[param])
 
                     if (!remainingPath.length || // fully matched
-                        remainingPath.indexOf('?') === 0 // we only got unmatched queryParams
+                        !strictQueryParams && remainingPath.indexOf('?') === 0 // unmatched queryParams in non strict mode
                     ) {
                       return segments
                     }
@@ -253,7 +254,9 @@ export default class RouteNode {
         };
     }
 
-    matchPath(path, trailingSlash = false) {
-        return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, trailingSlash))
+    matchPath(path, options) {
+        const defaultOptions = { trailingSlash: false, strictQueryParams: true };
+        options = { ...defaultOptions, ...options };
+        return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options))
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package to create a tree of named routes",
   "main": "dist/commonjs/route-node.js",
   "jsnext:main": "modules/RouteNode.js",
@@ -34,7 +34,6 @@
     "babel-core": "^6.3.26",
     "babel-eslint": "^4.1.6",
     "babel-plugin-add-module-exports": "^0.1.2",
-    "babel-plugin-external-helpers-2": "^6.3.13",
     "babel-plugin-transform-class-properties": "^6.3.13",
     "babel-plugin-transform-export-extensions": "^6.3.13",
     "babel-plugin-transform-object-rest-spread": "^6.3.13",

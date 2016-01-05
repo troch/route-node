@@ -283,6 +283,20 @@ describe('RouteNode', function () {
         withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql({name: 'default', params: {}});
         should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
+
+    it('should support query parameters with square brackets', function () {
+        var node = new RouteNode('', '', [
+            new RouteNode('route', '/route?arr[]', [
+                new RouteNode('deep', '/deep?arr2[]')
+            ])
+        ]);
+
+        // node.buildPath('route.deep', { arr: [1, 2], arr2: [3] }).should.equal('/route/deep?arr[]=1&arr[]=2&arr2[]=3');
+        withoutMeta(node.matchPath('/route/deep?arr[]=1&arr[]=2&arr2[]=3')).should.eql({
+            name: 'route.deep',
+            params: { arr: ['1', '2'], arr2: ['3'] }
+        });
+    });
 });
 
 

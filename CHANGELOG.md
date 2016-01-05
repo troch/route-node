@@ -1,3 +1,13 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/troch/route-node/compare/v0.6.0...v1.0.0) (2016-01-05)
+
+
+### Features
+
+* support query parameters with square brackets ([781470f](https://github.com/troch/route-node/commit/781470f))
+
+
+
 <a name="0.6.0"></a>
 # 0.6.0 (2016-01-01)
 

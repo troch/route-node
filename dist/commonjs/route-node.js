@@ -1,23 +1,30 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
-    value: true
-});
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _pathParser = require('path-parser');
 
 var _pathParser2 = _interopRequireDefault(_pathParser);
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var isSerialisable = function isSerialisable(val) {
     return val !== undefined && val !== null && val !== '';
+};
+
+var bracketTest = /\[\]$/;
+var withoutBrackets = function withoutBrackets(param) {
+    return param.replace(bracketTest, '');
 };
 
 var removeQueryParamsFromPath = function removeQueryParamsFromPath(path, params) {
@@ -28,9 +35,12 @@ var removeQueryParamsFromPath = function removeQueryParamsFromPath(path, params)
 
     var remainingSearchParams = searchPart.split('&').reduce(function (obj, p) {
         var splitParam = p.split('=');
+        var hasBrackets = bracketTest.test(splitParam[0]);
         var key = splitParam[0];
         var val = decodeURIComponent(splitParam[1]);
-        if (params.indexOf(key) === -1) obj[key] = val || '';
+        val = hasBrackets ? [val] : val;
+
+        if (params.indexOf(withoutBrackets(key)) === -1) obj[key] = val || '';
         return obj;
     }, {});
 
@@ -53,7 +63,7 @@ var RouteNode = (function () {
 
         this.name = name;
         this.path = path;
-        this.parser = path ? new _pathParser2['default'](path) : null;
+        this.parser = path ? new _pathParser2.default(path) : null;
         this.children = [];
 
         this.add(childRoutes);
@@ -174,12 +184,11 @@ var RouteNode = (function () {
             var strictQueryParams = options.strictQueryParams;
 
             var matchChildren = function matchChildren(nodes, pathSegment, segments) {
-                var _loop = function (i) {
+                var _loop = function _loop(i) {
                     var child = nodes[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
-                    var remainingPath = undefined,
-                        remainingSearch = undefined;
+                    var remainingPath = undefined;
 
                     if (!match && trailingSlash) {
                         // Try with optional trailing slash
@@ -188,7 +197,7 @@ var RouteNode = (function () {
                     } else if (match) {
                         // Remove consumed segment from path
                         var consumedPath = child.parser.build(match, { ignoreSearch: true });
-                        remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams);
+                        remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams.concat(child.parser.queryParamsBr));
 
                         if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                             remainingPath = '';
@@ -225,7 +234,7 @@ var RouteNode = (function () {
                 for (var i in nodes) {
                     var _ret = _loop(i);
 
-                    if (typeof _ret === 'object') return _ret.v;
+                    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
                 }
                 return null;
             };
@@ -257,16 +266,16 @@ var RouteNode = (function () {
 
             var searchParams = segments.filter(function (s) {
                 return s.parser.hasQueryParams;
-            }).map(function (s) {
-                return s.parser.queryParams;
-            });
+            }).reduce(function (params, s) {
+                return params.concat(s.parser.queryParams).concat(s.parser.queryParamsBr.map(function (p) {
+                    return p + '[]';
+                }));
+            }, []);
 
-            var searchPart = !searchParams.length ? null : searchParams.reduce(function (queryParams, params) {
-                return queryParams.concat(params);
-            }).filter(function (p) {
-                return Object.keys(params).indexOf(p) !== -1;
+            var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
+                return Object.keys(params).indexOf(withoutBrackets(p)) !== -1;
             }).map(function (p) {
-                return _pathParser2['default'].serialise(p, params[p]);
+                return _pathParser2.default.serialise(p, params[withoutBrackets(p)]);
             }).join('&');
 
             return segments.map(function (segment) {
@@ -343,5 +352,5 @@ var RouteNode = (function () {
     return RouteNode;
 })();
 
-exports['default'] = RouteNode;
+exports.default = RouteNode;
 module.exports = exports['default'];

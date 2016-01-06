@@ -253,11 +253,11 @@ describe('RouteNode', function () {
 
     it('should sort paths by length', function () {
         var rootNode = new RouteNode('', '')
-            .addNode('section', '/section/:id')
-            .addNode('index', '/')
-            .addNode('id', '/:id')
+            .addNode('section', '/section/:id?a')
+            .addNode('index', '/?queryparamOfexceptionalLength')
+            .addNode('id', '/:id?rrrr')
             .addNode('abo', '/abo')
-            .addNode('about', '/about');
+            .addNode('about', '/about?hello');
 
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'index', params: {}});
         withoutMeta(rootNode.matchPath('/abo')).should.eql({name: 'abo', params: {}});

@@ -75,25 +75,27 @@ export default class RouteNode {
         if (names.length === 1) {
             this.children.push(route);
             // Push greedy spats to the bottom of the pile
-            this.children.sort((a, b) => {
+            this.children.sort((left, right) => {
+                const leftPath = left.path.split('?')[0];
+                const rightPath = right.path.split('?')[0];
                 // '/' last
-                if (a.path === '/') return 1;
-                if (b.path === '/') return -1;
-                let aHasParams = a.parser.hasUrlParams || a.parser.hasSpatParam;
-                let bHasParams = b.parser.hasUrlParams || b.parser.hasSpatParam;
+                if (leftPath === '/') return 1;
+                if (rightPath === '/') return -1;
+                let aHasParams = left.parser.hasUrlParams || left.parser.hasSpatParam;
+                let bHasParams = right.parser.hasUrlParams || right.parser.hasSpatParam;
                 // No params first, sort by length descending
                 if (!aHasParams && !bHasParams) {
-                    return a.path && b.path ? (a.path.length < b.path.length ? 1 : -1) : 0;
+                    return leftPath && rightPath ? (leftPath.length < rightPath.length ? 1 : -1) : 0;
                 }
                 // Params last
                 if (aHasParams && !bHasParams) return 1;
                 if (!aHasParams && bHasParams) return -1;
                 // Spat params last
-                if (!a.parser.hasSpatParam && b.parser.hasSpatParam) return -1;
-                if (!b.parser.hasSpatParam && a.parser.hasSpatParam) return 1;
+                if (!left.parser.hasSpatParam && right.parser.hasSpatParam) return -1;
+                if (!right.parser.hasSpatParam && left.parser.hasSpatParam) return 1;
                 // Sort by number of segments descending
-                let aSegments = (a.path.match(/\//g) || []).length;
-                let bSegments = (b.path.match(/\//g) || []).length;
+                let aSegments = (leftPath.match(/\//g) || []).length;
+                let bSegments = (rightPath.match(/\//g) || []).length;
                 if (aSegments < bSegments) return 1;
                 return 0;
             });

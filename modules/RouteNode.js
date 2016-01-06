@@ -81,22 +81,22 @@ export default class RouteNode {
                 // '/' last
                 if (leftPath === '/') return 1;
                 if (rightPath === '/') return -1;
-                let aHasParams = left.parser.hasUrlParams || left.parser.hasSpatParam;
-                let bHasParams = right.parser.hasUrlParams || right.parser.hasSpatParam;
+                let leftHasParams = left.parser.hasUrlParams || left.parser.hasSpatParam;
+                let rightHasParams = right.parser.hasUrlParams || right.parser.hasSpatParam;
                 // No params first, sort by length descending
-                if (!aHasParams && !bHasParams) {
+                if (!leftHasParams && !rightHasParams) {
                     return leftPath && rightPath ? (leftPath.length < rightPath.length ? 1 : -1) : 0;
                 }
                 // Params last
-                if (aHasParams && !bHasParams) return 1;
-                if (!aHasParams && bHasParams) return -1;
+                if (leftHasParams && !rightHasParams) return 1;
+                if (!leftHasParams && rightHasParams) return -1;
                 // Spat params last
                 if (!left.parser.hasSpatParam && right.parser.hasSpatParam) return -1;
                 if (!right.parser.hasSpatParam && left.parser.hasSpatParam) return 1;
                 // Sort by number of segments descending
-                let aSegments = (leftPath.match(/\//g) || []).length;
-                let bSegments = (rightPath.match(/\//g) || []).length;
-                if (aSegments < bSegments) return 1;
+                let leftSegments = (leftPath.match(/\//g) || []).length;
+                let rightSegments = (rightPath.match(/\//g) || []).length;
+                if (leftSegments < rightSegments) return 1;
                 return 0;
             });
         } else {

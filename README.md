@@ -77,6 +77,10 @@ rootNode.matchPath('/users/view/1/', { trailingSlash: true });
 
 Query parameters are optional, however a match will fail if the URL contains non-expected query parameters. This can be prevented by setting `strictQueryParams` to false.
 
+## Callbacks
+
+When adding routes (with contructor or `.add`), you can pass a callback which will be executed for each route added successfully to the tree.
+
 ## Related packages
 
 - [routington](https://www.npmjs.com/package/routington)

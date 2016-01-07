@@ -18,6 +18,7 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var noop = function noop() {};
 var isSerialisable = function isSerialisable(val) {
     return val !== undefined && val !== null && val !== '';
 };
@@ -58,6 +59,7 @@ var RouteNode = (function () {
         var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
         var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
         var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+        var cb = arguments[3];
 
         _classCallCheck(this, RouteNode);
 
@@ -66,7 +68,7 @@ var RouteNode = (function () {
         this.parser = path ? new _pathParser2.default(path) : null;
         this.children = [];
 
-        this.add(childRoutes);
+        this.add(childRoutes, cb);
 
         return this;
     }
@@ -76,11 +78,14 @@ var RouteNode = (function () {
         value: function add(route) {
             var _this = this;
 
+            var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
+
+            var originalRoute = undefined;
             if (route === undefined || route === null) return;
 
             if (route instanceof Array) {
                 route.forEach(function (r) {
-                    return _this.add(r);
+                    return _this.add(r, cb);
                 });
                 return;
             }
@@ -92,6 +97,7 @@ var RouteNode = (function () {
                 if (!route.name || !route.path) {
                     throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                 }
+                originalRoute = route;
                 route = new RouteNode(route.name, route.path, route.children);
             }
             // Check duplicated routes
@@ -145,6 +151,8 @@ var RouteNode = (function () {
                     throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
                 }
             }
+
+            if (originalRoute) cb(originalRoute);
 
             return this;
         }

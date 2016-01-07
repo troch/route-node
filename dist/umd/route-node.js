@@ -372,6 +372,7 @@
         return Path;
     })();
 
+    var noop = function noop() {};
     var isSerialisable = function isSerialisable(val) {
         return val !== undefined && val !== null && val !== '';
     };
@@ -412,6 +413,7 @@
             var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
             var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
             var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+            var cb = arguments[3];
             babelHelpers_classCallCheck(this, RouteNode);
 
             this.name = name;
@@ -419,7 +421,7 @@
             this.parser = path ? new Path(path) : null;
             this.children = [];
 
-            this.add(childRoutes);
+            this.add(childRoutes, cb);
 
             return this;
         }
@@ -429,11 +431,14 @@
             value: function add(route) {
                 var _this = this;
 
+                var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
+
+                var originalRoute = undefined;
                 if (route === undefined || route === null) return;
 
                 if (route instanceof Array) {
                     route.forEach(function (r) {
-                        return _this.add(r);
+                        return _this.add(r, cb);
                     });
                     return;
                 }
@@ -445,6 +450,7 @@
                     if (!route.name || !route.path) {
                         throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                     }
+                    originalRoute = route;
                     route = new RouteNode(route.name, route.path, route.children);
                 }
                 // Check duplicated routes
@@ -498,6 +504,8 @@
                         throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
                     }
                 }
+
+                if (originalRoute) cb(originalRoute);
 
                 return this;
             }

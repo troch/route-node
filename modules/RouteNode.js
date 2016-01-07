@@ -1,5 +1,6 @@
 import Path from 'path-parser';
 
+const noop = () => {};
 const isSerialisable = val => val !== undefined && val !== null && val !== '';
 
 const bracketTest = /\[\]$/;
@@ -33,22 +34,23 @@ const removeQueryParamsFromPath = (path, params) => {
 };
 
 export default class RouteNode {
-    constructor(name = '', path = '', childRoutes = []) {
+    constructor(name = '', path = '', childRoutes = [], cb) {
         this.name     = name;
         this.path     = path;
         this.parser   = path ? new Path(path) : null;
         this.children = [];
 
-        this.add(childRoutes);
+        this.add(childRoutes, cb);
 
         return this;
     }
 
-    add(route) {
+    add(route, cb = noop) {
+        let originalRoute;
         if (route === undefined || route === null) return;
 
         if (route instanceof Array) {
-            route.forEach(r => this.add(r));
+            route.forEach(r => this.add(r, cb));
             return;
         }
 
@@ -59,6 +61,7 @@ export default class RouteNode {
             if (!route.name || !route.path) {
                 throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
             }
+            originalRoute = route;
             route = new RouteNode(route.name, route.path, route.children);
         }
         // Check duplicated routes
@@ -108,6 +111,8 @@ export default class RouteNode {
                 throw new Error(`Could not add route named '${route.name}', parent is missing.`);
             }
         }
+
+        if (originalRoute) cb(originalRoute);
 
         return this;
     }

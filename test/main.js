@@ -36,6 +36,33 @@ describe('RouteNode', function () {
         node.children.length.should.equal(2);
     });
 
+    it('should callback for each route from a POJO', function () {
+        var routeA = {name: 'home', path: '/home', extra: 'extra'};
+        var routeB = {name: 'profile', path: '/profile', extra: 'extra'};
+
+        var routes = [routeA, routeB];
+        var node = new RouteNode();
+        var i = 0;
+
+        node.add(routes, function(route) {
+            i = i + 1;
+            if (i === 1) route.should.equal(routeA);
+            if (i === 2) route.should.equal(routeB);
+        });
+
+        i.should.not.equal(0);
+
+        i = 0;
+
+        var node = new RouteNode('', '', routes, function(route) {
+            i = i + 1;
+            if (i === 1) route.should.equal(routeA);
+            if (i === 2) route.should.equal(routeB);
+        });
+
+        i.should.not.equal(0);
+    });
+
     it('should throw an error when trying to instanciate a RouteNode object with plain objects missing `name` or `path` properties', function () {
         (function () {
             new RouteNode('', '', [

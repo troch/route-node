@@ -327,6 +327,8 @@ var RouteNode = (function () {
 
             var name = segments.map(function (segment) {
                 return segment.name;
+            }).filter(function (name) {
+                return name;
             }).join('.');
             var params = segments.params;
 

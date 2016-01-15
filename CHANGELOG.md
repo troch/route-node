@@ -1,3 +1,27 @@
+<a name="1.2.0"></a>
+# [1.2.0](https://github.com/troch/route-node/compare/v1.1.0...v1.2.0) (2016-01-15)
+
+
+### Features
+
+* support path for root node ([a834d0f](https://github.com/troch/route-node/commit/a834d0f))
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/troch/route-node/compare/v1.0.1...v1.1.0) (2016-01-07)
+
+
+### Bug Fixes
+
+* fix ordering of children when matching routes ([c917f6f](https://github.com/troch/route-node/commit/c917f6f))
+
+### Features
+
+* support callbacks for successfully added routes (requested by router5) ([f71f4a5](https://github.com/troch/route-node/commit/f71f4a5))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/troch/route-node/compare/v1.0.1...v1.0.2) (2016-01-06)
 

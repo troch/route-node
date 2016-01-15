@@ -252,7 +252,10 @@ export default class RouteNode {
     buildStateFromSegments(segments) {
         if (!segments || !segments.length) return null;
 
-        const name = segments.map(segment => segment.name).join('.');
+        const name = segments
+            .map(segment => segment.name)
+            .filter(name => name)
+            .join('.');
         const params = segments.params;
 
         return {

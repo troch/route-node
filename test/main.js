@@ -324,6 +324,17 @@ describe('RouteNode', function () {
             params: { arr: ['1', '2'], arr2: ['3'] }
         });
     });
+
+    it('should support query parameters in the root node', function () {
+        var node = new RouteNode('', '?a', [
+            new RouteNode('route', '/path?b')
+        ]);
+        console.log(node.matchPath('/path?a=1&b=2'));
+        withoutMeta(node.matchPath('/path?a=1&b=2')).should.eql({
+            name: 'route',
+            params: { a: '1', b: '2' }
+        });
+    });
 });
 
 

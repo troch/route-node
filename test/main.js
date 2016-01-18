@@ -357,6 +357,17 @@ describe('RouteNode', function () {
         node.buildPath('route', { b: '2' }).should.equal('/path?b=2');
         node.buildPath('route', { a: '1', b: '2' }).should.equal('/path?a=1&b=2');
     });
+
+    it('should be able to modify a path', function () {
+        var node = new RouteNode('', '', [
+            new RouteNode('route', '/path')
+        ]);
+
+        node.buildPath('route').should.equal('/path');
+        node.buildPath('route', {  param: '1' }).should.equal('/path');
+        node.setPath('?param');
+        node.buildPath('route', {  param: '1' }).should.equal('/path?param=1');
+    });
 });
 
 

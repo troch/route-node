@@ -45,6 +45,11 @@ export default class RouteNode {
         return this;
     }
 
+    setPath(path = '') {
+        this.path = path;
+        this.parser = path ? new Path(path) : null;
+    }
+
     add(route, cb = noop) {
         let originalRoute;
         if (route === undefined || route === null) return;

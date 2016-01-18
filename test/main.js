@@ -1,16 +1,14 @@
 'use strict';
 
-var path      = require('path');
-var pkg       = require('../package.json');
-var RouteNode = require(path.join(__dirname, '..', pkg.main));
-var should    = require('should');
-var omit      = require('lodash.omit');
+import path from 'path';
+import pkg from '../package.json';
+import RouteNode from '../modules/RouteNode';
+import should from 'should';
+import omit from 'lodash.omit';
 
 function withoutMeta(obj) {
     return omit(obj, '_meta');
 }
-
-require('mocha');
 
 describe('RouteNode', function () {
     it('should instanciate an empty RouteNode if no routes are specified in constructor', function () {
@@ -329,10 +327,35 @@ describe('RouteNode', function () {
         var node = new RouteNode('', '?a', [
             new RouteNode('route', '/path?b')
         ]);
-        withoutMeta(node.matchPath('/path?a=1&b=2')).should.eql({
+        node.matchPath('/path?a=1&b=2').should.eql({
+            _meta: {
+                '': { a: 'query' },
+                'route': { b: 'query' }
+            },
             name: 'route',
             params: { a: '1', b: '2' }
         });
+
+        node.buildState('route', { b: '1' }).should.eql({
+            _meta: {
+                '': { a: 'query' },
+                'route': { b: 'query' }
+            },
+            name: 'route',
+            params: { b: '1' }
+        });
+
+        node.buildState('route', { a: '1', b: '1' }).should.eql({
+            _meta: {
+                '': { a: 'query' },
+                'route': { b: 'query' }
+            },
+            name: 'route',
+            params: { a: '1', b: '1' }
+        });
+
+        node.buildPath('route', { b: '2' }).should.equal('/path?b=2');
+        node.buildPath('route', { a: '1', b: '2' }).should.equal('/path?a=1&b=2');
     });
 });
 

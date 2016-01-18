@@ -128,8 +128,8 @@ export default class RouteNode {
             return filteredRoutes.length ? filteredRoutes[0] : undefined;
         };
         let segments = [];
-        let names = routeName.split('.');
-        let routes = this.children;
+        let routes = this.parser ? [ this ] : this.children;
+        let names = ( this.parser ? [''] : [] ).concat(routeName.split('.'));
 
         let matched = names.every(name => {
             let segment = findSegmentByName(name, routes);

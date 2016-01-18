@@ -1,3 +1,13 @@
+<a name="1.2.1"></a>
+## [1.2.1](https://github.com/troch/route-node/compare/v1.2.0...v1.2.1) (2016-01-18)
+
+
+### Bug Fixes
+
+* fix issue with building state and paths for non-empty root nodes ([07a48e8](https://github.com/troch/route-node/commit/07a48e8))
+
+
+
 <a name="1.2.0"></a>
 # [1.2.0](https://github.com/troch/route-node/compare/v1.1.0...v1.2.0) (2016-01-15)
 

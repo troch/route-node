@@ -1,11 +1,11 @@
 {
   "name": "route-node",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A package to create a tree of named routes",
   "main": "dist/commonjs/route-node.js",
   "jsnext:main": "modules/RouteNode.js",
   "scripts": {
-    "test": "./node_modules/.bin/_mocha",
+    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'",
     "test-cover": "node ./node_modules/istanbul/lib/cli.js cover ./node_modules/mocha/bin/_mocha",
     "lint": "eslint modules/*.js",
     "build:amd": "BABEL_ENV=rollup rollup -c rollup.config.js --format amd",

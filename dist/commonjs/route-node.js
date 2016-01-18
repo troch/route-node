@@ -74,6 +74,14 @@ var RouteNode = (function () {
     }
 
     _createClass(RouteNode, [{
+        key: 'setPath',
+        value: function setPath() {
+            var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+
+            this.path = path;
+            this.parser = path ? new _pathParser2.default(path) : null;
+        }
+    }, {
         key: 'add',
         value: function add(route) {
             var _this = this;

@@ -427,6 +427,14 @@
         }
 
         babelHelpers_createClass(RouteNode, [{
+            key: 'setPath',
+            value: function setPath() {
+                var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+
+                this.path = path;
+                this.parser = path ? new Path(path) : null;
+            }
+        }, {
             key: 'add',
             value: function add(route) {
                 var _this = this;

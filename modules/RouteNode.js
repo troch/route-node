@@ -197,7 +197,10 @@ export default class RouteNode {
         let segments = [];
         segments.params = {};
 
-        return matchChildren(startingNodes, path, segments);
+        const matched = matchChildren(startingNodes, path, segments);
+        if (matched && matched.length === 1 && matched[0].name === '') return null;
+
+        return matched;
     }
 
     getPathFromSegments(segments) {

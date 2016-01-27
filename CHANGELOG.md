@@ -1,3 +1,13 @@
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/troch/route-node/compare/v1.3.1...v1.3.2) (2016-01-27)
+
+
+### Bug Fixes
+
+* properly check for duplicated route names and paths ([bfc843b](https://github.com/troch/route-node/commit/bfc843b))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/troch/route-node/compare/v1.3.0...v1.3.1) (2016-01-26)
 

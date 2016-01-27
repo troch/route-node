@@ -95,6 +95,14 @@ describe('RouteNode', function () {
         (function () {
             root.add({name: 'profile', path: '/home'})
         }).should.throw('Path "/home" is already defined in route node');
+
+        (function () {
+            root.add({name: 'home.profile', path: '/home'})
+        }).should.not.throw();
+
+        (function () {
+            root.add({name: 'home.profile', path: '/profile'})
+        }).should.throw();
     });
 
     it('should throw an error when trying to add a route which parent doesn\'t exist', function () {

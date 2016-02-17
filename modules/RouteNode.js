@@ -12,21 +12,29 @@ const removeQueryParamsFromPath = (path, params) => {
     const pathPart = splitPath[0];
     const searchPart = splitPath[1];
 
-    let remainingSearchParams = searchPart
+    const remainingSearchParams = searchPart
         .split('&')
         .reduce((obj, p) => {
             const splitParam = p.split('=');
-            const hasBrackets = bracketTest.test(splitParam[0]);
             const key = splitParam[0];
+            const hasBrackets = bracketTest.test(key);
             let val = decodeURIComponent(splitParam[1]);
             val = hasBrackets ? [ val ] : val;
 
-            if (params.indexOf(withoutBrackets(key)) === -1) obj[key] = val || '';
+            if (params.indexOf(withoutBrackets(key)) === -1) {
+                if (obj[key] === undefined) obj[key] = val || '';
+                else obj[key] = [].concat(obj[key], val);
+            }
+
             return obj;
         }, {});
 
-    let remainingSearchPart = Object.keys(remainingSearchParams)
-        .map(p => [p].concat(isSerialisable(remainingSearchParams[p]) ? encodeURIComponent(remainingSearchParams[p]) : []))
+    const remainingSearchPart = Object.keys(remainingSearchParams)
+        .reduce((acc, param) => acc.concat(
+            [].concat(remainingSearchParams[param])
+                .map(p => ({ key: param, val: p }))
+        ), [])
+        .map(p => [p.key].concat(isSerialisable(p.val) ? encodeURIComponent(p.val) : []))
         .map(p => p.join('='))
         .join('&');
 

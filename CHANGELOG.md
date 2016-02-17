@@ -1,3 +1,13 @@
+<a name="1.3.3"></a>
+## [1.3.3](https://github.com/troch/route-node/compare/v1.3.2...v1.3.3) (2016-02-17)
+
+
+### Bug Fixes
+
+* computing remaining search parameters when multiple values ([2d3bbc5](https://github.com/troch/route-node/commit/2d3bbc5))
+
+
+
 <a name="1.3.2"></a>
 ## [1.3.2](https://github.com/troch/route-node/compare/v1.3.1...v1.3.2) (2016-01-27)
 

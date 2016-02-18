@@ -1,3 +1,9 @@
+<a name="1.3.4"></a>
+## [1.3.4](https://github.com/troch/route-node/compare/v1.3.3...v1.3.4) (2016-02-18)
+
+
+
+
 <a name="1.3.3"></a>
 ## [1.3.3](https://github.com/troch/route-node/compare/v1.3.2...v1.3.3) (2016-02-17)
 

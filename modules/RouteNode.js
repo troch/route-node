@@ -1,45 +1,7 @@
 import Path from 'path-parser';
+import { getSearch, getPath, omit, withoutBrackets, parse, toObject } from 'search-params';
 
 const noop = () => {};
-const isSerialisable = val => val !== undefined && val !== null && val !== '';
-
-const bracketTest = /\[\]$/;
-const withoutBrackets = param => param.replace(bracketTest, '');
-
-const removeQueryParamsFromPath = (path, params) => {
-    if (path.indexOf('?') === -1) return path;
-    const splitPath = path.split('?');
-    const pathPart = splitPath[0];
-    const searchPart = splitPath[1];
-
-    const remainingSearchParams = searchPart
-        .split('&')
-        .reduce((obj, p) => {
-            const splitParam = p.split('=');
-            const key = splitParam[0];
-            const hasBrackets = bracketTest.test(key);
-            let val = decodeURIComponent(splitParam[1]);
-            val = hasBrackets ? [ val ] : val;
-
-            if (params.indexOf(withoutBrackets(key)) === -1) {
-                if (obj[key] === undefined) obj[key] = val || '';
-                else obj[key] = [].concat(obj[key], val);
-            }
-
-            return obj;
-        }, {});
-
-    const remainingSearchPart = Object.keys(remainingSearchParams)
-        .reduce((acc, param) => acc.concat(
-            [].concat(remainingSearchParams[param])
-                .map(p => ({ key: param, val: p }))
-        ), [])
-        .map(p => [p.key].concat(isSerialisable(p.val) ? encodeURIComponent(p.val) : []))
-        .map(p => p.join('='))
-        .join('&');
-
-    return pathPart + (remainingSearchPart ? `?${remainingSearchPart}` : '');
-};
 
 export default class RouteNode {
     constructor(name = '', path = '', childRoutes = [], cb) {
@@ -175,8 +137,13 @@ export default class RouteNode {
                     remainingPath = '';
                 } else if (match) {
                     // Remove consumed segment from path
-                    let consumedPath = child.parser.build(match, {ignoreSearch: true});
-                    remainingPath = removeQueryParamsFromPath(pathSegment.replace(consumedPath, ''), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                    const consumedPath = child.parser.build(match, {ignoreSearch: true});
+                    remainingPath = pathSegment.replace(consumedPath, '');
+                    const search = omit(
+                        getSearch(pathSegment.replace(consumedPath, '')),
+                        child.parser.queryParams.concat(child.parser.queryParamsBr)
+                    );
+                    remainingPath = getPath(remainingPath) + (search ? `?${search}` : '');
 
                     if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                         remainingPath = '';
@@ -257,8 +224,10 @@ export default class RouteNode {
                 return params;
             }, urlParams);
 
-            accName = accName ? accName + '.' + segment.name : segment.name;
-            meta[accName] = allParams;
+            if (segment.name !== undefined) {
+                accName = accName ? accName + '.' + segment.name : segment.name;
+                meta[accName] = allParams;
+            }
             return meta;
         }, {});
     }

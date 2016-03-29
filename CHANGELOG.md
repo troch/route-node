@@ -1,3 +1,13 @@
+<a name="1.4.1"></a>
+## [1.4.1](https://github.com/troch/route-node/compare/v1.4.0...v1.4.1) (2016-03-29)
+
+
+### Bug Fixes
+
+* remove console.log ([7e2a664](https://github.com/troch/route-node/commit/7e2a664))
+
+
+
 <a name="1.4.0"></a>
 # [1.4.0](https://github.com/troch/route-node/compare/v1.3.4...v1.4.0) (2016-03-29)
 

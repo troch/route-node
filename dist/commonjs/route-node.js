@@ -123,9 +123,6 @@ var RouteNode = (function () {
                     // Same last segment length, preserve definition order
                     return 0;
                 });
-                console.log(this.children.map(function (c) {
-                    return c.path;
-                }));
             } else {
                 // Locate parent node
                 var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));

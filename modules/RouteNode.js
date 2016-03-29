@@ -1,5 +1,5 @@
 import Path from 'path-parser';
-import { getSearch, getPath, omit, withoutBrackets, parse, toObject } from 'search-params';
+import { getSearch, getPath, omit, withoutBrackets } from 'search-params';
 
 const noop = () => {};
 

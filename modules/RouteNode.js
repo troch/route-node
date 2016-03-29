@@ -56,29 +56,33 @@ export default class RouteNode {
             this.children.push(route);
             // Push greedy spats to the bottom of the pile
             this.children.sort((left, right) => {
-                const leftPath = left.path.split('?')[0];
-                const rightPath = right.path.split('?')[0];
+                const leftPath = left.path.split('?')[0].replace(/(.+)\/$/, '$1');
+                const rightPath = right.path.split('?')[0].replace(/(.+)\/$/, '$1');
                 // '/' last
                 if (leftPath === '/') return 1;
                 if (rightPath === '/') return -1;
-                let leftHasParams = left.parser.hasUrlParams || left.parser.hasSpatParam;
-                let rightHasParams = right.parser.hasUrlParams || right.parser.hasSpatParam;
-                // No params first, sort by length descending
-                if (!leftHasParams && !rightHasParams) {
-                    return leftPath && rightPath ? (leftPath.length < rightPath.length ? 1 : -1) : 0;
-                }
-                // Params last
-                if (leftHasParams && !rightHasParams) return 1;
-                if (!leftHasParams && rightHasParams) return -1;
                 // Spat params last
-                if (!left.parser.hasSpatParam && right.parser.hasSpatParam) return -1;
-                if (!right.parser.hasSpatParam && left.parser.hasSpatParam) return 1;
-                // Sort by number of segments descending
-                let leftSegments = (leftPath.match(/\//g) || []).length;
-                let rightSegments = (rightPath.match(/\//g) || []).length;
+                if (left.parser.hasSpatParam) return 1;
+                if (right.parser.hasSpatParam) return -1;
+                // No spat, number of segments (less segments last)
+                const leftSegments = (leftPath.match(/\//g) || []).length;
+                const rightSegments = (rightPath.match(/\//g) || []).length;
                 if (leftSegments < rightSegments) return 1;
+                if (leftSegments > rightSegments) return -1;
+                // Same number of segments, number of URL params ascending
+                const leftParamsCount = left.parser.urlParams.length;
+                const rightParamsCount = right.parser.urlParams.length;
+                if (leftParamsCount < rightParamsCount) return -1;
+                if (leftParamsCount > rightParamsCount) return 1;
+                // Same number of segments and params, last segment length descending
+                const leftParamLength = (leftPath.split('/').slice(-1)[0] || '').length;
+                const rightParamLength = (rightPath.split('/').slice(-1)[0] || '').length;
+                if (leftParamLength < rightParamLength) return 1;
+                if (leftParamLength > rightParamLength) return -1;
+                // Same last segment length, preserve definition order
                 return 0;
             });
+            console.log(this.children.map(c => c.path));
         } else {
             // Locate parent node
             let segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
@@ -176,7 +180,6 @@ export default class RouteNode {
 
         const matched = matchChildren(startingNodes, path, segments);
         if (matched && matched.length === 1 && matched[0].name === '') return null;
-
         return matched;
     }
 

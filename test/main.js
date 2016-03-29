@@ -1,5 +1,3 @@
-'use strict';
-
 import path from 'path';
 import pkg from '../package.json';
 import RouteNode from '../modules/RouteNode';
@@ -272,7 +270,7 @@ describe('RouteNode', function () {
 
         withoutMeta(usersNode.matchPath('/users/view/1')).should.eql({name: 'users.view', params: {id: '1'}});
         withoutMeta(usersNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
-    })
+    });
 
     it('should be able to add deep nodes', function () {
         var rootNode = new RouteNode('', '')
@@ -286,17 +284,28 @@ describe('RouteNode', function () {
 
     it('should sort paths by length', function () {
         var rootNode = new RouteNode('', '')
+            .addNode('personList', '/persons/')
+            .addNode('personDetail', '/persons/:personId')
             .addNode('section', '/section/:id?a')
             .addNode('index', '/?queryparamOfexceptionalLength')
             .addNode('id', '/:id?rrrr')
             .addNode('abo', '/abo')
-            .addNode('about', '/about?hello');
+            .addNode('about', '/about?hello')
+            .addNode('users', '/users-tab')
+            .addNode('user', '/users/:id')
+            .addNode('postNew', '/blogs/:blogId/posts/new')
+            .addNode('postDetail', '/blogs/:blogId/posts/:postId');
 
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'index', params: {}});
         withoutMeta(rootNode.matchPath('/abo')).should.eql({name: 'abo', params: {}});
         withoutMeta(rootNode.matchPath('/about')).should.eql({name: 'about', params: {}});
         withoutMeta(rootNode.matchPath('/abc')).should.eql({name: 'id', params: {id: 'abc'}});
         withoutMeta(rootNode.matchPath('/section/abc')).should.eql({name: 'section', params: {id: 'abc'}});
+        withoutMeta(rootNode.matchPath('/persons/jwoudenberg')).should.eql({name: 'personDetail', params: {personId: 'jwoudenberg'}});
+        withoutMeta(rootNode.matchPath('/users-tab')).should.eql({name: 'users', params: {}});
+        withoutMeta(rootNode.matchPath('/users/thomas')).should.eql({name: 'user', params: {id: 'thomas'}});
+        withoutMeta(rootNode.matchPath('/blogs/123/posts/new')).should.eql({name: 'postNew', params: {blogId: '123'}});
+        withoutMeta(rootNode.matchPath('/blogs/123/posts/456')).should.eql({name: 'postDetail', params: {blogId: '123', postId: '456'}});
     });
 
     it('should match paths with optional trailing slashes', function () {
@@ -317,7 +326,7 @@ describe('RouteNode', function () {
         should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
 
-    it.only('should support query parameters with square brackets', function () {
+    it('should support query parameters with square brackets', function () {
         var node = new RouteNode('', '', [
             new RouteNode('route', '/route?arr[]', [
                 new RouteNode('deep', '/deep?arr2[]')

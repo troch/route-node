@@ -82,7 +82,6 @@ export default class RouteNode {
                 // Same last segment length, preserve definition order
                 return 0;
             });
-            console.log(this.children.map(c => c.path));
         } else {
             // Locate parent node
             let segments = this.getSegmentsByName(names.slice(0, -1).join('.'));

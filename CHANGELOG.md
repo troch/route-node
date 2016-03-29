@@ -1,3 +1,13 @@
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/troch/route-node/compare/v1.3.4...v1.4.0) (2016-03-29)
+
+
+### Bug Fixes
+
+* ordering of siblings routes for matching ([6719d2e](https://github.com/troch/route-node/commit/6719d2e))
+
+
+
 <a name="1.3.4"></a>
 ## [1.3.4](https://github.com/troch/route-node/compare/v1.3.3...v1.3.4) (2016-02-18)
 

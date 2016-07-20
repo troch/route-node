@@ -37,7 +37,7 @@ export default class RouteNode {
                 throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
             }
             originalRoute = route;
-            route = new RouteNode(route.name, route.path, route.children);
+            route = new RouteNode(route.name, route.path, route.children, cb);
         }
 
         let names = route.name.split('.');

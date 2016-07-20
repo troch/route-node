@@ -2,7 +2,9 @@
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -16,13 +18,11 @@ var _searchParams = require('search-params');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var noop = function noop() {};
 
-var RouteNode = (function () {
+var RouteNode = function () {
     function RouteNode() {
         var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
         var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
@@ -56,7 +56,7 @@ var RouteNode = (function () {
 
             var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
 
-            var originalRoute = undefined;
+            var originalRoute = void 0;
             if (route === undefined || route === null) return;
 
             if (route instanceof Array) {
@@ -74,7 +74,7 @@ var RouteNode = (function () {
                     throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
                 }
                 originalRoute = route;
-                route = new RouteNode(route.name, route.path, route.children);
+                route = new RouteNode(route.name, route.path, route.children, cb);
             }
 
             var names = route.name.split('.');
@@ -179,7 +179,7 @@ var RouteNode = (function () {
                     var child = nodes[i];
                     // Partially match path
                     var match = child.parser.partialMatch(pathSegment);
-                    var remainingPath = undefined;
+                    var remainingPath = void 0;
 
                     if (!match && trailingSlash) {
                         // Try with optional trailing slash
@@ -349,7 +349,7 @@ var RouteNode = (function () {
     }]);
 
     return RouteNode;
-})();
+}();
 
 exports.default = RouteNode;
 module.exports = exports['default'];

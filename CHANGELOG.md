@@ -1,3 +1,13 @@
+<a name="1.4.2"></a>
+## [1.4.2](https://github.com/troch/route-node/compare/v1.4.1...v1.4.2) (2016-07-20)
+
+
+### Bug Fixes
+
+* pass route registration callback when adding children routes ([5f58852](https://github.com/troch/route-node/commit/5f58852))
+
+
+
 <a name="1.4.1"></a>
 ## [1.4.1](https://github.com/troch/route-node/compare/v1.4.0...v1.4.1) (2016-03-29)
 

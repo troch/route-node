@@ -204,7 +204,14 @@ export default class RouteNode {
 
         const searchPart = !searchParams.length ? null : searchParams
             .filter(p => Object.keys(params).indexOf(withoutBrackets(p)) !== -1)
-            .map(p => Path.serialise(p, params[withoutBrackets(p)]))
+            .map(p => {
+                const val = params[withoutBrackets(p)];
+                const encodedVal = Array.isArray(val)
+                        ? val.map(encodeURIComponent)
+                        : encodeURIComponent(val);
+
+                return Path.serialise(p, encodedVal);
+            })
             .join('&');
 
         return segments

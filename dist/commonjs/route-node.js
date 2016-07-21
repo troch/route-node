@@ -270,7 +270,10 @@ var RouteNode = function () {
             var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
                 return Object.keys(params).indexOf((0, _searchParams.withoutBrackets)(p)) !== -1;
             }).map(function (p) {
-                return _pathParser2.default.serialise(p, params[(0, _searchParams.withoutBrackets)(p)]);
+                var val = params[(0, _searchParams.withoutBrackets)(p)];
+                var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);
+
+                return _pathParser2.default.serialise(p, encodedVal);
             }).join('&');
 
             return segments.map(function (segment) {

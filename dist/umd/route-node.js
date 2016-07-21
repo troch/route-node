@@ -48,72 +48,6 @@
       return target;
     };
 
-    // Split path
-    var getPath = function getPath(path) {
-        return path.split('?')[0];
-    };
-    var getSearch = function getSearch(path) {
-        return path.split('?')[1];
-    };
-
-    // Search param value
-    var isSerialisable = function isSerialisable(val) {
-        return val !== undefined && val !== null && val !== '';
-    };
-
-    // Search param name
-    var bracketTest = /\[\]$/;
-    var withoutBrackets$1 = function withoutBrackets(paramName) {
-        return paramName.replace(bracketTest, '');
-    };
-
-    /**
-     * Parse a querystring and return a list of params (Objects with name and value properties)
-     * @param  {String} querystring The querystring to parse
-     * @return {Array[Object]}      The list of params
-     */
-    var parse = function parse(querystring) {
-        return querystring.split('&').reduce(function (params, param) {
-            var split = param.split('=');
-            var name = split[0];
-            var value = split[1];
-            return params.concat({ name: name, value: decodeURIComponent(value) });
-        }, []);
-    };
-
-    /**
-     * Build a querystring from a list of parameters
-     * @param  {Array} paramList The list of parameters (see `.parse()`)
-     * @return {String}          The querystring
-     */
-    var build = function build(paramList) {
-        return paramList.map(function (_ref2) {
-            var name = _ref2.name;
-            var value = _ref2.value;
-            return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
-        }).map(function (param) {
-            return param.join('=');
-        }).join('&');
-    };
-
-    /**
-     * Remove a list of parameters from a querystring
-     * @param  {String} querystring  The original querystring
-     * @param  {Array}  paramsToOmit The parameters to omit
-     * @return {String}              The querystring
-     */
-    var omit = function omit(querystring, paramsToOmit) {
-        if (!querystring) return '';
-
-        var remainingQueryParams = parse(querystring).filter(function (_ref3) {
-            var name = _ref3.name;
-            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
-        });
-        var remainingQueryString = build(remainingQueryParams);
-
-        return remainingQueryString || '';
-    };
-
     var defaultOrConstrained = function defaultOrConstrained(match) {
         return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%]+') + ')';
     };
@@ -447,6 +381,72 @@
         return Path;
     })();
 
+    // Split path
+    var getPath = function getPath(path) {
+        return path.split('?')[0];
+    };
+    var getSearch = function getSearch(path) {
+        return path.split('?')[1];
+    };
+
+    // Search param value
+    var isSerialisable = function isSerialisable(val) {
+        return val !== undefined && val !== null && val !== '';
+    };
+
+    // Search param name
+    var bracketTest = /\[\]$/;
+    var withoutBrackets$1 = function withoutBrackets(paramName) {
+        return paramName.replace(bracketTest, '');
+    };
+
+    /**
+     * Parse a querystring and return a list of params (Objects with name and value properties)
+     * @param  {String} querystring The querystring to parse
+     * @return {Array[Object]}      The list of params
+     */
+    var parse = function parse(querystring) {
+        return querystring.split('&').reduce(function (params, param) {
+            var split = param.split('=');
+            var name = split[0];
+            var value = split[1];
+            return params.concat({ name: name, value: decodeURIComponent(value) });
+        }, []);
+    };
+
+    /**
+     * Build a querystring from a list of parameters
+     * @param  {Array} paramList The list of parameters (see `.parse()`)
+     * @return {String}          The querystring
+     */
+    var build = function build(paramList) {
+        return paramList.map(function (_ref2) {
+            var name = _ref2.name;
+            var value = _ref2.value;
+            return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
+        }).map(function (param) {
+            return param.join('=');
+        }).join('&');
+    };
+
+    /**
+     * Remove a list of parameters from a querystring
+     * @param  {String} querystring  The original querystring
+     * @param  {Array}  paramsToOmit The parameters to omit
+     * @return {String}              The querystring
+     */
+    var omit = function omit(querystring, paramsToOmit) {
+        if (!querystring) return '';
+
+        var remainingQueryParams = parse(querystring).filter(function (_ref3) {
+            var name = _ref3.name;
+            return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
+        });
+        var remainingQueryString = build(remainingQueryParams);
+
+        return remainingQueryString || '';
+    };
+
     var noop = function noop() {};
 
     var RouteNode = (function () {
@@ -696,7 +696,10 @@
                 var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
                     return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
                 }).map(function (p) {
-                    return Path.serialise(p, params[withoutBrackets$1(p)]);
+                    var val = params[withoutBrackets$1(p)];
+                    var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);
+
+                    return Path.serialise(p, encodedVal);
                 }).join('&');
 
                 return segments.map(function (segment) {

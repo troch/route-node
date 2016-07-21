@@ -1,3 +1,13 @@
+<a name="1.4.3"></a>
+## [1.4.3](https://github.com/troch/route-node/compare/v1.4.2...v1.4.3) (2016-07-21)
+
+
+### Bug Fixes
+
+* make sure query params are encoded ([dc24062](https://github.com/troch/route-node/commit/dc24062))
+
+
+
 <a name="1.4.2"></a>
 ## [1.4.2](https://github.com/troch/route-node/compare/v1.4.1...v1.4.2) (2016-07-20)
 

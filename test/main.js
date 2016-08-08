@@ -235,7 +235,7 @@ describe('RouteNode', function () {
               }
           },
           name: 'grandParent',
-          params: {nickname: 'gran'}
+          params: {nickname: 'gran', name: 'papa'}
         });
         node.matchPath('/grand-parent/parent/child?nickname=gran&names=papa-maman', { strictQueryParams: false }).should.eql({
           _meta: {
@@ -250,7 +250,7 @@ describe('RouteNode', function () {
               }
           },
           name: 'grandParent.parent.child',
-          params: {nickname: 'gran'}
+          params: {nickname: 'gran', names: 'papa-maman'}
         });
     });
 
@@ -396,6 +396,17 @@ describe('RouteNode', function () {
         node.buildPath('route', {  param: '1' }).should.equal('/path');
         node.setPath('?param');
         node.buildPath('route', {  param: '1' }).should.equal('/path?param=1');
+    });
+
+    it('should serialise extra search parameters', function () {
+        var node = new RouteNode('', '', [
+            new RouteNode('route', '/path')
+        ]);
+
+        withoutMeta(node.matchPath('/path?a=1&b=2&c=3', { strictQueryParams: false })).should.eql({
+            name: 'route',
+            params: { a: '1', b: '2', c: '3' }
+        });
     });
 });
 

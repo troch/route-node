@@ -1,5 +1,5 @@
 import Path from 'path-parser';
-import { getSearch, getPath, omit, withoutBrackets } from 'search-params';
+import { getSearch, getPath, omit, withoutBrackets, parse } from 'search-params';
 
 const noop = () => {};
 
@@ -158,10 +158,14 @@ export default class RouteNode {
                     segments.push(child);
                     Object.keys(match).forEach(param => segments.params[param] = match[param]);
 
-                    if (!isRoot && (!remainingPath.length || // fully matched
-                        !strictQueryParams && remainingPath.indexOf('?') === 0) // unmatched queryParams in non strict mode
-                    ) {
-                      return segments;
+                    if (!isRoot && !remainingPath.length) { // fully matched
+                        return segments;
+                    }
+                    if (!isRoot && !strictQueryParams && remainingPath.indexOf('?') === 0) { // unmatched queryParams in non strict mode
+                        const remainingQueryParams = parse(remainingPath.slice(1));
+
+                        remainingQueryParams.forEach(({ name, value} ) => segments.params[name] = value);
+                        return segments;
                     }
                     // If no children to match against but unmatched path left
                     if (!child.children.length) {

@@ -326,6 +326,18 @@ describe('RouteNode', function () {
         should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
 
+    it('should match paths with optional trailing slashes and a non-empty root node', function () {
+        var rootNode = new RouteNode('', '?c&d', [
+            new RouteNode('a', '/')
+        ]);
+
+        const state = { name: 'a', params: {}};
+
+        withoutMeta(rootNode.matchPath('/', { trailingSlash: false })).should.eql(state);
+        withoutMeta(rootNode.matchPath('/', { trailingSlash: true })).should.eql(state);
+        withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql(state);
+    });
+
     it('should support query parameters with square brackets', function () {
         var node = new RouteNode('', '', [
             new RouteNode('route', '/route?arr[]', [

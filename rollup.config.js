@@ -1,5 +1,5 @@
 import babel from 'rollup-plugin-babel';
-import npm from 'rollup-plugin-npm';
+import nodeResolve from 'rollup-plugin-node-resolve';
 import { argv } from 'yargs';
 
 const babelOptions = {
@@ -21,7 +21,7 @@ const dest = {
 export default {
     entry: 'modules/RouteNode.js',
     format,
-    plugins: [ babel(babelOptions), npm({ jsnext: true }) ],
+    plugins: [ babel(babelOptions), nodeResolve({ jsnext: true }) ],
     moduleName: 'RouteNode',
     moduleId: 'RouteNode',
     dest

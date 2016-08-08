@@ -1,3 +1,13 @@
+<a name="1.4.4"></a>
+## [1.4.4](https://github.com/troch/route-node/compare/v1.4.3...v1.4.4) (2016-08-08)
+
+
+### Bug Fixes
+
+* don't consider matching resolved when on the root node ([55e614a](https://github.com/troch/route-node/commit/55e614a)), closes [router5/router5-persistent-params#1](https://github.com/router5/router5-persistent-params/issues/1)
+
+
+
 <a name="1.4.3"></a>
 ## [1.4.3](https://github.com/troch/route-node/compare/v1.4.2...v1.4.3) (2016-07-21)
 

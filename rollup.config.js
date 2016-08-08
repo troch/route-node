@@ -21,7 +21,7 @@ const dest = {
 export default {
     entry: 'modules/RouteNode.js',
     format,
-    plugins: [ babel(babelOptions), nodeResolve({ jsnext: true }) ],
+    plugins: [ nodeResolve({ jsnext: true }), babel(babelOptions) ],
     moduleName: 'RouteNode',
     moduleId: 'RouteNode',
     dest

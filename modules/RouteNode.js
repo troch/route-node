@@ -127,6 +127,7 @@ export default class RouteNode {
     getSegmentsMatchingPath(path, options) {
         const { trailingSlash, strictQueryParams } = options;
         let matchChildren = (nodes, pathSegment, segments) => {
+            const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
             for (let i in nodes) {
                 let child = nodes[i];
@@ -148,7 +149,7 @@ export default class RouteNode {
                     );
                     remainingPath = getPath(remainingPath) + (search ? `?${search}` : '');
 
-                    if (trailingSlash && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                    if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                         remainingPath = '';
                     }
                 }
@@ -157,8 +158,8 @@ export default class RouteNode {
                     segments.push(child);
                     Object.keys(match).forEach(param => segments.params[param] = match[param]);
 
-                    if (!remainingPath.length || // fully matched
-                        !strictQueryParams && remainingPath.indexOf('?') === 0 // unmatched queryParams in non strict mode
+                    if (!isRoot && (!remainingPath.length || // fully matched
+                        !strictQueryParams && remainingPath.indexOf('?') === 0) // unmatched queryParams in non strict mode
                     ) {
                       return segments;
                     }
@@ -170,6 +171,7 @@ export default class RouteNode {
                     return matchChildren(child.children, remainingPath, segments);
                 }
             }
+
             return null;
         };
 

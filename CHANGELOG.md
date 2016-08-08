@@ -1,3 +1,13 @@
+<a name="1.4.5"></a>
+## [1.4.5](https://github.com/troch/route-node/compare/v1.4.4...v1.4.5) (2016-08-08)
+
+
+### Bug Fixes
+
+* in non strictQueryParams mode, serialise extra query params to returned matched  ([c8c7de3](https://github.com/troch/route-node/commit/c8c7de3))
+
+
+
 <a name="1.4.4"></a>
 ## [1.4.4](https://github.com/troch/route-node/compare/v1.4.3...v1.4.4) (2016-08-08)
 

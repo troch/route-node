@@ -626,13 +626,25 @@ define('RouteNode', function () { 'use strict';
                               return segments.params[param] = match[param];
                           });
 
-                          if (!isRoot && (!remainingPath.length || // fully matched
-                          !strictQueryParams && remainingPath.indexOf('?') === 0) // unmatched queryParams in non strict mode
-                          ) {
-                                  return {
-                                      v: segments
-                                  };
-                              }
+                          if (!isRoot && !remainingPath.length) {
+                              // fully matched
+                              return {
+                                  v: segments
+                              };
+                          }
+                          if (!isRoot && !strictQueryParams && remainingPath.indexOf('?') === 0) {
+                              // unmatched queryParams in non strict mode
+                              var remainingQueryParams = parse(remainingPath.slice(1));
+
+                              remainingQueryParams.forEach(function (_ref) {
+                                  var name = _ref.name;
+                                  var value = _ref.value;
+                                  return segments.params[name] = value;
+                              });
+                              return {
+                                  v: segments
+                              };
+                          }
                           // If no children to match against but unmatched path left
                           if (!child.children.length) {
                               return {

@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "1.4.5",
+  "version": "1.4.6",
   "description": "A package to create a tree of named routes",
   "main": "dist/commonjs/route-node.js",
   "jsnext:main": "modules/RouteNode.js",
@@ -10,7 +10,7 @@
     "lint": "eslint modules/*.js",
     "build:amd": "rollup -c rollup.config.js --format amd",
     "build:umd": "rollup -c rollup.config.js --format umd",
-    "build:cjs": "mkdirp dist/commonjs && babel modules/RouteNode.js --out-dir dist/commonjs/route-node.js",
+    "build:cjs": "mkdirp dist/commonjs && babel modules/RouteNode.js -o dist/commonjs/route-node.js",
     "clean": "rimraf dist",
     "build": "npm run clean && npm run build:amd && npm run build:umd && npm run build:cjs",
     "clog": "conventional-changelog -p angular -i CHANGELOG.md -w"

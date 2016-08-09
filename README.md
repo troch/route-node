@@ -86,4 +86,4 @@ When adding routes (with contructor or `.add`), you can pass a callback which wi
 
 ## Based on
 
-- [parth-parser](https://www.npmjs.com/package/path-parser) for parsing, matching and building paths.
+- [path-parser](https://www.npmjs.com/package/path-parser) for parsing, matching and building paths.

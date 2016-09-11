@@ -208,6 +208,7 @@ describe('RouteNode', function () {
         node.buildPath('grandParent.parent.child', {name: 'maman', age: 3}).should.equal('/grand-parent/parent/child?name=maman&age=3');
         node.buildPath('grandParent.parent.child', {}).should.equal('/grand-parent/parent/child');
         node.buildPath('grandParent.parent.child', {nickname: ['gran', 'granny']}).should.equal('/grand-parent/parent/child?nickname=gran&nickname=granny');
+        node.buildPath('grandParent.parent.child', {nickname: undefined}).should.equal('/grand-parent/parent/child');
 
         // Matching
         withoutMeta(node.matchPath('/grand-parent')).should.eql({name: 'grandParent', params: {}});
@@ -403,9 +404,9 @@ describe('RouteNode', function () {
             new RouteNode('route', '/path')
         ]);
 
-        withoutMeta(node.matchPath('/path?a=1&b=2&c=3', { strictQueryParams: false })).should.eql({
+        withoutMeta(node.matchPath('/path?a=1&b=2&c=3&d', { strictQueryParams: false })).should.eql({
             name: 'route',
-            params: { a: '1', b: '2', c: '3' }
+            params: { a: '1', b: '2', c: '3', d: true }
         });
     });
 });

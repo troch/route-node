@@ -209,7 +209,15 @@ export default class RouteNode {
             );
 
         const searchPart = !searchParams.length ? null : searchParams
-            .filter(p => Object.keys(params).indexOf(withoutBrackets(p)) !== -1)
+            .filter(p => {
+                if (Object.keys(params).indexOf(withoutBrackets(p)) === -1) {
+                    return false;
+                }
+
+                const val = params[withoutBrackets(p)];
+
+                return val !== undefined && val !== null;
+            })
             .map(p => {
                 const val = params[withoutBrackets(p)];
                 const encodedVal = Array.isArray(val)

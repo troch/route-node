@@ -283,7 +283,13 @@ var RouteNode = function () {
             }, []);
 
             var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                return Object.keys(params).indexOf((0, _searchParams.withoutBrackets)(p)) !== -1;
+                if (Object.keys(params).indexOf((0, _searchParams.withoutBrackets)(p)) === -1) {
+                    return false;
+                }
+
+                var val = params[(0, _searchParams.withoutBrackets)(p)];
+
+                return val !== undefined && val !== null;
             }).map(function (p) {
                 var val = params[(0, _searchParams.withoutBrackets)(p)];
                 var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);

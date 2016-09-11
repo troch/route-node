@@ -1,3 +1,13 @@
+<a name="1.4.7"></a>
+## [1.4.7](https://github.com/troch/route-node/compare/v1.4.6...v1.4.7) (2016-09-11)
+
+
+### Bug Fixes
+
+* update to next version of search-params, fix issue with undefined or null query params ([1207804](https://github.com/troch/route-node/commit/1207804))
+
+
+
 <a name="1.4.6"></a>
 ## [1.4.6](https://github.com/troch/route-node/compare/v1.4.5...v1.4.6) (2016-08-09)
 

@@ -383,11 +383,6 @@ define('RouteNode', function () { 'use strict';
       return path.split('?')[1];
   };
 
-  // Search param value
-  var isSerialisable = function isSerialisable(val) {
-      return val !== undefined && val !== null && val !== '';
-  };
-
   // Search param name
   var bracketTest = /\[\]$/;
   var withoutBrackets$1 = function withoutBrackets(paramName) {
@@ -404,7 +399,8 @@ define('RouteNode', function () { 'use strict';
           var split = param.split('=');
           var name = split[0];
           var value = split[1];
-          return params.concat({ name: name, value: decodeURIComponent(value) });
+
+          return params.concat(split.length === 1 ? { name: name, value: true } : { name: name, value: decodeURIComponent(value) });
       }, []);
   };
 
@@ -414,12 +410,13 @@ define('RouteNode', function () { 'use strict';
    * @return {String}          The querystring
    */
   var build = function build(paramList) {
-      return paramList.map(function (_ref2) {
-          var name = _ref2.name;
+      return paramList.filter(function (_ref2) {
           var value = _ref2.value;
-          return [name].concat(isSerialisable(value) ? encodeURIComponent(value) : []);
-      }).map(function (param) {
-          return param.join('=');
+          return value !== undefined && value !== null;
+      }).map(function (_ref3) {
+          var name = _ref3.name;
+          var value = _ref3.value;
+          return value === true ? name : name + '=' + encodeURIComponent(value);
       }).join('&');
   };
 
@@ -432,8 +429,8 @@ define('RouteNode', function () { 'use strict';
   var omit = function omit(querystring, paramsToOmit) {
       if (!querystring) return '';
 
-      var remainingQueryParams = parse(querystring).filter(function (_ref3) {
-          var name = _ref3.name;
+      var remainingQueryParams = parse(querystring).filter(function (_ref4) {
+          var name = _ref4.name;
           return paramsToOmit.indexOf(withoutBrackets$1(name)) === -1;
       });
       var remainingQueryString = build(remainingQueryParams);
@@ -703,7 +700,13 @@ define('RouteNode', function () { 'use strict';
               }, []);
 
               var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
-                  return Object.keys(params).indexOf(withoutBrackets$1(p)) !== -1;
+                  if (Object.keys(params).indexOf(withoutBrackets$1(p)) === -1) {
+                      return false;
+                  }
+
+                  var val = params[withoutBrackets$1(p)];
+
+                  return val !== undefined && val !== null;
               }).map(function (p) {
                   var val = params[withoutBrackets$1(p)];
                   var encodedVal = Array.isArray(val) ? val.map(encodeURIComponent) : encodeURIComponent(val);

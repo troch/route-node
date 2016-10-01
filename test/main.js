@@ -408,6 +408,46 @@ describe('RouteNode', function () {
             name: 'route',
             params: { a: '1', b: '2', c: '3', d: true }
         });
+
+    });
+
+    it('should throw an error when adding an absolute path below nodes with params', () => {
+        function createNode() {
+            return new RouteNode('', '', [
+                new RouteNode('path', '/path/:path', [
+                    new RouteNode('absolute', '~/absolute')
+                ])
+            ]);
+        }
+
+        createNode.should.throw();
+    });
+
+    it('should build absolute paths', function () {
+        var node = new RouteNode('', '', [
+            new RouteNode('path', '/path', [
+                new RouteNode('relative', '/relative'),
+                new RouteNode('absolute', '~/absolute')
+            ])
+        ]);
+
+        node.buildPath('path.relative').should.equal('/path/relative');
+        node.buildPath('path.absolute').should.equal('/absolute');
+    });
+
+    it('should match absolute paths', function () {
+        const absolute = new RouteNode('absolute', '~/absolute');
+
+        var node = new RouteNode('', '', [
+            new RouteNode('path', '/path', [
+                new RouteNode('relative', '/relative'),
+                absolute
+            ])
+        ]);
+
+        withoutMeta(node.matchPath('/path/relative')).should.eql({ name: 'path.relative', params: {}});
+        should.not.exist(node.matchPath('/path/absolute'));
+        withoutMeta(node.matchPath('/absolute')).should.eql({ name: 'path.absolute', params: {}});
     });
 });
 

@@ -4,15 +4,60 @@ import { getSearch, getPath, omit, withoutBrackets, parse } from 'search-params'
 const noop = () => {};
 
 export default class RouteNode {
-    constructor(name = '', path = '', childRoutes = [], cb) {
+    constructor(name = '', path = '', childRoutes = [], cb, parent) {
         this.name     = name;
-        this.path     = path;
-        this.parser   = path ? new Path(path) : null;
+        this.absolute = /^~/.test(path);
+        this.path     = this.absolute ? path.slice(1) : path;
+        this.parser   = this.path ? new Path(this.path) : null;
         this.children = [];
+        this.parent   = parent;
+
+        this.checkParents();
 
         this.add(childRoutes, cb);
 
         return this;
+    }
+
+    checkParents() {
+        if (this.absolute && this.haveParentsParams()) {
+            throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
+        }
+    }
+
+    haveParentsParams() {
+        if (this.parent && this.parent.parser) {
+            const parser = this.parent.parser;
+            const hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
+
+            return hasParams || this.parent.haveParentsParams();
+        }
+
+        return false;
+    }
+
+    getNonAbsoluteChildren() {
+        return this.children.filter((child) => !child.absolute);
+    }
+
+    findAbsoluteChildren() {
+        return this.children.reduce((absoluteChildren, child) =>
+            absoluteChildren
+                .concat(child.absolute ? child : [])
+                .concat(child.findAbsoluteChildren()),
+            []
+        );
+    }
+
+    getParentSegments(segments = []) {
+        return this.parent && this.parent.parser
+            ? this.parent.getParentSegments(segments.concat(this.parent))
+            : segments.reverse();
+    }
+
+    setParent(parent) {
+        this.parent = parent;
+        this.checkParents();
     }
 
     setPath(path = '') {
@@ -31,13 +76,14 @@ export default class RouteNode {
 
         if (!(route instanceof RouteNode) && !(route instanceof Object)) {
             throw new Error('RouteNode.add() expects routes to be an Object or an instance of RouteNode.');
-        }
-        if (route instanceof Object) {
+        } else if (route instanceof RouteNode) {
+            route.setParent(this);
+        } else {
             if (!route.name || !route.path) {
                 throw new Error('RouteNode.add() expects routes to have a name and a path defined.');
             }
             originalRoute = route;
-            route = new RouteNode(route.name, route.path, route.children, cb);
+            route = new RouteNode(route.name, route.path, route.children, cb, this);
         }
 
         let names = route.name.split('.');
@@ -167,19 +213,26 @@ export default class RouteNode {
                         remainingQueryParams.forEach(({ name, value} ) => segments.params[name] = value);
                         return segments;
                     }
+                    // Continue matching on non absolute children
+                    const children = child.getNonAbsoluteChildren();
                     // If no children to match against but unmatched path left
-                    if (!child.children.length) {
+                    if (!children.length) {
                         return null;
                     }
                     // Else: remaining path and children
-                    return matchChildren(child.children, remainingPath, segments);
+                    return matchChildren(children, remainingPath, segments);
                 }
             }
 
             return null;
         };
 
-        let startingNodes = this.parser ? [this] : this.children;
+        const topLevelNodes = this.parser ? [ this ] : this.children;
+        const startingNodes = topLevelNodes.reduce(
+            (nodes, node) => nodes.concat(node, node.findAbsoluteChildren()),
+            []
+        );
+
         let segments = [];
         segments.params = {};
 
@@ -228,9 +281,14 @@ export default class RouteNode {
             })
             .join('&');
 
-        return segments
-            .map(segment => segment.parser.build(params, {ignoreSearch: true}))
-            .join('') + (searchPart ? '?' + searchPart : '');
+        const path = segments
+            .reduce((path, segment) => {
+                const segmentPath = segment.parser.build(params, {ignoreSearch: true});
+
+                return segment.absolute ? segmentPath : path + segmentPath;
+            }, '');
+
+        return path + (searchPart ? '?' + searchPart : '');
     }
 
     getMetaFromSegments(segments) {
@@ -288,7 +346,17 @@ export default class RouteNode {
 
     matchPath(path, options) {
         const defaultOptions = { trailingSlash: false, strictQueryParams: true };
-        options = { ...defaultOptions, ...options };
-        return this.buildStateFromSegments(this.getSegmentsMatchingPath(path, options));
+        const opts = { ...defaultOptions, ...options };
+        let matchedSegments = this.getSegmentsMatchingPath(path, opts);
+
+        if (matchedSegments && matchedSegments[0].absolute) {
+            const firstSegmentParams = matchedSegments[0].getParentSegments();
+
+            matchedSegments.reverse();
+            matchedSegments.push(...firstSegmentParams);
+            matchedSegments.reverse();
+        }
+
+        return this.buildStateFromSegments(matchedSegments);
     }
 }

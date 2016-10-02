@@ -5,16 +5,18 @@
 
 # route-node
 
-A package to create a tree (trie) of named routes. It is similar to [routington](https://www.npmjs.com/package/routington) except that nodes are not added by splitting path by segment ("/"). Instead the tree is built with the supplied nodes, meaning each node is a valid route.
+A package to create a tree (trie) of named routes, allowing you to build and match routes.
 
 
 ## Install
 
-    $ npm install route-node --save
+```sh
+$ npm install route-node --save
+```
 
 ## Usage
 
-Building your route tree:
+__Building your tree:__
 
 ```javascript
 import rootNode from 'route-node';
@@ -32,7 +34,7 @@ const ordersNode = new RouteNode('orders', '/orders', [
     {name: 'view',      path: '/view/:id'}
 ]);
 
-// Creating a top node
+// Creating a top root node
 const rootNode = new RouteNode('', '', [
     ordersNode,
     usersNode
@@ -64,7 +66,9 @@ rootNode.buildPath('users.view', {id: 1});     // => "/users/view/1"
 rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
 ```
 
-Trailing slash can be optional:
+__Trailing slashes can be optional__
+
+When using `matchPath`, you can pass a `trailingSlash` option for non-strict matching on trailing slashes.
 
 ```javascript
 rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
@@ -74,15 +78,31 @@ rootNode.matchPath('/users/view/1/', { trailingSlash: true });
 // => {name: "users.view", params: {id: "1"}}
 ```
 
+`buildPath` also accepts a `trailingSlash` option. When `true`, it will force a trailing slash on built paths. When set to `false`, it will remove trailing slashes.
+
 Query parameters are optional, however a match will fail if the URL contains non-expected query parameters. This can be prevented by setting `strictQueryParams` to false.
+
+__`/` paths__
+
+When using a deeply nested `/` path, it will automatically be matched when its parent is matched.
+
+```js
+const tree = new RouteNode('', '', [
+    new RouteNode('admin', '/admin', [
+        new RouteNode('home', '/'),
+        new RouteNode('users', '/users')
+    ])
+]);
+
+tree.matchPath('/admin'); // => { name: 'admin.home', params: {} }
+tree.buildPath('admin.home', {}, { trailingSlash: false }); // => '/admin'
+```
+
 
 ## Callbacks
 
 When adding routes (with contructor or `.add`), you can pass a callback which will be executed for each route added successfully to the tree.
 
-## Related packages
-
-- [routington](https://www.npmjs.com/package/routington)
 
 ## Based on
 

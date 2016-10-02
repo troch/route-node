@@ -449,6 +449,19 @@ describe('RouteNode', function () {
         should.not.exist(node.matchPath('/path/absolute'));
         withoutMeta(node.matchPath('/absolute')).should.eql({ name: 'path.absolute', params: {}});
     });
+
+    it('should automatically match deep nested "/" children', () => {
+        var node = new RouteNode('', '', [
+            new RouteNode('section', '/section', [
+                new RouteNode('top', '/'),
+                new RouteNode('part', '/:part')
+            ])
+        ]);
+
+        withoutMeta(node.matchPath('/section')).should.eql({ name: 'section.top', params: {}});
+        node.buildPath('section.top').should.eql('/section/');
+        node.buildPath('section.top', {}, { trailingSlash: false }).should.eql('/section');
+    });
 });
 
 

@@ -49,6 +49,12 @@ export default class RouteNode {
         );
     }
 
+    findSlashChild() {
+        const slashChildren = this.getNonAbsoluteChildren().filter((child) => child.parser.path === '/');
+
+        return slashChildren[0];
+    }
+
     getParentSegments(segments = []) {
         return this.parent && this.parent.parser
             ? this.parent.getParentSegments(segments.concat(this.parent))
@@ -313,8 +319,16 @@ export default class RouteNode {
         }, {});
     }
 
-    buildPath(routeName, params = {}) {
-        return this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+    buildPath(routeName, params = {}, options = {}) {
+        const path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+
+        if (options.trailingSlash === true) {
+            return /\/$/.test(path) ? path : `${path}/`;
+        } else if (options.trailingSlash === false) {
+            return /\/$/.test(path) ? path.slice(0, -1) : path;
+        }
+
+        return path;
     }
 
     buildStateFromSegments(segments) {
@@ -349,12 +363,21 @@ export default class RouteNode {
         const opts = { ...defaultOptions, ...options };
         let matchedSegments = this.getSegmentsMatchingPath(path, opts);
 
-        if (matchedSegments && matchedSegments[0].absolute) {
-            const firstSegmentParams = matchedSegments[0].getParentSegments();
+        if (matchedSegments) {
+            if (matchedSegments[0].absolute) {
+                const firstSegmentParams = matchedSegments[0].getParentSegments();
 
-            matchedSegments.reverse();
-            matchedSegments.push(...firstSegmentParams);
-            matchedSegments.reverse();
+                matchedSegments.reverse();
+                matchedSegments.push(...firstSegmentParams);
+                matchedSegments.reverse();
+            }
+
+            const lastSegment = matchedSegments[matchedSegments.length - 1];
+            const lastSegmentSlashChild = lastSegment.findSlashChild();
+
+            if (lastSegmentSlashChild) {
+                matchedSegments.push(lastSegmentSlashChild);
+            }
         }
 
         return this.buildStateFromSegments(matchedSegments);

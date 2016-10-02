@@ -1,3 +1,14 @@
+<a name="1.5.0"></a>
+# [1.5.0](https://github.com/troch/route-node/compare/v1.4.7...v1.5.0) (2016-10-02)
+
+
+### Features
+
+* automatically match deep routes with path = '/' ([c78227d](https://github.com/troch/route-node/commit/c78227d))
+* support absolute paths for nested routes ([f117c57](https://github.com/troch/route-node/commit/f117c57))
+
+
+
 <a name="1.4.7"></a>
 ## [1.4.7](https://github.com/troch/route-node/compare/v1.4.6...v1.4.7) (2016-09-11)
 

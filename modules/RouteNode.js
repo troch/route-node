@@ -182,8 +182,9 @@ export default class RouteNode {
         let matchChildren = (nodes, pathSegment, segments) => {
             const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
-            for (let i in nodes) {
-                let child = nodes[i];
+            for (let i = 0; i < nodes.length; i += 1) {
+                const child = nodes[i];
+
                 // Partially match path
                 let match = child.parser.partialMatch(pathSegment);
                 let remainingPath;

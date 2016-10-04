@@ -1,3 +1,13 @@
+<a name="1.5.2"></a>
+## [1.5.2](https://github.com/troch/route-node/compare/v1.5.1...v1.5.2) (2016-10-04)
+
+
+### Bug Fixes
+
+* fix code syntax issue, causing issue when not matching on IE ([4e82d0f](https://github.com/troch/route-node/commit/4e82d0f))
+
+
+
 <a name="1.5.1"></a>
 ## [1.5.1](https://github.com/troch/route-node/compare/v1.5.0...v1.5.1) (2016-10-04)
 

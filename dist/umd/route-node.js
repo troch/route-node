@@ -672,6 +672,7 @@
 
                   var _loop = function _loop(i) {
                       var child = nodes[i];
+
                       // Partially match path
                       var match = child.parser.partialMatch(pathSegment);
                       var remainingPath = void 0;
@@ -732,7 +733,7 @@
                       }
                   };
 
-                  for (var i in nodes) {
+                  for (var i = 0; i < nodes.length; i += 1) {
                       var _ret = _loop(i);
 
                       if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;

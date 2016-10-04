@@ -453,7 +453,7 @@ describe('RouteNode', function () {
     it('should automatically match deep nested "/" children', () => {
         var node = new RouteNode('', '', [
             new RouteNode('section', '/section', [
-                new RouteNode('top', '/'),
+                new RouteNode('top', '/?withParam'),
                 new RouteNode('part', '/:part')
             ])
         ]);
@@ -461,6 +461,19 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/section')).should.eql({ name: 'section.top', params: {}});
         node.buildPath('section.top').should.eql('/section/');
         node.buildPath('section.top', {}, { trailingSlash: false }).should.eql('/section');
+    });
+
+    it('should match deep nested "/" children with query params', () => {
+        var node = new RouteNode('', '', [
+            new RouteNode('app', '?:showVersion', [
+                new RouteNode('admin', '/admin', [
+                    new RouteNode('users', '/?:sort?:page')
+                ])
+            ])
+        ]);
+
+        withoutMeta(node.matchPath('/admin/?page=1')).should.eql({ name: 'app.admin.users', params: { page: '1' }});
+        withoutMeta(node.matchPath('/admin/')).should.eql({ name: 'app.admin.users', params: {}});
     });
 });
 

@@ -50,7 +50,8 @@ export default class RouteNode {
     }
 
     findSlashChild() {
-        const slashChildren = this.getNonAbsoluteChildren().filter((child) => child.parser.path === '/');
+        const slashChildren = this.getNonAbsoluteChildren()
+            .filter((child) => child.parser && /^\/(\?|$)/.test(child.parser.path));
 
         return slashChildren[0];
     }

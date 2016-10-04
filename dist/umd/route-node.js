@@ -514,7 +514,7 @@
           key: 'findSlashChild',
           value: function findSlashChild() {
               var slashChildren = this.getNonAbsoluteChildren().filter(function (child) {
-                  return child.parser.path === '/';
+                  return child.parser && /^\/(\?|$)/.test(child.parser.path);
               });
 
               return slashChildren[0];

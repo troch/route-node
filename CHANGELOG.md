@@ -1,3 +1,13 @@
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/troch/route-node/compare/v1.5.0...v1.5.1) (2016-10-04)
+
+
+### Bug Fixes
+
+* match deeply nested '/' paths with query parameters ([9810cfd](https://github.com/troch/route-node/commit/9810cfd))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/troch/route-node/compare/v1.4.7...v1.5.0) (2016-10-02)
 

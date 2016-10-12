@@ -186,29 +186,33 @@ export default class RouteNode {
                 const child = nodes[i];
 
                 // Partially match path
-                let match = child.parser.partialMatch(pathSegment);
+                let match;
                 let remainingPath;
 
-                if (!match && trailingSlash) {
-                    // Try with optional trailing slash
-                    match = child.parser.match(pathSegment, true);
-                    remainingPath = '';
-                } else if (match) {
+                if (!child.children.length) {
+                    match = child.parser.test(pathSegment, { trailingSlash });
+                }
+
+                if (!match) {
+                    match = child.parser.partialTest(pathSegment);
+                }
+
+                if (match) {
                     // Remove consumed segment from path
-                    const consumedPath = child.parser.build(match, {ignoreSearch: true});
+                    let consumedPath = child.parser.build(match, {ignoreSearch: true});
+                    if (trailingSlash && !child.children.length) {
+                        consumedPath = consumedPath.replace(/\/$/, '');
+                    }
                     remainingPath = pathSegment.replace(consumedPath, '');
                     const search = omit(
                         getSearch(pathSegment.replace(consumedPath, '')),
                         child.parser.queryParams.concat(child.parser.queryParamsBr)
                     );
                     remainingPath = getPath(remainingPath) + (search ? `?${search}` : '');
-
                     if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                         remainingPath = '';
                     }
-                }
 
-                if (match) {
                     segments.push(child);
                     Object.keys(match).forEach(param => segments.params[param] = match[param]);
 

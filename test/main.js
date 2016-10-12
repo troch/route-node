@@ -475,6 +475,16 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/admin/?page=1')).should.eql({ name: 'app.admin.users', params: { page: '1' }});
         withoutMeta(node.matchPath('/admin/')).should.eql({ name: 'app.admin.users', params: {}});
     });
+
+    it('should fully match route nodes who have no children', () => {
+        var node = new RouteNode('', '', [
+            new RouteNode('home', '/home'),
+            new RouteNode('section', '/:section')
+        ]);
+
+        withoutMeta(node.matchPath('/homeland')).should.eql({ name: 'section', params: { section: 'homeland' }});
+        withoutMeta(node.matchPath('/hom')).should.eql({ name: 'section', params: { section: 'hom' }});
+    });
 });
 
 

@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -26,9 +26,9 @@ var noop = function noop() {};
 
 var RouteNode = function () {
     function RouteNode() {
-        var name = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
-        var path = arguments.length <= 1 || arguments[1] === undefined ? '' : arguments[1];
-        var childRoutes = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+        var name = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+        var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+        var childRoutes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
         var cb = arguments[3];
         var parent = arguments[4];
 
@@ -93,7 +93,7 @@ var RouteNode = function () {
     }, {
         key: 'getParentSegments',
         value: function getParentSegments() {
-            var segments = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+            var segments = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 
             return this.parent && this.parent.parser ? this.parent.getParentSegments(segments.concat(this.parent)) : segments.reverse();
         }
@@ -106,7 +106,7 @@ var RouteNode = function () {
     }, {
         key: 'setPath',
         value: function setPath() {
-            var path = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+            var path = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
             this.path = path;
             this.parser = path ? new _pathParser2.default(path) : null;
@@ -116,7 +116,7 @@ var RouteNode = function () {
         value: function add(route) {
             var _this = this;
 
-            var cb = arguments.length <= 1 || arguments[1] === undefined ? noop : arguments[1];
+            var cb = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : noop;
 
             var originalRoute = void 0;
             if (route === undefined || route === null) return;
@@ -245,26 +245,30 @@ var RouteNode = function () {
                     var child = nodes[i];
 
                     // Partially match path
-                    var match = child.parser.partialMatch(pathSegment);
+                    var match = void 0;
                     var remainingPath = void 0;
 
-                    if (!match && trailingSlash) {
-                        // Try with optional trailing slash
-                        match = child.parser.match(pathSegment, true);
-                        remainingPath = '';
-                    } else if (match) {
-                        // Remove consumed segment from path
-                        var consumedPath = child.parser.build(match, { ignoreSearch: true });
-                        remainingPath = pathSegment.replace(consumedPath, '');
-                        var search = (0, _searchParams.omit)((0, _searchParams.getSearch)(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
-                        remainingPath = (0, _searchParams.getPath)(remainingPath) + (search ? '?' + search : '');
+                    if (!child.children.length) {
+                        match = child.parser.test(pathSegment, { trailingSlash: trailingSlash });
+                    }
 
-                        if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
-                            remainingPath = '';
-                        }
+                    if (!match) {
+                        match = child.parser.partialTest(pathSegment);
                     }
 
                     if (match) {
+                        // Remove consumed segment from path
+                        var consumedPath = child.parser.build(match, { ignoreSearch: true });
+                        if (trailingSlash && !child.children.length) {
+                            consumedPath = consumedPath.replace(/\/$/, '');
+                        }
+                        remainingPath = pathSegment.replace(consumedPath, '');
+                        var search = (0, _searchParams.omit)((0, _searchParams.getSearch)(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                        remainingPath = (0, _searchParams.getPath)(remainingPath) + (search ? '?' + search : '');
+                        if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                            remainingPath = '';
+                        }
+
                         segments.push(child);
                         Object.keys(match).forEach(function (param) {
                             return segments.params[param] = match[param];
@@ -340,7 +344,7 @@ var RouteNode = function () {
     }, {
         key: 'buildPathFromSegments',
         value: function buildPathFromSegments(segments) {
-            var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             if (!segments) return null;
 
@@ -401,8 +405,8 @@ var RouteNode = function () {
     }, {
         key: 'buildPath',
         value: function buildPath(routeName) {
-            var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-            var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+            var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
             var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
 
@@ -437,7 +441,7 @@ var RouteNode = function () {
     }, {
         key: 'buildState',
         value: function buildState(name) {
-            var params = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+            var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
             var segments = this.getSegmentsByName(name);
             if (!segments || !segments.length) return null;

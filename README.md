@@ -98,6 +98,9 @@ tree.matchPath('/admin'); // => { name: 'admin.home', params: {} }
 tree.buildPath('admin.home', {}, { trailingSlash: false }); // => '/admin'
 ```
 
+__Other options__
+
+When matching paths, you can use two other options: `ignoreSearch` for not taking query parameters into account, and `strongMatching` (default `true`) for enforcing strong partial matching (making sure matches are well delimited).
 
 ## Callbacks
 

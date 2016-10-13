@@ -178,7 +178,7 @@ export default class RouteNode {
     }
 
     getSegmentsMatchingPath(path, options) {
-        const { trailingSlash, strictQueryParams } = options;
+        const { trailingSlash, strictQueryParams, strongMatching } = options;
         let matchChildren = (nodes, pathSegment, segments) => {
             const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
@@ -194,7 +194,7 @@ export default class RouteNode {
                 }
 
                 if (!match) {
-                    match = child.parser.partialTest(pathSegment);
+                    match = child.parser.partialTest(pathSegment, { delimiter: strongMatching });
                 }
 
                 if (match) {
@@ -365,7 +365,7 @@ export default class RouteNode {
     }
 
     matchPath(path, options) {
-        const defaultOptions = { trailingSlash: false, strictQueryParams: true };
+        const defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
         const opts = { ...defaultOptions, ...options };
         let matchedSegments = this.getSegmentsMatchingPath(path, opts);
 

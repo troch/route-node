@@ -54,7 +54,7 @@
     "yargs": "~4.8.1"
   },
   "dependencies": {
-    "path-parser": "2.0.0",
+    "path-parser": "2.0.1",
     "search-params": "~1.3.0"
   }
 }

@@ -324,6 +324,7 @@ describe('RouteNode', function () {
         withoutMeta(rootNode.matchPath('/users/list/')).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'default', params: {}});
         withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql({name: 'default', params: {}});
+        should.not.exists(rootNode.matchPath('', { trailingSlash: false }));
         should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
 

@@ -1,3 +1,13 @@
+<a name="1.6.1"></a>
+## [1.6.1](https://github.com/troch/route-node/compare/v1.6.0...v1.6.1) (2016-10-13)
+
+
+### Bug Fixes
+
+* update path-parser version ([5cf8265](https://github.com/troch/route-node/commit/5cf8265))
+
+
+
 <a name="1.6.0"></a>
 # [1.6.0](https://github.com/troch/route-node/compare/v1.5.2...v1.6.0) (2016-10-12)
 

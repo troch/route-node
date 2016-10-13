@@ -818,6 +818,7 @@ var RouteNode = function () {
         value: function getSegmentsMatchingPath(path, options) {
             var trailingSlash = options.trailingSlash;
             var strictQueryParams = options.strictQueryParams;
+            var strongMatching = options.strongMatching;
 
             var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                 var isRoot = nodes.length === 1 && nodes[0].name === '';
@@ -835,7 +836,7 @@ var RouteNode = function () {
                     }
 
                     if (!match) {
-                        match = child.parser.partialTest(pathSegment);
+                        match = child.parser.partialTest(pathSegment, { delimiter: strongMatching });
                     }
 
                     if (match) {
@@ -1037,7 +1038,7 @@ var RouteNode = function () {
     }, {
         key: 'matchPath',
         value: function matchPath(path, options) {
-            var defaultOptions = { trailingSlash: false, strictQueryParams: true };
+            var defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
             var opts = _extends({}, defaultOptions, options);
             var matchedSegments = this.getSegmentsMatchingPath(path, opts);
 

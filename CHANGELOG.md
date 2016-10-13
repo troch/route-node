@@ -1,3 +1,13 @@
+<a name="1.7.0"></a>
+# [1.7.0](https://github.com/troch/route-node/compare/v1.6.1...v1.7.0) (2016-10-13)
+
+
+### Features
+
+* support 'strongMatching' option ([ae1b7ff](https://github.com/troch/route-node/commit/ae1b7ff))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/troch/route-node/compare/v1.6.0...v1.6.1) (2016-10-13)
 

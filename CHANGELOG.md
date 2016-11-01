@@ -1,3 +1,9 @@
+<a name="1.7.1"></a>
+## [1.7.1](https://github.com/troch/route-node/compare/v1.7.0...v1.7.1) (2016-11-01)
+
+
+
+
 <a name="1.7.0"></a>
 # [1.7.0](https://github.com/troch/route-node/compare/v1.6.1...v1.7.0) (2016-10-13)
 

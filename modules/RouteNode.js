@@ -145,7 +145,13 @@ export default class RouteNode {
             }
         }
 
-        if (originalRoute) cb(originalRoute);
+        if (originalRoute) {
+            const fullName = route.getParentSegments([ route ]).map((_) => _.name).join('.');
+            cb({
+                ...originalRoute,
+                name: fullName
+            });
+        }
 
         return this;
     }

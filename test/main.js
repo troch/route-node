@@ -42,8 +42,8 @@ describe('RouteNode', function () {
 
         node.add(routes, function(route) {
             i = i + 1;
-            if (i === 1) route.should.equal(routeA);
-            if (i === 2) route.should.equal(routeB);
+            if (i === 1) route.should.eql(routeA);
+            if (i === 2) route.should.eql(routeB);
         });
 
         i.should.not.equal(0);
@@ -52,8 +52,8 @@ describe('RouteNode', function () {
 
         var node = new RouteNode('', '', routes, function(route) {
             i = i + 1;
-            if (i === 1) route.should.equal(routeA);
-            if (i === 2) route.should.equal(routeB);
+            if (i === 1) route.should.eql(routeA);
+            if (i === 2) route.should.eql(routeB);
         });
 
         i.should.not.equal(0);

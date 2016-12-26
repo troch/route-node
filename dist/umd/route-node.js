@@ -778,7 +778,14 @@ var RouteNode = function () {
                 }
             }
 
-            if (originalRoute) cb(originalRoute);
+            if (originalRoute) {
+                var fullName = route.getParentSegments([route]).map(function (_) {
+                    return _.name;
+                }).join('.');
+                cb(_extends({}, originalRoute, {
+                    name: fullName
+                }));
+            }
 
             return this;
         }
@@ -816,9 +823,9 @@ var RouteNode = function () {
     }, {
         key: 'getSegmentsMatchingPath',
         value: function getSegmentsMatchingPath(path, options) {
-            var trailingSlash = options.trailingSlash;
-            var strictQueryParams = options.strictQueryParams;
-            var strongMatching = options.strongMatching;
+            var trailingSlash = options.trailingSlash,
+                strictQueryParams = options.strictQueryParams,
+                strongMatching = options.strongMatching;
 
             var matchChildren = function matchChildren(nodes, pathSegment, segments) {
                 var isRoot = nodes.length === 1 && nodes[0].name === '';
@@ -868,8 +875,8 @@ var RouteNode = function () {
                             var remainingQueryParams = parse(remainingPath.slice(1));
 
                             remainingQueryParams.forEach(function (_ref) {
-                                var name = _ref.name;
-                                var value = _ref.value;
+                                var name = _ref.name,
+                                    value = _ref.value;
                                 return segments.params[name] = value;
                             });
                             return {

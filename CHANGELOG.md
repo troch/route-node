@@ -1,3 +1,13 @@
+<a name="1.8.0"></a>
+# [1.8.0](https://github.com/troch/route-node/compare/v1.7.2...v1.8.0) (2017-01-13)
+
+
+### Bug Fixes
+
+* support strictQueryParams option when building paths ([0c45a50](https://github.com/troch/route-node/commit/0c45a50))
+
+
+
 <a name="1.7.2"></a>
 ## [1.7.2](https://github.com/troch/route-node/compare/v1.7.1...v1.7.2) (2016-12-26)
 

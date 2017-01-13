@@ -20,17 +20,17 @@ export default class RouteNode {
     }
 
     checkParents() {
-        if (this.absolute && this.haveParentsParams()) {
+        if (this.absolute && this.hasParentsParams()) {
             throw new Error('[RouteNode] A RouteNode with an abolute path cannot have parents with route parameters');
         }
     }
 
-    haveParentsParams() {
+    hasParentsParams() {
         if (this.parent && this.parent.parser) {
             const parser = this.parent.parser;
             const hasParams = parser.hasUrlParams || parser.hasSpatParam || parser.hasMatrixParams || parser.hasQueryParams;
 
-            return hasParams || this.parent.haveParentsParams();
+            return hasParams || this.parent.hasParentsParams();
         }
 
         return false;
@@ -267,17 +267,28 @@ export default class RouteNode {
         return this.getPathFromSegments(this.getSegmentsByName(routeName));
     }
 
-    buildPathFromSegments(segments, params = {}) {
+    buildPathFromSegments(segments, params = {}, options = {}) {
         if (!segments) return null;
 
-        const searchParams = segments
-            .filter(s => s.parser.hasQueryParams)
-            .reduce(
-                (params, s) => params
-                    .concat(s.parser.queryParams)
-                    .concat(s.parser.queryParamsBr.map(p => p + '[]')),
-                []
-            );
+        let searchParams = [];
+        let nonSearchParams = [];
+
+        for (let i = 0; i < segments.length; i += 1) {
+            const parser = segments[i].parser;
+            searchParams.push(...parser.queryParams);
+            searchParams.push(...parser.queryParamsBr);
+            nonSearchParams.push(...parser.urlParams);
+            nonSearchParams.push(...parser.spatParams);
+        }
+
+        if (!options.strictQueryParams) {
+            const extraParams = Object.keys(params).reduce(
+                (acc, p) => searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1
+                    ? acc.concat(p)
+                    : acc
+            , []);
+            searchParams.push(...extraParams);
+        }
 
         const searchPart = !searchParams.length ? null : searchParams
             .filter(p => {
@@ -331,8 +342,10 @@ export default class RouteNode {
         }, {});
     }
 
-    buildPath(routeName, params = {}, options = {}) {
-        const path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params);
+    buildPath(routeName, params = {}, opts = {}) {
+        const defaultOptions = { strictQueryParams: true };
+        const options = { ...defaultOptions, ...opts };
+        const path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
 
         if (options.trailingSlash === true) {
             return /\/$/.test(path) ? path : `${path}/`;

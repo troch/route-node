@@ -78,7 +78,7 @@ rootNode.matchPath('/users/view/1/', { trailingSlash: true });
 // => {name: "users.view", params: {id: "1"}}
 ```
 
-`buildPath` also accepts a `trailingSlash` option. When `true`, it will force a trailing slash on built paths. When set to `false`, it will remove trailing slashes.
+`buildPath` also accepts a `trailingSlash` and `strictQueryParams` option. When `trailingSlash` is set to `true`, it will force a trailing slash on built paths. When set to `false`, it will remove trailing slashes. When `strictQueryParams` is set to `false` (default `true`) additional parameters will be serialised as query parameters.
 
 Query parameters are optional, however a match will fail if the URL contains non-expected query parameters. This can be prevented by setting `strictQueryParams` to false.
 

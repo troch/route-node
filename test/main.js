@@ -484,6 +484,16 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/homeland')).should.eql({ name: 'section', params: { section: 'homeland' }});
         withoutMeta(node.matchPath('/hom')).should.eql({ name: 'section', params: { section: 'hom' }});
     });
+
+    context('when strictQueryParams is falsy', () => {
+        it('should serialise extra params to search part', () => {
+            const node = new RouteNode('', '', [
+                new RouteNode('home', '/home')
+            ]);
+
+            node.buildPath('home', { extra: 1, more: 2 }, { strictQueryParams: false }).should.equal('/home?extra=1&more=2');
+        });
+    });
 });
 
 

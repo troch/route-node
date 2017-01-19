@@ -1,3 +1,13 @@
+<a name="1.8.1"></a>
+## [1.8.1](https://github.com/troch/route-node/compare/v1.8.0...v1.8.1) (2017-01-19)
+
+
+### Bug Fixes
+
+* avoid re-creating nodes to preserve absolute paths ([562eeb1](https://github.com/troch/route-node/commit/562eeb1))
+
+
+
 <a name="1.8.0"></a>
 # [1.8.0](https://github.com/troch/route-node/compare/v1.7.2...v1.8.0) (2017-01-13)
 

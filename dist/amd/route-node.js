@@ -768,7 +768,8 @@ var RouteNode = function () {
                 // Locate parent node
                 var segments = this.getSegmentsByName(names.slice(0, -1).join('.'));
                 if (segments) {
-                    segments[segments.length - 1].add(new RouteNode(names[names.length - 1], route.path, route.children));
+                    route.name = names[names.length - 1];
+                    segments[segments.length - 1].add(route);
                 } else {
                     throw new Error('Could not add route named \'' + route.name + '\', parent is missing.');
                 }

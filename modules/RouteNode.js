@@ -210,7 +210,13 @@ export default class RouteNode {
                     if (trailingSlash && !child.children.length) {
                         consumedPath = consumedPath.replace(/\/$/, '');
                     }
+
                     remainingPath = pathSegment.replace(consumedPath, '');
+
+                    if (trailingSlash && !child.children.length) {
+                        remainingPath = remainingPath.replace(/^\/\?/, '?');
+                    }
+
                     const search = omit(
                         getSearch(pathSegment.replace(consumedPath, '')),
                         child.parser.queryParams.concat(child.parser.queryParamsBr)

@@ -494,6 +494,25 @@ describe('RouteNode', function () {
             node.buildPath('home', { extra: 1, more: 2 }, { strictQueryParams: false }).should.equal('/home?extra=1&more=2');
         });
     });
+
+    context('when strictQueryParams is falsy and trailingSlash is truthy', () => {
+        it('should match extra query params', () => {
+            const node = new RouteNode('', '', [
+                { name: 'root', path: '/' },
+                { name: 'home', path: '/home' }
+            ]);
+            const opts = {
+                strictQueryParams: false,
+                trailingSlash: true
+            };
+
+            const match1 = node.matchPath('/?s=3', opts);
+            const match2 = node.matchPath('/home/?s=3', opts);
+
+            withoutMeta(match1).should.eql({ name: 'root', params: { s: '3' }});
+            withoutMeta(match2).should.eql({ name: 'home', params: { s: '3' }});
+        });
+    });
 });
 
 

@@ -1,3 +1,13 @@
+<a name="1.8.2"></a>
+## [1.8.2](https://github.com/troch/route-node/compare/v1.8.1...v1.8.2) (2017-04-08)
+
+
+### Bug Fixes
+
+* fix path matching when trailing slash and not strict query params ([717823d](https://github.com/troch/route-node/commit/717823d))
+
+
+
 <a name="1.8.1"></a>
 ## [1.8.1](https://github.com/troch/route-node/compare/v1.8.0...v1.8.1) (2017-01-19)
 

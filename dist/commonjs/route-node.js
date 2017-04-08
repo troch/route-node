@@ -271,7 +271,13 @@ var RouteNode = function () {
                         if (trailingSlash && !child.children.length) {
                             consumedPath = consumedPath.replace(/\/$/, '');
                         }
+
                         remainingPath = pathSegment.replace(consumedPath, '');
+
+                        if (trailingSlash && !child.children.length) {
+                            remainingPath = remainingPath.replace(/^\/\?/, '?');
+                        }
+
                         var search = (0, _searchParams.omit)((0, _searchParams.getSearch)(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
                         remainingPath = (0, _searchParams.getPath)(remainingPath) + (search ? '?' + search : '');
                         if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {

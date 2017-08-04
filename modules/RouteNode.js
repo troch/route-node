@@ -324,7 +324,15 @@ export default class RouteNode {
                 return segment.absolute ? segmentPath : path + segmentPath;
             }, '');
 
-        return path + (searchPart ? '?' + searchPart : '');
+        let finalPath = path;
+
+        if (options.trailingSlash === true) {
+            finalPath = /\/$/.test(path) ? path : `${path}/`;
+        } else if (options.trailingSlash === false) {
+            finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
+        }
+
+        return finalPath + (searchPart ? '?' + searchPart : '');
     }
 
     getMetaFromSegments(segments) {
@@ -353,12 +361,6 @@ export default class RouteNode {
         const defaultOptions = { strictQueryParams: true };
         const options = { ...defaultOptions, ...opts };
         const path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
-
-        if (options.trailingSlash === true) {
-            return /\/$/.test(path) ? path : `${path}/`;
-        } else if (options.trailingSlash === false) {
-            return /\/$/.test(path) ? path.slice(0, -1) : path;
-        }
 
         return path;
     }

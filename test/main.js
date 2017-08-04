@@ -513,6 +513,17 @@ describe('RouteNode', function () {
             withoutMeta(match2).should.eql({ name: 'home', params: { s: '3' }});
         });
     });
+
+    it('should trim trailing slashes when building paths', () => {
+        const node = new RouteNode('', '', [
+            new RouteNode('a', '/a', [
+                new RouteNode('b', '/?c')
+            ])
+        ]);
+
+        node.buildPath('a.b', {}, { trailingSlash: false }).should.eql('/a');
+        node.buildPath('a.b', { c: 1 }, { trailingSlash: false }).should.eql('/a?c=1');
+    });
 });
 
 

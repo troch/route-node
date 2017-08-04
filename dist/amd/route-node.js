@@ -95,118 +95,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
 
-  function AsyncGenerator(gen) {
-    var front, back;
 
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
 
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
 
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
 
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
 
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
 
-        case "throw":
-          front.reject(value);
-          break;
 
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
 
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -232,6 +129,12 @@ var createClass = function () {
   };
 }();
 
+
+
+
+
+
+
 var _extends = Object.assign || function (target) {
   for (var i = 1; i < arguments.length; i++) {
     var source = arguments[i];
@@ -245,6 +148,40 @@ var _extends = Object.assign || function (target) {
 
   return target;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 var toConsumableArray = function (arr) {
   if (Array.isArray(arr)) {
@@ -531,7 +468,7 @@ var Path = function () {
         }
     }, {
         key: 'build',
-        value: function build() {
+        value: function build$$1() {
             var _this4 = this;
 
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
@@ -931,7 +868,7 @@ var RouteNode = function () {
         }
     }, {
         key: 'getPath',
-        value: function getPath(routeName) {
+        value: function getPath$$1(routeName) {
             return this.getPathFromSegments(this.getSegmentsByName(routeName));
         }
     }, {
@@ -981,7 +918,15 @@ var RouteNode = function () {
                 return segment.absolute ? segmentPath : path + segmentPath;
             }, '');
 
-            return path + (searchPart ? '?' + searchPart : '');
+            var finalPath = path;
+
+            if (options.trailingSlash === true) {
+                finalPath = /\/$/.test(path) ? path : path + '/';
+            } else if (options.trailingSlash === false) {
+                finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
+            }
+
+            return finalPath + (searchPart ? '?' + searchPart : '');
         }
     }, {
         key: 'getMetaFromSegments',
@@ -1015,14 +960,6 @@ var RouteNode = function () {
             var defaultOptions = { strictQueryParams: true };
             var options = _extends({}, defaultOptions, opts);
             var path = this.buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
-
-            if (options.trailingSlash === true) {
-                return (/\/$/.test(path) ? path : path + '/'
-                );
-            } else if (options.trailingSlash === false) {
-                return (/\/$/.test(path) ? path.slice(0, -1) : path
-                );
-            }
 
             return path;
         }

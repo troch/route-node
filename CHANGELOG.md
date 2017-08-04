@@ -1,3 +1,13 @@
+<a name="1.8.3"></a>
+## [1.8.3](https://github.com/troch/route-node/compare/v1.8.2...v1.8.3) (2017-08-04)
+
+
+### Bug Fixes
+
+* build path correctly when 'trailingSlash' is set and with query params ([f7a18b0](https://github.com/troch/route-node/commit/f7a18b0))
+
+
+
 <a name="1.8.2"></a>
 ## [1.8.2](https://github.com/troch/route-node/compare/v1.8.1...v1.8.2) (2017-04-08)
 

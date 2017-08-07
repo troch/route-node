@@ -1,3 +1,13 @@
+<a name="1.8.4"></a>
+## [1.8.4](https://github.com/troch/route-node/compare/v1.8.3...v1.8.4) (2017-08-07)
+
+
+### Bug Fixes
+
+* don't remove trailing slash of `/` if `useTrailingSlash` is set to `false` ([61f4b21](https://github.com/troch/route-node/commit/61f4b21))
+
+
+
 <a name="1.8.3"></a>
 ## [1.8.3](https://github.com/troch/route-node/compare/v1.8.2...v1.8.3) (2017-08-04)
 

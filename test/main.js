@@ -518,12 +518,15 @@ describe('RouteNode', function () {
         const node = new RouteNode('', '', [
             new RouteNode('a', '/a', [
                 new RouteNode('b', '/?c')
-            ])
+            ]),
+            new RouteNode('c', '/?c')
         ]);
 
         node.buildPath('a.b', {}, { trailingSlash: false }).should.eql('/a');
         node.buildPath('a.b', { c: 1 }, { trailingSlash: false }).should.eql('/a?c=1');
+        node.buildPath('c', { c: 1 }, { trailingSlash: false }).should.eql('/?c=1');
     });
+
 });
 
 

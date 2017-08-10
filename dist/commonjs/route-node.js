@@ -389,6 +389,10 @@ var RouteNode = function () {
 
                 var val = params[(0, _searchParams.withoutBrackets)(p)];
 
+                if (Array.isArray(val)) {
+                    return val.length > 0;
+                }
+
                 return val !== undefined && val !== null;
             }).map(function (p) {
                 var val = params[(0, _searchParams.withoutBrackets)(p)];

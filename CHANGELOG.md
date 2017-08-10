@@ -1,3 +1,13 @@
+<a name="1.8.5"></a>
+## [1.8.5](https://github.com/troch/route-node/compare/v1.8.4...v1.8.5) (2017-08-10)
+
+
+### Bug Fixes
+
+* prevent empty arrays to be serialised in search part ([af201c4](https://github.com/troch/route-node/commit/af201c4))
+
+
+
 <a name="1.8.4"></a>
 ## [1.8.4](https://github.com/troch/route-node/compare/v1.8.3...v1.8.4) (2017-08-07)
 

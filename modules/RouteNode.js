@@ -305,6 +305,10 @@ export default class RouteNode {
 
                 const val = params[withoutBrackets(p)];
 
+                if (Array.isArray(val)) {
+                    return val.length > 0;
+                }
+
                 return val !== undefined && val !== null;
             })
             .map(p => {

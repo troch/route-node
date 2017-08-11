@@ -185,7 +185,7 @@ export default class RouteNode {
     }
 
     getSegmentsMatchingPath(path, options) {
-        const { trailingSlash, strictQueryParams, strongMatching } = options;
+        const { trailingSlash, strictQueryParams, strongMatching, partialMatching } = options;
         let matchChildren = (nodes, pathSegment, segments) => {
             const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
@@ -242,7 +242,7 @@ export default class RouteNode {
                     const children = child.getNonAbsoluteChildren();
                     // If no children to match against but unmatched path left
                     if (!children.length) {
-                        return null;
+                        return partialMatching ? segments : null;
                     }
                     // Else: remaining path and children
                     return matchChildren(children, remainingPath, segments);
@@ -397,7 +397,7 @@ export default class RouteNode {
     }
 
     matchPath(path, options) {
-        const defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
+        const defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true, partialMatching: false };
         const opts = { ...defaultOptions, ...options };
         let matchedSegments = this.getSegmentsMatchingPath(path, opts);
 

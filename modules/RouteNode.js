@@ -186,22 +186,30 @@ export default class RouteNode {
 
     getSegmentsMatchingPath(path, options) {
         const { trailingSlash, strictQueryParams, strongMatching } = options;
-        let matchChildren = (nodes, pathSegment, segments) => {
+        let matchChildren = (nodes, pathSegment, segments, consumedBefore) => {
             const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
             for (let i = 0; i < nodes.length; i += 1) {
                 const child = nodes[i];
+                
 
                 // Partially match path
                 let match;
                 let remainingPath;
+                let segment = pathSegment;
+
+                if (consumedBefore === '/' && child.path === '/') {
+                    // when we encounter repeating slashes we add the slash
+                    // back to the URL to make it de facto pathless
+                    segment = '/' + pathSegment;
+                }
 
                 if (!child.children.length) {
-                    match = child.parser.test(pathSegment, { trailingSlash });
+                    match = child.parser.test(segment, { trailingSlash });
                 }
 
                 if (!match) {
-                    match = child.parser.partialTest(pathSegment, { delimiter: strongMatching });
+                    match = child.parser.partialTest(segment, { delimiter: strongMatching });
                 }
 
                 if (match) {
@@ -211,14 +219,14 @@ export default class RouteNode {
                         consumedPath = consumedPath.replace(/\/$/, '');
                     }
 
-                    remainingPath = pathSegment.replace(consumedPath, '');
-
+                    remainingPath = segment.replace(consumedPath, '');
+                    
                     if (trailingSlash && !child.children.length) {
                         remainingPath = remainingPath.replace(/^\/\?/, '?');
                     }
-
+                        
                     const search = omit(
-                        getSearch(pathSegment.replace(consumedPath, '')),
+                        getSearch(segment.replace(consumedPath, '')),
                         child.parser.queryParams.concat(child.parser.queryParamsBr)
                     );
                     remainingPath = getPath(remainingPath) + (search ? `?${search}` : '');
@@ -245,7 +253,7 @@ export default class RouteNode {
                         return null;
                     }
                     // Else: remaining path and children
-                    return matchChildren(children, remainingPath, segments);
+                    return matchChildren(children, remainingPath, segments, consumedPath);
                 }
             }
 
@@ -326,7 +334,9 @@ export default class RouteNode {
                 const segmentPath = segment.parser.build(params, {ignoreSearch: true});
 
                 return segment.absolute ? segmentPath : path + segmentPath;
-            }, '');
+            }, '')
+            // remove repeated slashes
+            .replace(/\/\/{1,}/g, '/');
 
         let finalPath = path;
 

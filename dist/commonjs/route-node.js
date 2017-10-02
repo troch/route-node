@@ -246,7 +246,7 @@ var RouteNode = function () {
                 strictQueryParams = options.strictQueryParams,
                 strongMatching = options.strongMatching;
 
-            var matchChildren = function matchChildren(nodes, pathSegment, segments) {
+            var matchChildren = function matchChildren(nodes, pathSegment, segments, consumedBefore) {
                 var isRoot = nodes.length === 1 && nodes[0].name === '';
                 // for (child of node.children) {
 
@@ -256,13 +256,20 @@ var RouteNode = function () {
                     // Partially match path
                     var match = void 0;
                     var remainingPath = void 0;
+                    var segment = pathSegment;
+
+                    if (consumedBefore === '/' && child.path === '/') {
+                        // when we encounter repeating slashes we add the slash
+                        // back to the URL to make it de facto pathless
+                        segment = '/' + pathSegment;
+                    }
 
                     if (!child.children.length) {
-                        match = child.parser.test(pathSegment, { trailingSlash: trailingSlash });
+                        match = child.parser.test(segment, { trailingSlash: trailingSlash });
                     }
 
                     if (!match) {
-                        match = child.parser.partialTest(pathSegment, { delimiter: strongMatching });
+                        match = child.parser.partialTest(segment, { delimiter: strongMatching });
                     }
 
                     if (match) {
@@ -272,13 +279,13 @@ var RouteNode = function () {
                             consumedPath = consumedPath.replace(/\/$/, '');
                         }
 
-                        remainingPath = pathSegment.replace(consumedPath, '');
+                        remainingPath = segment.replace(consumedPath, '');
 
                         if (trailingSlash && !child.children.length) {
                             remainingPath = remainingPath.replace(/^\/\?/, '?');
                         }
 
-                        var search = (0, _searchParams.omit)((0, _searchParams.getSearch)(pathSegment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
+                        var search = (0, _searchParams.omit)((0, _searchParams.getSearch)(segment.replace(consumedPath, '')), child.parser.queryParams.concat(child.parser.queryParamsBr));
                         remainingPath = (0, _searchParams.getPath)(remainingPath) + (search ? '?' + search : '');
                         if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                             remainingPath = '';
@@ -318,7 +325,7 @@ var RouteNode = function () {
                         }
                         // Else: remaining path and children
                         return {
-                            v: matchChildren(children, remainingPath, segments)
+                            v: matchChildren(children, remainingPath, segments, consumedPath)
                         };
                     }
                 };
@@ -405,7 +412,9 @@ var RouteNode = function () {
                 var segmentPath = segment.parser.build(params, { ignoreSearch: true });
 
                 return segment.absolute ? segmentPath : path + segmentPath;
-            }, '');
+            }, '')
+            // remove repeated slashes
+            .replace(/\/\/{1,}/g, '/');
 
             var finalPath = path;
 

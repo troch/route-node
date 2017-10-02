@@ -313,7 +313,6 @@ describe('RouteNode', function () {
         withoutMeta(rootNode.matchPath('/users/list', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/users/list/', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
-        should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
 
         rootNode = getRoutes(true);
         should.not.exists(rootNode.matchPath('/users/list'));
@@ -323,7 +322,6 @@ describe('RouteNode', function () {
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'default', params: {}});
         withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql({name: 'default', params: {}});
         should.not.exists(rootNode.matchPath('', { trailingSlash: false }));
-        should.not.exists(rootNode.matchPath('/users/list//', { trailingSlash: true }));
     });
 
     it('should match paths with optional trailing slashes and a non-empty root node', function () {
@@ -525,6 +523,36 @@ describe('RouteNode', function () {
         node.buildPath('a.b', {}, { trailingSlash: false }).should.eql('/a');
         node.buildPath('a.b', { c: 1 }, { trailingSlash: false }).should.eql('/a?c=1');
         node.buildPath('c', { c: 1 }, { trailingSlash: false }).should.eql('/?c=1');
+    });
+
+    it('should remove repeated slashes when building paths', ( ) => {
+
+        const node = new RouteNode('', '', [
+            new RouteNode('a', '/', [
+                new RouteNode('b', '/', [
+                    new RouteNode('c', '/')
+                ])
+            ])
+        ]);
+
+        node.buildPath('a.b', {}).should.eql('/');
+        node.buildPath('a.b.c', {}).should.eql('/');
+
+    });
+
+    it('should match paths with repeating slashes', ( ) => {
+
+        const node = new RouteNode('', '', [
+            new RouteNode('a', '/', [
+                new RouteNode('b', '/', [
+                    new RouteNode('c', ':bar')
+                ])
+            ])
+        ]);
+
+        withoutMeta(node.matchPath('/')).should.eql({ name: 'a.b', params: {}});
+        withoutMeta(node.matchPath('/foo')).should.eql({ name: 'a.b.c', params: { bar: 'foo' }});
+
     });
 
 });

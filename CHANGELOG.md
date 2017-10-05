@@ -1,3 +1,13 @@
+<a name="1.9.0"></a>
+# [1.9.0](https://github.com/troch/route-node/compare/v1.8.5...v1.9.0) (2017-10-05)
+
+
+### Features
+
+* treat repeating slashes as pathless paths ([#13](https://github.com/troch/route-node/issues/13)) ([4a8a41f](https://github.com/troch/route-node/commit/4a8a41f))
+
+
+
 <a name="1.8.5"></a>
 ## [1.8.5](https://github.com/troch/route-node/compare/v1.8.4...v1.8.5) (2017-08-10)
 

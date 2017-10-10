@@ -5,7 +5,7 @@
   "main": "dist/commonjs/route-node.js",
   "jsnext:main": "modules/RouteNode.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-core/register --recursive 'test/main.js'",
+    "test": "mocha --compilers js:babel-core/register --recursive \"test/main.js\"",
     "test:cover": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha -- --recursive 'test/main.js'",
     "lint": "eslint modules/*.js",
     "build:amd": "rollup -c rollup.config.js --format amd",

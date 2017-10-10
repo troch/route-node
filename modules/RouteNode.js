@@ -109,8 +109,14 @@ export default class RouteNode {
             this.children.push(route);
             // Push greedy spats to the bottom of the pile
             this.children.sort((left, right) => {
-                const leftPath = left.path.split('?')[0].replace(/(.+)\/$/, '$1');
-                const rightPath = right.path.split('?')[0].replace(/(.+)\/$/, '$1');
+                const leftPath = left.path
+                    .replace(/<.*?>/g, '')
+                    .split('?')[0]
+                    .replace(/(.+)\/$/, '$1');
+                const rightPath = right.path
+                    .replace(/<.*?>/g, '')
+                    .split('?')[0]
+                    .replace(/(.+)\/$/, '$1');
                 // '/' last
                 if (leftPath === '/') return 1;
                 if (rightPath === '/') return -1;

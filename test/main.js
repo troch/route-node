@@ -554,6 +554,17 @@ describe('RouteNode', function () {
         withoutMeta(node.matchPath('/foo')).should.eql({ name: 'a.b.c', params: { bar: 'foo' }});
 
     });
+    
+    it('should sort path with complex regexes correctly', ( ) => {
+
+        const node = new RouteNode('', '', [
+            new RouteNode('a', '/:path<foo|bar(?:baz?)>/:bar'),
+            new RouteNode('b', '/:foo', )
+        ]);
+
+        withoutMeta(node.matchPath('/foo/bar')).should.eql({ name: 'a', params: { path: 'foo', bar: 'bar' } });
+
+    });
 
 });
 

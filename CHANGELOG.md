@@ -1,3 +1,13 @@
+<a name="1.10.0"></a>
+# [1.10.0](https://github.com/troch/route-node/compare/v1.9.0...v1.10.0) (2017-10-15)
+
+
+### Bug Fixes
+
+* strip content of regexes from path before sorting ([#14](https://github.com/troch/route-node/issues/14)) ([0166747](https://github.com/troch/route-node/commit/0166747))
+
+
+
 <a name="1.9.0"></a>
 # [1.9.0](https://github.com/troch/route-node/compare/v1.8.5...v1.9.0) (2017-10-05)
 

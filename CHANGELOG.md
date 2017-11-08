@@ -1,3 +1,13 @@
+<a name="1.11.0"></a>
+# [1.11.0](https://github.com/troch/route-node/compare/v1.10.0...v1.11.0) (2017-11-08)
+
+
+### Features
+
+* update path-parser to latest version ([0a47563](https://github.com/troch/route-node/commit/0a47563))
+
+
+
 <a name="1.10.0"></a>
 # [1.10.0](https://github.com/troch/route-node/compare/v1.9.0...v1.10.0) (2017-10-15)
 

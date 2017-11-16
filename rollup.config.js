@@ -1,9 +1,8 @@
 import babel from 'rollup-plugin-babel';
 import nodeResolve from 'rollup-plugin-node-resolve';
-import { argv } from 'yargs';
 
 const babelOptions = {
-    presets: [ 'es2015-rollup' ],
+    presets: [[ 'env', { modules: false }]],
     plugins: [
         'transform-object-rest-spread',
         'transform-class-properties',
@@ -12,17 +11,13 @@ const babelOptions = {
     babelrc: false
 };
 
-const format = argv.format || 'umd';
-const dest = {
-    amd:  'dist/amd/route-node.js',
-    umd:  'dist/umd/route-node.js'
-}[format];
-
-export default {
-    entry: 'modules/RouteNode.js',
-    format,
+export default ['umd', 'es', 'cjs'].map(format => ({
+    input: 'modules/RouteNode.js',
     plugins: [ nodeResolve({ jsnext: true }), babel(babelOptions) ],
-    moduleName: 'RouteNode',
+    name: 'RouteNode',
     moduleId: 'RouteNode',
-    dest
-};
+    output: {
+        format,
+        file: `dist/${format}/route-node.js`
+    }
+}));

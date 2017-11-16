@@ -1,6 +1,6 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define('RouteNode', factory) :
+	typeof define === 'function' && define.amd ? define(factory) :
 	(global.RouteNode = factory());
 }(this, (function () { 'use strict';
 
@@ -93,109 +93,31 @@ var omit = function omit(querystring, paramsToOmit) {
     return remainingQueryString || '';
 };
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-  return typeof obj;
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+var _extends$1 = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+        var source = arguments[i];for (var key in source) {
+            if (Object.prototype.hasOwnProperty.call(source, key)) {
+                target[key] = source[key];
+            }
+        }
+    }return target;
 };
 
-
-
-
-
-
-
-
-
-
-
-var classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
-
-var createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];
-      descriptor.enumerable = descriptor.enumerable || false;
-      descriptor.configurable = true;
-      if ("value" in descriptor) descriptor.writable = true;
-      Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }
-
-  return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);
-    if (staticProps) defineProperties(Constructor, staticProps);
-    return Constructor;
-  };
+var _createClass$1 = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
 }();
 
-
-
-
-
-
-
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
+function _classCallCheck$1(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
     }
-  }
-
-  return target;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
-};
+}
 
 var defaultOrConstrained = function defaultOrConstrained(match) {
     return '(' + (match ? match.replace(/(^<|>$)/g, '') : '[a-zA-Z0-9-_.~%\':]+') + ')';
@@ -225,11 +147,13 @@ var rules = [{
     //                   ?:param1&:param2
     name: 'query-parameter-bracket',
     pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})(?:\[\])/
+    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
 }, {
     // Query parameter: ?param1&param2
     //                   ?:param1&:param2
     name: 'query-parameter',
     pattern: /^(?:\?|&)(?:\:)?([a-zA-Z0-9-_]*[a-zA-Z0-9]{1})/
+    // regex:   match => new RegExp('(?=(\?|.*&)' + match[0] + '(?=(\=|&|$)))')
 }, {
     // Delimiter /
     name: 'delimiter',
@@ -333,7 +257,7 @@ function _serialise(key, val) {
 }
 
 var Path = function () {
-    createClass(Path, null, [{
+    _createClass$1(Path, null, [{
         key: 'createPath',
         value: function createPath(path) {
             return new Path(path);
@@ -346,7 +270,7 @@ var Path = function () {
     }]);
 
     function Path(path) {
-        classCallCheck(this, Path);
+        _classCallCheck$1(this, Path);
 
         if (!path) throw new Error('Missing path in Path constructor');
         this.path = path;
@@ -385,7 +309,7 @@ var Path = function () {
         }).join('');
     }
 
-    createClass(Path, [{
+    _createClass$1(Path, [{
         key: '_getParams',
         value: function _getParams(type) {
             var predicate = type instanceof RegExp ? function (t) {
@@ -421,7 +345,7 @@ var Path = function () {
         value: function test(path, opts) {
             var _this2 = this;
 
-            var options = _extends({ trailingSlash: false }, opts);
+            var options = _extends$1({ trailingSlash: false }, opts);
             // trailingSlash: falsy => non optional, truthy => optional
             var source = optTrailingSlash(this.source, options.trailingSlash);
             // Check if exact match
@@ -450,7 +374,7 @@ var Path = function () {
         value: function partialTest(path, opts) {
             var _this3 = this;
 
-            var options = _extends({ delimited: true }, opts);
+            var options = _extends$1({ delimited: true }, opts);
             // Check if partial match (start of given path matches regex)
             // trailingSlash: falsy => non optional, truthy => optional
             var source = upToDelimiter(this.source, options.delimited);
@@ -478,7 +402,7 @@ var Path = function () {
             var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
             var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            var options = _extends({ ignoreConstraints: false, ignoreSearch: false }, opts);
+            var options = _extends$1({ ignoreConstraints: false, ignoreSearch: false }, opts);
             var encodedParams = Object.keys(params).reduce(function (acc, key) {
                 if (!exists(params[key])) {
                     return acc;
@@ -544,8 +468,19 @@ var Path = function () {
             return base + (searchPart ? '?' + searchPart : '');
         }
     }]);
+
     return Path;
 }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var noop = function noop() {};
 
@@ -556,7 +491,8 @@ var RouteNode = function () {
         var childRoutes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
         var cb = arguments[3];
         var parent = arguments[4];
-        classCallCheck(this, RouteNode);
+
+        _classCallCheck(this, RouteNode);
 
         this.name = name;
         this.absolute = /^~/.test(path);
@@ -572,7 +508,7 @@ var RouteNode = function () {
         return this;
     }
 
-    createClass(RouteNode, [{
+    _createClass(RouteNode, [{
         key: 'checkParents',
         value: function checkParents() {
             if (this.absolute && this.hasParentsParams()) {
@@ -900,17 +836,17 @@ var RouteNode = function () {
 
             for (var i = 0; i < segments.length; i += 1) {
                 var parser = segments[i].parser;
-                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParams));
-                searchParams.push.apply(searchParams, toConsumableArray(parser.queryParamsBr));
-                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.urlParams));
-                nonSearchParams.push.apply(nonSearchParams, toConsumableArray(parser.spatParams));
+                searchParams.push.apply(searchParams, _toConsumableArray(parser.queryParams));
+                searchParams.push.apply(searchParams, _toConsumableArray(parser.queryParamsBr));
+                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray(parser.urlParams));
+                nonSearchParams.push.apply(nonSearchParams, _toConsumableArray(parser.spatParams));
             }
 
             if (!options.strictQueryParams) {
                 var extraParams = Object.keys(params).reduce(function (acc, p) {
                     return searchParams.indexOf(p) === -1 && nonSearchParams.indexOf(p) === -1 ? acc.concat(p) : acc;
                 }, []);
-                searchParams.push.apply(searchParams, toConsumableArray(extraParams));
+                searchParams.push.apply(searchParams, _toConsumableArray(extraParams));
             }
 
             var searchPart = !searchParams.length ? null : searchParams.filter(function (p) {
@@ -1029,7 +965,7 @@ var RouteNode = function () {
                     var firstSegmentParams = matchedSegments[0].getParentSegments();
 
                     matchedSegments.reverse();
-                    matchedSegments.push.apply(matchedSegments, toConsumableArray(firstSegmentParams));
+                    matchedSegments.push.apply(matchedSegments, _toConsumableArray(firstSegmentParams));
                     matchedSegments.reverse();
                 }
 
@@ -1044,6 +980,7 @@ var RouteNode = function () {
             return this.buildStateFromSegments(matchedSegments);
         }
     }]);
+
     return RouteNode;
 }();
 

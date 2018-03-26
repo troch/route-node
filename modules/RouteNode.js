@@ -1,7 +1,11 @@
 import Path from 'path-parser';
-import { getSearch, getPath, omit, withoutBrackets, parse } from 'search-params';
+import { build, omit, parse } from 'search-params';
 
 const noop = () => {};
+
+const getPath = string => string.split('?')[0]
+
+const getSearch = string => string.split('?')[1] || ''
 
 export default class RouteNode {
     constructor(name = '', path = '', childRoutes = [], cb, parent) {
@@ -195,7 +199,7 @@ export default class RouteNode {
     }
 
     getSegmentsMatchingPath(path, options) {
-        const { trailingSlash, strictQueryParams, strongMatching } = options;
+        const { strictTrailingSlash, strictQueryParams, strongMatching } = options;
         let matchChildren = (nodes, pathSegment, segments, consumedBefore) => {
             const isRoot = nodes.length === 1 && nodes[0].name === '';
             // for (child of node.children) {
@@ -215,7 +219,7 @@ export default class RouteNode {
                 }
 
                 if (!child.children.length) {
-                    match = child.parser.test(segment, { trailingSlash });
+                    match = child.parser.test(segment, { strictTrailingSlash });
                 }
 
                 if (!match) {
@@ -225,22 +229,19 @@ export default class RouteNode {
                 if (match) {
                     // Remove consumed segment from path
                     let consumedPath = child.parser.build(match, {ignoreSearch: true});
-                    if (trailingSlash && !child.children.length) {
+                    if (!strictTrailingSlash && !child.children.length) {
                         consumedPath = consumedPath.replace(/\/$/, '');
                     }
 
                     remainingPath = segment.replace(consumedPath, '');
                     
-                    if (trailingSlash && !child.children.length) {
+                    if (!strictTrailingSlash && !child.children.length) {
                         remainingPath = remainingPath.replace(/^\/\?/, '?');
                     }
-                        
-                    const search = omit(
-                        getSearch(segment.replace(consumedPath, '')),
-                        child.parser.queryParams.concat(child.parser.queryParamsBr)
-                    );
-                    remainingPath = getPath(remainingPath) + (search ? `?${search}` : '');
-                    if (trailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
+                    
+                    const { querystring } = omit(getSearch(segment.replace(consumedPath, '')), child.parser.queryParams)
+                    remainingPath = getPath(remainingPath) + (querystring ? `?${querystring}` : '');
+                    if (!strictTrailingSlash && !isRoot && remainingPath === '/' && !/\/$/.test(consumedPath)) {
                         remainingPath = '';
                     }
 
@@ -253,7 +254,7 @@ export default class RouteNode {
                     if (!isRoot && !strictQueryParams && remainingPath.indexOf('?') === 0) { // unmatched queryParams in non strict mode
                         const remainingQueryParams = parse(remainingPath.slice(1));
 
-                        remainingQueryParams.forEach(({ name, value} ) => segments.params[name] = value);
+                        Object.keys(remainingQueryParams).forEach((name) => segments.params[name] = remainingQueryParams[name]);
                         return segments;
                     }
                     // Continue matching on non absolute children
@@ -301,7 +302,6 @@ export default class RouteNode {
         for (let i = 0; i < segments.length; i += 1) {
             const parser = segments[i].parser;
             searchParams.push(...parser.queryParams);
-            searchParams.push(...parser.queryParamsBr);
             nonSearchParams.push(...parser.urlParams);
             nonSearchParams.push(...parser.spatParams);
         }
@@ -315,29 +315,15 @@ export default class RouteNode {
             searchParams.push(...extraParams);
         }
 
-        const searchPart = !searchParams.length ? null : searchParams
-            .filter(p => {
-                if (Object.keys(params).indexOf(withoutBrackets(p)) === -1) {
-                    return false;
-                }
+        const searchParamsObject = searchParams.reduce((acc, paramName) => {
+            if (Object.keys(params).indexOf(paramName) !== -1) {
+                acc[paramName] = params[paramName]
+            }
 
-                const val = params[withoutBrackets(p)];
+            return acc
+        }, {})
 
-                if (Array.isArray(val)) {
-                    return val.length > 0;
-                }
-
-                return val !== undefined && val !== null;
-            })
-            .map(p => {
-                const val = params[withoutBrackets(p)];
-                const encodedVal = Array.isArray(val)
-                        ? val.map(encodeURIComponent)
-                        : encodeURIComponent(val);
-
-                return Path.serialise(p, encodedVal);
-            })
-            .join('&');
+        const searchPart = build(searchParamsObject)
 
         const path = segments
             .reduce((path, segment) => {
@@ -350,9 +336,9 @@ export default class RouteNode {
 
         let finalPath = path;
 
-        if (options.trailingSlash === true) {
+        if (options.useTrailingSlash === true) {
             finalPath = /\/$/.test(path) ? path : `${path}/`;
-        } else if (options.trailingSlash === false && path !== '/') {
+        } else if (options.useTrailingSlash === false && path !== '/') {
             finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
         }
 
@@ -417,7 +403,7 @@ export default class RouteNode {
     }
 
     matchPath(path, options) {
-        const defaultOptions = { trailingSlash: false, strictQueryParams: true, strongMatching: true };
+        const defaultOptions = { strictTrailingSlash: false, strictQueryParams: true, strongMatching: true };
         const opts = { ...defaultOptions, ...options };
         let matchedSegments = this.getSegmentsMatchingPath(path, opts);
 

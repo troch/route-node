@@ -51,7 +51,7 @@
     "should": "~13.1.3"
   },
   "dependencies": {
-    "path-parser": "3.0.1",
-    "search-params": "~1.3.0"
+    "path-parser": "4.0.1",
+    "search-params": "2.1.1"
   }
 }

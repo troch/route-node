@@ -189,7 +189,7 @@ describe('RouteNode', function () {
         should.not.exists(node.matchPath('/users/view/profile/1'));
     });
 
-    it('should match build build paths with nested query parameters', function () {
+    it('should match and build paths with nested query parameters', function () {
         const node = new RouteNode('', '', [
             new RouteNode('grandParent', '/grand-parent?nickname', [
                 new RouteNode('parent', '/parent?name', [
@@ -309,19 +309,19 @@ describe('RouteNode', function () {
 
     it('should match paths with optional trailing slashes', function () {
         let rootNode = getRoutes();
-        should.not.exists(rootNode.matchPath('/users/list/'));
-        withoutMeta(rootNode.matchPath('/users/list', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list')).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list/', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list/', { strictTrailingSlash: true }));
+        withoutMeta(rootNode.matchPath('/users/list', { strictTrailingSlash: false })).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list', { strictTrailingSlash: true })).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', { strictTrailingSlash: false })).should.eql({name: 'users.list', params: {}});
 
         rootNode = getRoutes(true);
-        should.not.exists(rootNode.matchPath('/users/list'));
-        withoutMeta(rootNode.matchPath('/users/list', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list/', { trailingSlash: true })).should.eql({name: 'users.list', params: {}});
-        withoutMeta(rootNode.matchPath('/users/list/')).should.eql({name: 'users.list', params: {}});
+        should.not.exists(rootNode.matchPath('/users/list', { strictTrailingSlash: true }));
+        withoutMeta(rootNode.matchPath('/users/list', { strictTrailingSlash: false })).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', { strictTrailingSlash: false })).should.eql({name: 'users.list', params: {}});
+        withoutMeta(rootNode.matchPath('/users/list/', { strictTrailingSlash: true })).should.eql({name: 'users.list', params: {}});
         withoutMeta(rootNode.matchPath('/')).should.eql({name: 'default', params: {}});
-        withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql({name: 'default', params: {}});
-        should.not.exists(rootNode.matchPath('', { trailingSlash: false }));
+        // withoutMeta(rootNode.matchPath('', { strictTrailingSlash: false })).should.eql({name: 'default', params: {}});
+        // should.not.exists(rootNode.matchPath('', { strictTrailingSlash: true }));
     });
 
     it('should match paths with optional trailing slashes and a non-empty root node', function () {
@@ -331,20 +331,20 @@ describe('RouteNode', function () {
 
         const state = { name: 'a', params: {}};
 
-        withoutMeta(rootNode.matchPath('/', { trailingSlash: false })).should.eql(state);
-        withoutMeta(rootNode.matchPath('/', { trailingSlash: true })).should.eql(state);
-        withoutMeta(rootNode.matchPath('', { trailingSlash: true })).should.eql(state);
+        withoutMeta(rootNode.matchPath('/', { strictTrailingSlash: true })).should.eql(state);
+        withoutMeta(rootNode.matchPath('/', { strictTrailingSlash: false })).should.eql(state);
+        // withoutMeta(rootNode.matchPath('', { strictTrailingSlash: false })).should.eql(state);
     });
 
     it('should support query parameters with square brackets', function () {
         const node = new RouteNode('', '', [
-            new RouteNode('route', '/route?arr[]', [
-                new RouteNode('deep', '/deep?arr2[]')
+            new RouteNode('route', '/route?arr', [
+                new RouteNode('deep', '/deep?arr2')
             ])
         ]);
 
-        // node.buildPath('route.deep', { arr: [1, 2], arr2: [3] }).should.equal('/route/deep?arr[]=1&arr[]=2&arr2[]=3');
-        withoutMeta(node.matchPath('/route/deep?arr[]=1&arr[]=2&arr2[]=3&arr2[]=4')).should.eql({
+        // node.buildPath('route.deep', { arr: [1, 2], arr2: [3] }).should.equal('/route/deep?arr=1&arr=2&arr2=3');
+        withoutMeta(node.matchPath('/route/deep?arr=1&arr=2&arr2=3&arr2=4')).should.eql({
             name: 'route.deep',
             params: { arr: ['1', '2'], arr2: ['3', '4'] }
         });
@@ -403,7 +403,7 @@ describe('RouteNode', function () {
 
         withoutMeta(node.matchPath('/path?a=1&b=2&c=3&d', { strictQueryParams: false })).should.eql({
             name: 'route',
-            params: { a: '1', b: '2', c: '3', d: true }
+            params: { a: '1', b: '2', c: '3', d: null }
         });
 
     });
@@ -457,7 +457,7 @@ describe('RouteNode', function () {
 
         withoutMeta(node.matchPath('/section')).should.eql({ name: 'section.top', params: {}});
         node.buildPath('section.top').should.eql('/section/');
-        node.buildPath('section.top', {}, { trailingSlash: false }).should.eql('/section');
+        node.buildPath('section.top', {}, { useTrailingSlash: false }).should.eql('/section');
     });
 
     it('should match deep nested "/" children with query params', () => {
@@ -493,7 +493,7 @@ describe('RouteNode', function () {
         });
     });
 
-    context('when strictQueryParams is falsy and trailingSlash is truthy', () => {
+    context('when strictQueryParams is falsy and strictTrailingSlash is falsy', () => {
         it('should match extra query params', () => {
             const node = new RouteNode('', '', [
                 { name: 'root', path: '/' },
@@ -501,7 +501,7 @@ describe('RouteNode', function () {
             ]);
             const opts = {
                 strictQueryParams: false,
-                trailingSlash: true
+                strictTrailingSlash: false
             };
 
             const match1 = node.matchPath('/?s=3', opts);
@@ -520,13 +520,12 @@ describe('RouteNode', function () {
             new RouteNode('c', '/?c')
         ]);
 
-        node.buildPath('a.b', {}, { trailingSlash: false }).should.eql('/a');
-        node.buildPath('a.b', { c: 1 }, { trailingSlash: false }).should.eql('/a?c=1');
-        node.buildPath('c', { c: 1 }, { trailingSlash: false }).should.eql('/?c=1');
+        node.buildPath('a.b', {}, { useTrailingSlash: false }).should.eql('/a');
+        node.buildPath('a.b', { c: 1 }, { useTrailingSlash: false }).should.eql('/a?c=1');
+        node.buildPath('c', { c: 1 }, { useTrailingSlash: false }).should.eql('/?c=1');
     });
 
     it('should remove repeated slashes when building paths', ( ) => {
-
         const node = new RouteNode('', '', [
             new RouteNode('a', '/', [
                 new RouteNode('b', '/', [

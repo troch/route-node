@@ -1,23 +1,22 @@
-import babel from 'rollup-plugin-babel';
-import nodeResolve from 'rollup-plugin-node-resolve';
-
-const babelOptions = {
-    presets: [[ 'env', { modules: false }]],
-    plugins: [
-        'transform-object-rest-spread',
-        'transform-class-properties',
-        'transform-export-extensions'
-    ],
-    babelrc: false
-};
+import typescript from 'rollup-plugin-typescript2'
+import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default ['umd', 'es', 'cjs'].map(format => ({
-    input: 'modules/RouteNode.js',
-    plugins: [ nodeResolve({ jsnext: true }), babel(babelOptions) ],
-    name: 'RouteNode',
-    moduleId: 'RouteNode',
+    input: 'modules/RouteNode.ts',
+    plugins: [
+        nodeResolve({ module: true, jsnext: true }),
+        typescript({
+            useTsconfigDeclarationDir: true,
+            clean: true
+        })
+    ].filter(Boolean),
+    external:
+        format === 'umd'
+            ? []
+            : Object.keys(require('./package.json').dependencies),
     output: {
+        name: 'RouteNode',
         format,
         file: `dist/${format}/route-node.js`
     }
-}));
+}))

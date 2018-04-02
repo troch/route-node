@@ -1,3 +1,17 @@
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/troch/route-node/compare/v2.0.3...v3.0.0) (2018-04-02)
+
+Version 3 is a refactoring of options: below is the gist, but make sure to read the docs!
+
+
+### BREAKING CHANGES
+
+* 'trailingSlash' has been renamed to 'strictTrailingSlash'
+* 'useTrailingSlash' has been renamed to 'trailingSlashMode' with value being 'default', 'never' or 'always'
+* 'strictQueryParams' has been renamed to 'queryParamsMode' with valu being 'default', 'strict' or 'loose'
+
+
+
 <a name="2.0.3"></a>
 ## [2.0.3](https://github.com/troch/route-node/compare/v2.0.2...v2.0.3) (2018-03-05)
 

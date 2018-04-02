@@ -1,5 +1,5 @@
 import { Path } from 'path-parser'
-import { build } from 'search-params'
+import { build, IOptions as QueryParamsOptions } from 'search-params'
 
 import {
     buildPathFromSegments,
@@ -17,10 +17,27 @@ export interface RouteDefinition {
 }
 export type Route = RouteNode | RouteDefinition
 export type Callback = (...args: any[]) => void
+export type TrailingSlashMode = 'default' | 'never' | 'always'
+export type QueryParamsMode = 'default' | 'strict' | 'loose'
 
+const defaultBuildOptions = {
+    queryParamsMode: 'default',
+    trailingSlashMode: 'default'
+}
+export interface BuildOptions {
+    trailingSlashMode?: TrailingSlashMode
+    queryParamsMode?: QueryParamsMode
+    queryParams?: QueryParamsOptions
+}
+const defaultMatchOptions = {
+    ...defaultBuildOptions,
+    strongMatching: true
+}
 export interface MatchOptions {
+    trailingSlashMode?: TrailingSlashMode
+    queryParamsMode?: QueryParamsMode
+    queryParams?: QueryParamsOptions
     strictTrailingSlash?: boolean
-    strictQueryParams?: boolean
     strongMatching?: boolean
 }
 
@@ -41,16 +58,11 @@ export interface RouteNodeState {
     meta: RouteNodeStateMeta
 }
 
-export interface BuildOptions {
-    useTrailingSlash?: boolean
-    strictQueryParams?: boolean
-}
-
 export default class RouteNode {
     public name: string
     public absolute: boolean
     public path: string
-    public parser?: Path
+    public parser: Path | null
     public children: RouteNode[]
     public parent?: RouteNode
 
@@ -154,10 +166,8 @@ export default class RouteNode {
     public buildPath(
         routeName: string,
         params: object = {},
-        opts: BuildOptions = {}
+        options: BuildOptions = {}
     ): string {
-        const defaultOptions = { strictQueryParams: true }
-        const options = { ...defaultOptions, ...opts }
         const path = buildPathFromSegments(
             this.getSegmentsByName(routeName),
             params,
@@ -192,13 +202,7 @@ export default class RouteNode {
             path = '/'
         }
 
-        const defaultOptions = {
-            strictTrailingSlash: false,
-            strictQueryParams: true,
-            strongMatching: true
-        }
-        const opts = { ...defaultOptions, ...options }
-        const match = this.getSegmentsMatchingPath(path, opts)
+        const match = this.getSegmentsMatchingPath(path, options)
 
         if (match) {
             const matchedSegments = match.segments

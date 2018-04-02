@@ -57,6 +57,10 @@ export const buildPathFromSegments = (
         return null
     }
 
+    const {
+        queryParamsMode = 'default',
+        trailingSlashMode = 'default'
+    } = options
     const searchParams = []
     const nonSearchParams = []
 
@@ -67,7 +71,7 @@ export const buildPathFromSegments = (
         nonSearchParams.push(...parser.spatParams)
     }
 
-    if (!options.strictQueryParams) {
+    if (queryParamsMode === 'loose') {
         const extraParams = Object.keys(params).reduce(
             (acc, p) =>
                 searchParams.indexOf(p) === -1 &&
@@ -92,7 +96,8 @@ export const buildPathFromSegments = (
     const path = segments
         .reduce((path, segment) => {
             const segmentPath = segment.parser.build(params, {
-                ignoreSearch: true
+                ignoreSearch: true,
+                queryParams: options.queryParams
             })
 
             return segment.absolute ? segmentPath : path + segmentPath
@@ -102,9 +107,9 @@ export const buildPathFromSegments = (
 
     let finalPath = path
 
-    if (options.useTrailingSlash === true) {
+    if (options.trailingSlashMode === 'always') {
         finalPath = /\/$/.test(path) ? path : `${path}/`
-    } else if (options.useTrailingSlash === false && path !== '/') {
+    } else if (options.trailingSlashMode === 'never' && path !== '/') {
         finalPath = /\/$/.test(path) ? path.slice(0, -1) : path
     }
 

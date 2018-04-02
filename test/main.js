@@ -59,7 +59,6 @@ describe('RouteNode', function() {
         ;(function() {
             new RouteNode('', '', [{ name: 'home' }])
         }.should.throw())
-
         ;(function() {
             new RouteNode('', '', [{ path: '/profile' }])
         }.should.throw())
@@ -67,7 +66,6 @@ describe('RouteNode', function() {
 
     it('should throw an error when trying to add a node which is not an instance of RouteNode or Object', function() {
         const rootNode = new RouteNode('', '')
-
         ;(function() {
             rootNode.add('users')
         }.should.throw())
@@ -75,19 +73,15 @@ describe('RouteNode', function() {
 
     it('should throw an error when trying to add a route to a node with an already existing alias or path', function() {
         const root = new RouteNode('', '', [{ name: 'home', path: '/home' }])
-
         ;(function() {
             root.add({ name: 'home', path: '/profile' })
         }.should.throw('Alias "home" is already defined in route node'))
-
         ;(function() {
             root.add({ name: 'profile', path: '/home' })
         }.should.throw('Path "/home" is already defined in route node'))
-
         ;(function() {
             root.add({ name: 'home.profile', path: '/home' })
         }.should.not.throw())
-
         ;(function() {
             root.add({ name: 'home.profile', path: '/profile' })
         }.should.throw())
@@ -95,7 +89,6 @@ describe('RouteNode', function() {
 
     it("should throw an error when trying to add a route which parent doesn't exist", function() {
         const root = new RouteNode('', '', [{ name: 'home', path: '/home' }])
-
         ;(function() {
             root.add({ name: 'nested.route', path: '/route' })
         }.should.throw())
@@ -278,7 +271,7 @@ describe('RouteNode', function() {
         // still matching remainingPath only consist of unknown qsParams
         node
             .matchPath('/grand-parent?nickname=gran&name=papa', {
-                strictQueryParams: false
+                queryParamsMode: 'default'
             })
             .should.eql({
                 meta: {
@@ -292,7 +285,7 @@ describe('RouteNode', function() {
         node
             .matchPath(
                 '/grand-parent/parent/child?nickname=gran&names=papa-maman',
-                { strictQueryParams: false }
+                { queryParamsMode: 'default' }
             )
             .should.eql({
                 meta: {
@@ -348,10 +341,10 @@ describe('RouteNode', function() {
             .addNode('users.list', '/list')
 
         rootNode
-            .buildPath('users.view', { id: 1 }, { strictQueryParams: true })
+            .buildPath('users.view', { id: 1 }, { queryParamsMode: 'strict' })
             .should.equal('/users/view/1')
         rootNode
-            .buildPath('users.list', { id: 1 }, { strictQueryParams: true })
+            .buildPath('users.list', { id: 1 }, { queryParamsMode: 'strict' })
             .should.equal('/users/list')
     })
 
@@ -531,7 +524,9 @@ describe('RouteNode', function() {
         const node = new RouteNode('', '', [new RouteNode('route', '/path')])
 
         withoutMeta(
-            node.matchPath('/path?a=1&b=2&c=3&d', { strictQueryParams: false })
+            node.matchPath('/path?a=1&b=2&c=3&d', {
+                queryParamsMode: 'default'
+            })
         ).should.eql({
             name: 'route',
             params: { a: '1', b: '2', c: '3', d: null }
@@ -597,7 +592,7 @@ describe('RouteNode', function() {
         })
         node.buildPath('section.top').should.eql('/section/')
         node
-            .buildPath('section.top', {}, { useTrailingSlash: false })
+            .buildPath('section.top', {}, { trailingSlashMode: 'never' })
             .should.eql('/section')
     })
 
@@ -636,7 +631,7 @@ describe('RouteNode', function() {
         })
     })
 
-    context('when strictQueryParams is falsy', () => {
+    context('when queryParamsMode is loose', () => {
         it('should serialise extra params to search part', () => {
             const node = new RouteNode('', '', [new RouteNode('home', '/home')])
 
@@ -644,7 +639,7 @@ describe('RouteNode', function() {
                 .buildPath(
                     'home',
                     { extra: 1, more: 2 },
-                    { strictQueryParams: false }
+                    { queryParamsMode: 'loose' }
                 )
                 .should.equal('/home?extra=1&more=2')
         })
@@ -659,7 +654,7 @@ describe('RouteNode', function() {
                     { name: 'home', path: '/home' }
                 ])
                 const opts = {
-                    strictQueryParams: false,
+                    queryParamsMode: 'default',
                     strictTrailingSlash: false
                 }
 
@@ -684,12 +679,14 @@ describe('RouteNode', function() {
             new RouteNode('c', '/?c')
         ])
 
-        node.buildPath('a.b', {}, { useTrailingSlash: false }).should.eql('/a')
         node
-            .buildPath('a.b', { c: 1 }, { useTrailingSlash: false })
+            .buildPath('a.b', {}, { trailingSlashMode: 'never' })
+            .should.eql('/a')
+        node
+            .buildPath('a.b', { c: 1 }, { trailingSlashMode: 'never' })
             .should.eql('/a?c=1')
         node
-            .buildPath('c', { c: 1 }, { useTrailingSlash: false })
+            .buildPath('c', { c: 1 }, { trailingSlashMode: 'never' })
             .should.eql('/?c=1')
     })
 

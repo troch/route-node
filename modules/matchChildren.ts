@@ -12,7 +12,11 @@ const matchChildren = (
     options: MatchOptions = {},
     consumedBefore?: string
 ) => {
-    const { strictQueryParams, strictTrailingSlash, strongMatching } = options
+    const {
+        queryParamsMode = 'default',
+        strictTrailingSlash = false,
+        strongMatching = true
+    } = options
     const isRoot = nodes.length === 1 && nodes[0].name === ''
     // for (child of node.children) {
     for (const child of nodes) {
@@ -78,7 +82,7 @@ const matchChildren = (
             }
             if (
                 !isRoot &&
-                !strictQueryParams &&
+                queryParamsMode !== 'strict' &&
                 remainingPath.indexOf('?') === 0
             ) {
                 // unmatched queryParams in non strict mode

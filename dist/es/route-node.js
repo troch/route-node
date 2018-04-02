@@ -63,6 +63,7 @@ var buildPathFromSegments = function (segments, params, options) {
     if (!segments) {
         return null;
     }
+    var _a = options.queryParamsMode, queryParamsMode = _a === void 0 ? 'default' : _a, _b = options.trailingSlashMode;
     var searchParams = [];
     var nonSearchParams = [];
     for (var _i = 0, segments_1 = segments; _i < segments_1.length; _i++) {
@@ -72,7 +73,7 @@ var buildPathFromSegments = function (segments, params, options) {
         nonSearchParams.push.apply(nonSearchParams, parser.urlParams);
         nonSearchParams.push.apply(nonSearchParams, parser.spatParams);
     }
-    if (!options.strictQueryParams) {
+    if (queryParamsMode === 'loose') {
         var extraParams = Object.keys(params).reduce(function (acc, p) {
             return searchParams.indexOf(p) === -1 &&
                 nonSearchParams.indexOf(p) === -1
@@ -91,16 +92,17 @@ var buildPathFromSegments = function (segments, params, options) {
     var path = segments
         .reduce(function (path, segment) {
         var segmentPath = segment.parser.build(params, {
-            ignoreSearch: true
+            ignoreSearch: true,
+            queryParams: options.queryParams
         });
         return segment.absolute ? segmentPath : path + segmentPath;
     }, '')
         .replace(/\/\/{1,}/g, '/');
     var finalPath = path;
-    if (options.useTrailingSlash === true) {
+    if (options.trailingSlashMode === 'always') {
         finalPath = /\/$/.test(path) ? path : path + "/";
     }
-    else if (options.useTrailingSlash === false && path !== '/') {
+    else if (options.trailingSlashMode === 'never' && path !== '/') {
         finalPath = /\/$/.test(path) ? path.slice(0, -1) : path;
     }
     return finalPath + (searchPart ? '?' + searchPart : '');
@@ -113,7 +115,7 @@ var getPath = function (path) { return path.split('?')[0]; };
 var getSearch = function (path) { return path.split('?')[1] || ''; };
 var matchChildren = function (nodes, pathSegment, currentMatch, options, consumedBefore) {
     if (options === void 0) { options = {}; }
-    var strictQueryParams = options.strictQueryParams, strictTrailingSlash = options.strictTrailingSlash, strongMatching = options.strongMatching;
+    var _a = options.queryParamsMode, queryParamsMode = _a === void 0 ? 'default' : _a, _b = options.strictTrailingSlash, strictTrailingSlash = _b === void 0 ? false : _b, _c = options.strongMatching, strongMatching = _c === void 0 ? true : _c;
     var isRoot = nodes.length === 1 && nodes[0].name === '';
     var _loop_1 = function (child) {
         // Partially match path
@@ -147,8 +149,7 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
             }
             var querystring = omit(getSearch(segment.replace(consumedPath, '')), child.parser.queryParams).querystring;
             remainingPath =
-                getPath(remainingPath) +
-                    (querystring ? "?" + querystring : '');
+                getPath(remainingPath) + (querystring ? "?" + querystring : '');
             if (!strictTrailingSlash &&
                 !isRoot &&
                 remainingPath === '/' &&
@@ -161,13 +162,12 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
                 return { value: currentMatch };
             }
             if (!isRoot &&
-                !strictQueryParams &&
+                queryParamsMode !== 'strict' &&
                 remainingPath.indexOf('?') === 0) {
                 // unmatched queryParams in non strict mode
                 var remainingQueryParams_1 = parse(remainingPath.slice(1));
                 Object.keys(remainingQueryParams_1).forEach(function (name) {
-                    return (currentMatch.params[name] =
-                        remainingQueryParams_1[name]);
+                    return (currentMatch.params[name] = remainingQueryParams_1[name]);
                 });
                 return { value: currentMatch };
             }
@@ -245,6 +245,11 @@ var sortChildren = (function (originalChildren) { return function (left, right) 
     return originalChildren.indexOf(left) - originalChildren.indexOf(right);
 }; });
 
+var defaultBuildOptions = {
+    queryParamsMode: 'default',
+    trailingSlashMode: 'default'
+};
+var defaultMatchOptions = __assign({}, defaultBuildOptions, { strongMatching: true });
 var RouteNode = /** @class */ (function () {
     function RouteNode(name, path, childRoutes, cb, parent) {
         if (name === void 0) { name = ''; }
@@ -317,11 +322,9 @@ var RouteNode = /** @class */ (function () {
     RouteNode.prototype.getNonAbsoluteChildren = function () {
         return this.children.filter(function (child) { return !child.absolute; });
     };
-    RouteNode.prototype.buildPath = function (routeName, params, opts) {
+    RouteNode.prototype.buildPath = function (routeName, params, options) {
         if (params === void 0) { params = {}; }
-        if (opts === void 0) { opts = {}; }
-        var defaultOptions = { strictQueryParams: true };
-        var options = __assign({}, defaultOptions, opts);
+        if (options === void 0) { options = {}; }
         var path = buildPathFromSegments(this.getSegmentsByName(routeName), params, options);
         return path;
     };
@@ -338,16 +341,11 @@ var RouteNode = /** @class */ (function () {
         };
     };
     RouteNode.prototype.matchPath = function (path, options) {
-        if (path === '') {
+        if (options === void 0) { options = {}; }
+        if (path === '' && !options.strictTrailingSlash) {
             path = '/';
         }
-        var defaultOptions = {
-            strictTrailingSlash: false,
-            strictQueryParams: true,
-            strongMatching: true
-        };
-        var opts = __assign({}, defaultOptions, options);
-        var match = this.getSegmentsMatchingPath(path, opts);
+        var match = this.getSegmentsMatchingPath(path, options);
         if (match) {
             var matchedSegments = match.segments;
             if (matchedSegments[0].absolute) {

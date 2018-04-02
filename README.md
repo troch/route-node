@@ -7,16 +7,14 @@
 
 A package to create a tree (trie) of named routes, allowing you to build and match routes.
 
-
-## Install
-
 ```sh
 $ npm install route-node --save
 ```
 
-## Usage
 
-__Building your tree:__
+## Creating your tree
+
+To read about how to define paths, look at [path-parser README](https://www.npmjs.com/package/path-parser)
 
 ```javascript
 import rootNode from 'route-node';
@@ -43,44 +41,6 @@ const rootNode = new RouteNode('', '', [
 // Add nodes programmatically
 rootNode.add(new RouteNode('home', '/home'));
 ```
-You can chain constructor with `add` and `addNode` functions, making the example above shorter:
-
-```javascript
-const rootNode = new RouteNode()
-    .addNode('users',            '/users'))
-    .addNode('users.view',       '/view/:id')
-    .addNode('users.list',       '/list')
-    .addNode('orders',           '/orders')
-    .addNode('orders.pending',   '/pending')
-    .addNode('orders.completed', '/completed')
-    .addNode('orders.view',      '/view/:id')
-```
-
-And then build paths, or match your paths against your tree:
-
-```javascript
-
-rootNode.getPath('users.view');                // => "/users/view/:id"
-rootNode.buildPath('users.view', {id: 1});     // => "/users/view/1"
-
-rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
-```
-
-__Trailing slashes can be optional__
-
-When using `matchPath`, you can pass a `trailingSlash` option for non-strict matching on trailing slashes.
-
-```javascript
-rootNode.matchPath('/users/view/1');           // => {name: "users.view", params: {id: "1"}}
-rootNode.matchPath('/users/view/1/');          // => null
-
-rootNode.matchPath('/users/view/1/', { trailingSlash: true });
-// => {name: "users.view", params: {id: "1"}}
-```
-
-`buildPath` also accepts a `trailingSlash` and `strictQueryParams` option. When `trailingSlash` is set to `true`, it will force a trailing slash on built paths. When set to `false`, it will remove trailing slashes. When `strictQueryParams` is set to `false` (default `true`) additional parameters will be serialised as query parameters.
-
-Query parameters are optional, however a match will fail if the URL contains non-expected query parameters. This can be prevented by setting `strictQueryParams` to false.
 
 __`/` paths__
 
@@ -98,15 +58,35 @@ tree.matchPath('/admin'); // => { name: 'admin.home', params: {} }
 tree.buildPath('admin.home', {}, { trailingSlash: false }); // => '/admin'
 ```
 
-__Other options__
-
-When matching paths, you can use two other options: `ignoreSearch` for not taking query parameters into account, and `strongMatching` (default `true`) for enforcing strong partial matching (making sure matches are well delimited).
-
-## Callbacks
+__Callbacks__
 
 When adding routes (with contructor or `.add`), you can pass a callback which will be executed for each route added successfully to the tree.
 
+## Building and matching routes
 
-## Based on
+__node.buildPath(routeName: string, params?: object, options?: BuildOptions): string__
 
-- [path-parser](https://www.npmjs.com/package/path-parser) for parsing, matching and building paths.
+```javascript
+rootNode.buildPath('users.view', {id: 1})     // => "/users/view/1"
+```
+
+
+__matchPath(path: string, options?: MatchOptions): RouteNodeState | null__
+
+```js
+rootNode.matchPath('/users/view/1');
+// => {name: "users.view", params: {id: "1"}}
+```
+
+## Options
+
+Options available:
+- `trailingSlashMode`:
+  - `'default'`: building follows path definitions
+  - `'none'`: when building, trailing slash is removed
+  - `'always'`: when building, trailing slash is added
+- `queryParamsMode`:
+  - `'default'`: a path will match with any query parameters added, but when building, extra parameters won't appear in the returned path.
+  - `'strict'`: a path with query parameters which were not listed in node definition will cause a match to be unsuccessful. When building, extra parameters won't appear in the returned path.
+  - `'loose'`: a path will match with any query parameters added, and when building, extra parameters will appear in the returned path.
+- `queryParams`: [options for query parameters]

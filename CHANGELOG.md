@@ -1,3 +1,13 @@
+<a name="3.0.1"></a>
+## [3.0.1](https://github.com/troch/route-node/compare/v3.0.0...v3.0.1) (2018-04-03)
+
+
+### Bug Fixes
+
+* link typings to the right file ([59e2eef](https://github.com/troch/route-node/commit/59e2eef))
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/troch/route-node/compare/v2.0.3...v3.0.0) (2018-04-02)
 

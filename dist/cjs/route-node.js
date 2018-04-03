@@ -134,7 +134,7 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
         }
         if (!match) {
             match = child.parser.partialTest(segment, {
-                delimiter: strongMatching
+                delimited: strongMatching
             });
         }
         if (match) {

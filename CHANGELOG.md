@@ -1,3 +1,13 @@
+<a name="3.0.2"></a>
+## [3.0.2](https://github.com/troch/route-node/compare/v3.0.1...v3.0.2) (2018-04-03)
+
+
+### Bug Fixes
+
+* update path-parser to v4.0.3 ([6c3a6ca](https://github.com/troch/route-node/commit/6c3a6ca))
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/troch/route-node/compare/v3.0.0...v3.0.1) (2018-04-03)
 

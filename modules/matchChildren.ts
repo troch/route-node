@@ -37,7 +37,7 @@ const matchChildren = (
 
         if (!match) {
             match = child.parser.partialTest(segment, {
-                delimiter: strongMatching
+                delimited: strongMatching
             })
         }
 

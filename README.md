@@ -89,4 +89,4 @@ Options available:
   - `'default'`: a path will match with any query parameters added, but when building, extra parameters won't appear in the returned path.
   - `'strict'`: a path with query parameters which were not listed in node definition will cause a match to be unsuccessful. When building, extra parameters won't appear in the returned path.
   - `'loose'`: a path will match with any query parameters added, and when building, extra parameters will appear in the returned path.
-- `queryParams`: [options for query parameters]
+- `queryParams`: [options for query parameters](https://github.com/troch/search-params#options)

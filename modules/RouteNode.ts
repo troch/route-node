@@ -40,6 +40,7 @@ export interface MatchOptions {
     strictTrailingSlash?: boolean
     strongMatching?: boolean
 }
+export { QueryParamsOptions }
 
 export interface MatchResponse {
     segments: RouteNode[]

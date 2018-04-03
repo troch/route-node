@@ -6,7 +6,7 @@
   "jsnext:main": "dist/es/route-node.js",
   "module": "dist/es/route-node.js",
   "sideEffects": false,
-  "typings": "./typings/index.d.ts",
+  "typings": "./typings/RouteNode.d.ts",
   "scripts": {
     "test": "mocha -r ts-node/register 'test/main.js'",
     "lint": "tslint modules/*.ts",

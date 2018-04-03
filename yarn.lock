@@ -2259,9 +2259,9 @@ path-parse@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.5.tgz#3c1adf871ea9cd6c9431b6ea2bd74a0ff055c4c1"
 
-path-parser@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-4.0.2.tgz#682f863e4b05eacae00c21bc61614c367468b7db"
+path-parser@4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-4.0.3.tgz#237ad649aad0d850ff58ac83335909b579035592"
   dependencies:
     search-params "2.1.2"
 

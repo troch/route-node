@@ -28,7 +28,7 @@ Version 3 is a refactoring of options: below is the gist, but make sure to read 
 
 * 'trailingSlash' has been renamed to 'strictTrailingSlash'
 * 'useTrailingSlash' has been renamed to 'trailingSlashMode' with value being 'default', 'never' or 'always'
-* 'strictQueryParams' has been renamed to 'queryParamsMode' with valu being 'default', 'strict' or 'loose'
+* 'strictQueryParams' has been renamed to 'queryParamsMode' with value being 'default', 'strict' or 'loose'
 
 
 

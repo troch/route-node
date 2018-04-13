@@ -55,7 +55,7 @@ const tree = new RouteNode('', '', [
 ]);
 
 tree.matchPath('/admin'); // => { name: 'admin.home', params: {} }
-tree.buildPath('admin.home', {}, { trailingSlash: false }); // => '/admin'
+tree.buildPath('admin.home', {}, { trailingSlashMode: 'never' }); // => '/admin'
 ```
 
 __Callbacks__

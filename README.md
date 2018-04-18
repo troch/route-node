@@ -83,7 +83,7 @@ rootNode.matchPath('/users/view/1');
 Options available:
 - `trailingSlashMode`:
   - `'default'`: building follows path definitions
-  - `'none'`: when building, trailing slash is removed
+  - `'never'`: when building, trailing slash is removed
   - `'always'`: when building, trailing slash is added
 - `queryParamsMode`:
   - `'default'`: a path will match with any query parameters added, but when building, extra parameters won't appear in the returned path.

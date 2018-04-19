@@ -726,6 +726,14 @@ describe('RouteNode', function() {
             params: { path: 'foo', bar: 'bar' }
         })
     })
+
+    it('should be case insensitive by default', () => {
+        const node = new RouteNode('', '', [new RouteNode('a', '/a')])
+
+        node.matchPath('/a').name.should.equal('a')
+        node.matchPath('/A', { caseSensitive: false }).name.should.equal('a')
+        should.not.exist(node.matchPath('/A', { caseSensitive: true }))
+    })
 })
 
 function getRoutes(trailingSlash) {

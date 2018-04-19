@@ -15,7 +15,8 @@ const matchChildren = (
     const {
         queryParamsMode = 'default',
         strictTrailingSlash = false,
-        strongMatching = true
+        strongMatching = true,
+        caseSensitive = false
     } = options
     const isRoot = nodes.length === 1 && nodes[0].name === ''
     // for (child of node.children) {
@@ -32,12 +33,16 @@ const matchChildren = (
         }
 
         if (!child.children.length) {
-            match = child.parser.test(segment, options)
+            match = child.parser.test(segment, {
+                caseSensitive,
+                strictTrailingSlash
+            })
         }
 
         if (!match) {
             match = child.parser.partialTest(segment, {
-                delimited: strongMatching
+                delimited: strongMatching,
+                caseSensitive
             })
         }
 
@@ -46,11 +51,15 @@ const matchChildren = (
             let consumedPath = child.parser.build(match, {
                 ignoreSearch: true
             })
+
             if (!strictTrailingSlash && !child.children.length) {
                 consumedPath = consumedPath.replace(/\/$/, '')
             }
 
-            remainingPath = segment.replace(consumedPath, '')
+            remainingPath = segment.replace(
+                new RegExp('^' + consumedPath, 'i'),
+                ''
+            )
 
             if (!strictTrailingSlash && !child.children.length) {
                 remainingPath = remainingPath.replace(/^\/\?/, '?')

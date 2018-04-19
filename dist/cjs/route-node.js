@@ -117,7 +117,7 @@ var getPath = function (path) { return path.split('?')[0]; };
 var getSearch = function (path) { return path.split('?')[1] || ''; };
 var matchChildren = function (nodes, pathSegment, currentMatch, options, consumedBefore) {
     if (options === void 0) { options = {}; }
-    var _a = options.queryParamsMode, queryParamsMode = _a === void 0 ? 'default' : _a, _b = options.strictTrailingSlash, strictTrailingSlash = _b === void 0 ? false : _b, _c = options.strongMatching, strongMatching = _c === void 0 ? true : _c;
+    var _a = options.queryParamsMode, queryParamsMode = _a === void 0 ? 'default' : _a, _b = options.strictTrailingSlash, strictTrailingSlash = _b === void 0 ? false : _b, _c = options.strongMatching, strongMatching = _c === void 0 ? true : _c, _d = options.caseSensitive, caseSensitive = _d === void 0 ? false : _d;
     var isRoot = nodes.length === 1 && nodes[0].name === '';
     var _loop_1 = function (child) {
         // Partially match path
@@ -130,11 +130,15 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
             segment = '/' + pathSegment;
         }
         if (!child.children.length) {
-            match = child.parser.test(segment, options);
+            match = child.parser.test(segment, {
+                caseSensitive: caseSensitive,
+                strictTrailingSlash: strictTrailingSlash
+            });
         }
         if (!match) {
             match = child.parser.partialTest(segment, {
-                delimited: strongMatching
+                delimited: strongMatching,
+                caseSensitive: caseSensitive
             });
         }
         if (match) {
@@ -145,7 +149,7 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
             if (!strictTrailingSlash && !child.children.length) {
                 consumedPath = consumedPath.replace(/\/$/, '');
             }
-            remainingPath = segment.replace(consumedPath, '');
+            remainingPath = segment.replace(new RegExp('^' + consumedPath, 'i'), '');
             if (!strictTrailingSlash && !child.children.length) {
                 remainingPath = remainingPath.replace(/^\/\?/, '?');
             }

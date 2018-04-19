@@ -20,6 +20,7 @@ export interface MatchOptions {
     queryParams?: QueryParamsOptions;
     strictTrailingSlash?: boolean;
     strongMatching?: boolean;
+    caseSensitive?: boolean;
 }
 export { QueryParamsOptions };
 export interface MatchResponse {

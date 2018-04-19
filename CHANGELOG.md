@@ -1,3 +1,13 @@
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/troch/route-node/compare/v3.0.3...v3.1.0) (2018-04-19)
+
+
+### Features
+
+* expose caseSensitive option from path-parser ([ff3fcb8](https://github.com/troch/route-node/commit/ff3fcb8))
+
+
+
 <a name="3.0.3"></a>
 ## [3.0.3](https://github.com/troch/route-node/compare/v3.0.2...v3.0.3) (2018-04-09)
 

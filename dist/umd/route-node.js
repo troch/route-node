@@ -548,7 +548,7 @@
             }
             return acc;
         }, {});
-        var searchPart = build(searchParamsObject);
+        var searchPart = build(searchParamsObject, options.queryParams);
         var path = segments
             .reduce(function (path, segment) {
             var segmentPath = segment.parser.build(params, {
@@ -590,7 +590,8 @@
             if (!child.children.length) {
                 match = child.parser.test(segment, {
                     caseSensitive: caseSensitive,
-                    strictTrailingSlash: strictTrailingSlash
+                    strictTrailingSlash: strictTrailingSlash,
+                    queryParams: options.queryParams
                 });
             }
             if (!match) {
@@ -611,7 +612,7 @@
                 if (!strictTrailingSlash && !child.children.length) {
                     remainingPath = remainingPath.replace(/^\/\?/, '?');
                 }
-                var querystring = omit(getSearch$1(segment.replace(consumedPath, '')), child.parser.queryParams).querystring;
+                var querystring = omit(getSearch$1(segment.replace(consumedPath, '')), child.parser.queryParams, options.queryParams).querystring;
                 remainingPath =
                     getPath(remainingPath) + (querystring ? "?" + querystring : '');
                 if (!strictTrailingSlash &&
@@ -629,7 +630,7 @@
                     queryParamsMode !== 'strict' &&
                     remainingPath.indexOf('?') === 0) {
                     // unmatched queryParams in non strict mode
-                    var remainingQueryParams_1 = parse(remainingPath.slice(1));
+                    var remainingQueryParams_1 = parse(remainingPath.slice(1), options.queryParams);
                     Object.keys(remainingQueryParams_1).forEach(function (name) {
                         return (currentMatch.params[name] = remainingQueryParams_1[name]);
                     });

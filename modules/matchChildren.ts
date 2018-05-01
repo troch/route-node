@@ -35,7 +35,8 @@ const matchChildren = (
         if (!child.children.length) {
             match = child.parser.test(segment, {
                 caseSensitive,
-                strictTrailingSlash
+                strictTrailingSlash,
+                queryParams: options.queryParams
             })
         }
 
@@ -67,7 +68,8 @@ const matchChildren = (
 
             const { querystring } = omit(
                 getSearch(segment.replace(consumedPath, '')),
-                child.parser.queryParams
+                child.parser.queryParams,
+                options.queryParams
             )
             remainingPath =
                 getPath(remainingPath) + (querystring ? `?${querystring}` : '')
@@ -95,7 +97,10 @@ const matchChildren = (
                 remainingPath.indexOf('?') === 0
             ) {
                 // unmatched queryParams in non strict mode
-                const remainingQueryParams = parse(remainingPath.slice(1))
+                const remainingQueryParams = parse(
+                    remainingPath.slice(1),
+                    options.queryParams
+                )
 
                 Object.keys(remainingQueryParams).forEach(
                     name =>

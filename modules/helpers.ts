@@ -91,7 +91,7 @@ export const buildPathFromSegments = (
         return acc
     }, {})
 
-    const searchPart = build(searchParamsObject)
+    const searchPart = build(searchParamsObject, options.queryParams)
 
     const path = segments
         .reduce((path, segment) => {

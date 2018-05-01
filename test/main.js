@@ -734,6 +734,21 @@ describe('RouteNode', function() {
         node.matchPath('/A', { caseSensitive: false }).name.should.equal('a')
         should.not.exist(node.matchPath('/A', { caseSensitive: true }))
     })
+
+    it('should pass query parameters options to path-parser', () => {
+        const node = new RouteNode('', '', [new RouteNode('a', '/a?b&c')])
+        const options = {
+            queryParams: {
+                booleanFormat: 'string',
+                arrayFormat: 'brackets'
+            }
+        }
+
+        node.matchPath('/a?b=true&c[]=1', options).params.should.eql({
+            b: true,
+            c: ['1']
+        })
+    })
 })
 
 function getRoutes(trailingSlash) {

@@ -43,7 +43,8 @@ const matchChildren = (
         if (!match) {
             match = child.parser.partialTest(segment, {
                 delimited: strongMatching,
-                caseSensitive
+                caseSensitive,
+                queryParams: options.queryParams
             })
         }
 

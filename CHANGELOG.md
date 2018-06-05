@@ -1,3 +1,14 @@
+<a name="3.2.1"></a>
+## [3.2.1](https://github.com/troch/route-node/compare/v3.2.0...v3.2.1) (2018-06-05)
+
+
+### Bug Fixes
+
+* pass query param options on partial tests ([068a146](https://github.com/troch/route-node/commit/068a146))
+* update search-params and path-parser to decode unicode values when parsing ([7a1c0b9](https://github.com/troch/route-node/commit/7a1c0b9))
+
+
+
 <a name="3.2.0"></a>
 # [3.2.0](https://github.com/troch/route-node/compare/v3.1.2...v3.2.0) (2018-05-14)
 

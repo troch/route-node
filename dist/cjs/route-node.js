@@ -139,7 +139,8 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
         if (!match) {
             match = child.parser.partialTest(segment, {
                 delimited: strongMatching,
-                caseSensitive: caseSensitive
+                caseSensitive: caseSensitive,
+                queryParams: options.queryParams
             });
         }
         if (match) {

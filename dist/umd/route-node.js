@@ -99,10 +99,10 @@
             }
         }
         else if (opts.booleanFormat === 'unicode') {
-            if (value === '✓') {
+            if (decodeValue(value) === '✓') {
                 return true;
             }
-            if (value === '✗') {
+            if (decodeValue(value) === '✗') {
                 return false;
             }
         }
@@ -214,7 +214,7 @@
 
     var defaultOrConstrained = function (match) {
         return '(' +
-            (match ? match.replace(/(^<|>$)/g, '') : "[a-zA-Z0-9-_.~%':|=]+") +
+            (match ? match.replace(/(^<|>$)/g, '') : "[a-zA-Z0-9-_.~%':|=+]+") +
             ')';
     };
     var rules = [
@@ -599,7 +599,8 @@
             if (!match) {
                 match = child.parser.partialTest(segment, {
                     delimited: strongMatching,
-                    caseSensitive: caseSensitive
+                    caseSensitive: caseSensitive,
+                    queryParams: options.queryParams
                 });
             }
             if (match) {

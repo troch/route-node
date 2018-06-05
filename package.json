@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "A package to create a tree of named routes",
   "main": "dist/cjs/route-node.js",
   "jsnext:main": "dist/es/route-node.js",

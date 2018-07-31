@@ -110,44 +110,43 @@ export default class RouteNode {
             return
         }
 
-        if (route instanceof Array) {
-            route.forEach(r => this.add(r, cb))
-            return
-        }
-
-        if (!(route instanceof RouteNode) && !(route instanceof Object)) {
-            throw new Error(
-                'RouteNode.add() expects routes to be an Object or an instance of RouteNode.'
-            )
-        } else if (route instanceof RouteNode) {
-            route.setParent(this)
-            this.addRouteNode(route)
-        } else {
-            if (!route.name || !route.path) {
+        const routes = route instanceof Array ? route : [route]
+        routes.forEach((route, idx) => {
+            const skipChildrenSort = idx < routes.length - 1
+            if (!(route instanceof RouteNode) && !(route instanceof Object)) {
                 throw new Error(
-                    'RouteNode.add() expects routes to have a name and a path defined.'
+                    'RouteNode.add() expects routes to be an Object or an instance of RouteNode.'
                 )
-            }
+            } else if (route instanceof RouteNode) {
+                route.setParent(this)
+                this.addRouteNode(route, skipChildrenSort)
+            } else {
+                if (!route.name || !route.path) {
+                    throw new Error(
+                        'RouteNode.add() expects routes to have a name and a path defined.'
+                    )
+                }
 
-            const routeNode = new RouteNode(
-                route.name,
-                route.path,
-                route.children,
-                cb,
-                this
-            )
-            const fullName = routeNode
-                .getParentSegments([routeNode])
-                .map(_ => _.name)
-                .join('.')
-            if (cb) {
-                cb({
-                    ...route,
-                    name: fullName
-                })
+                const routeNode = new RouteNode(
+                    route.name,
+                    route.path,
+                    route.children,
+                    cb,
+                    this
+                )
+                const fullName = routeNode
+                    .getParentSegments([routeNode])
+                    .map(_ => _.name)
+                    .join('.')
+                if (cb) {
+                    cb({
+                        ...route,
+                        name: fullName
+                    })
+                }
+                this.addRouteNode(routeNode, skipChildrenSort)
             }
-            this.addRouteNode(routeNode)
-        }
+        })
 
         return this
     }
@@ -228,7 +227,10 @@ export default class RouteNode {
         return buildStateFromMatch(match)
     }
 
-    private addRouteNode(route: RouteNode, cb?: () => void): this {
+    private addRouteNode(
+        route: RouteNode,
+        skipChildrenSort: boolean = false
+    ): this {
         const names = route.name.split('.')
 
         if (names.length === 1) {
@@ -256,8 +258,9 @@ export default class RouteNode {
             // Push greedy spats to the bottom of the pile
 
             const originalChildren = this.children.slice(0)
-
-            this.children.sort(sortChildren(originalChildren))
+            if (!skipChildrenSort) {
+                this.children.sort(sortChildren(originalChildren))
+            }
         } else {
             // Locate parent node
             const segments = this.getSegmentsByName(

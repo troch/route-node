@@ -94,6 +94,17 @@ describe('RouteNode', function() {
         }.should.throw())
     })
 
+    it('should be able to add lots of routes quickly', function() {
+        const root = new RouteNode('', '', [{ name: 'home', path: '/home' }])
+        const routesToAdd = [...Array(1000)].map((_, idx) => ({
+            name: `route_${idx}`,
+            path: `/custom/${idx}`
+        }))
+        root.add(routesToAdd)
+
+        root.children.length.should.equal(1001)
+    })
+
     it('should instanciate a RouteNode object from RouteNode objects', function() {
         const node = new RouteNode('', '', [
             new RouteNode('home', '/home'),

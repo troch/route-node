@@ -55,6 +55,20 @@ describe('RouteNode', function() {
         i.should.not.equal(0)
     })
 
+    it.only('should perform a final sort all routes after adding them', () => {
+        const routes = [...Array(10)].map((_, index) => ({
+            name: `r${index}`,
+            path: `/${index}`,
+            children: [...Array(500)].map((_, childIndex) => ({
+                name: `r${childIndex}`,
+                path: `/${childIndex}`
+            }))
+        }))
+        new RouteNode('', '', routes, undefined, null, true)
+        // No assertion here, if final sort functionality is broken
+        // the test will exceed the 2s timeout and fail
+    })
+
     it('should throw an error when trying to instanciate a RouteNode object with plain objects missing `name` or `path` properties', function() {
         ;(function() {
             new RouteNode('', '', [{ name: 'home' }])

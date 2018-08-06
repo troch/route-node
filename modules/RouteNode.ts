@@ -73,7 +73,9 @@ export default class RouteNode {
         path: string = '',
         childRoutes: Route[] = [],
         cb?: Callback,
-        parent?: RouteNode
+        parent?: RouteNode,
+        finalSort?: boolean,
+        sort?: boolean
     ) {
         this.name = name
         this.absolute = /^~/.test(path)
@@ -84,7 +86,11 @@ export default class RouteNode {
 
         this.checkParents()
 
-        this.add(childRoutes, cb)
+        this.add(childRoutes, cb, finalSort ? false : sort !== false)
+
+        if (finalSort) {
+            this.sortDescendants()
+        }
 
         return this
     }
@@ -105,13 +111,17 @@ export default class RouteNode {
         this.parser = path ? new Path(path) : null
     }
 
-    public add(route: Route | Route[], cb?: Callback): this {
+    public add(
+        route: Route | Route[],
+        cb?: Callback,
+        sort: boolean = true
+    ): this {
         if (route === undefined || route === null) {
             return
         }
 
         if (route instanceof Array) {
-            route.forEach(r => this.add(r, cb))
+            route.forEach(r => this.add(r, cb, sort))
             return
         }
 
@@ -121,7 +131,7 @@ export default class RouteNode {
             )
         } else if (route instanceof RouteNode) {
             route.setParent(this)
-            this.addRouteNode(route)
+            this.addRouteNode(route, sort)
         } else {
             if (!route.name || !route.path) {
                 throw new Error(
@@ -134,7 +144,9 @@ export default class RouteNode {
                 route.path,
                 route.children,
                 cb,
-                this
+                this,
+                false,
+                sort
             )
             const fullName = routeNode
                 .getParentSegments([routeNode])
@@ -146,7 +158,7 @@ export default class RouteNode {
                     name: fullName
                 })
             }
-            this.addRouteNode(routeNode)
+            this.addRouteNode(routeNode, sort)
         }
 
         return this
@@ -239,7 +251,7 @@ export default class RouteNode {
         return buildStateFromMatch(match)
     }
 
-    private addRouteNode(route: RouteNode, cb?: () => void): this {
+    private addRouteNode(route: RouteNode, sort: boolean = true): this {
         const names = route.name.split('.')
 
         if (names.length === 1) {
@@ -264,9 +276,10 @@ export default class RouteNode {
             }
 
             this.children.push(route)
-            // Push greedy spats to the bottom of the pile
 
-            this.sortChildren()
+            if (sort) {
+                this.sortChildren()
+            }
         } else {
             // Locate parent node
             const segments = this.getSegmentsByName(

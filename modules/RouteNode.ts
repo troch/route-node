@@ -165,6 +165,17 @@ export default class RouteNode {
         return this.children.filter(child => !child.absolute)
     }
 
+    public sortChildren() {
+        if (this.children.length) {
+            sortChildren(this.children)
+        }
+    }
+
+    public sortDescendants() {
+        this.sortChildren()
+        this.children.forEach(child => child.sortDescendants())
+    }
+
     public buildPath(
         routeName: string,
         params: object = {},
@@ -255,9 +266,7 @@ export default class RouteNode {
             this.children.push(route)
             // Push greedy spats to the bottom of the pile
 
-            const originalChildren = this.children.slice(0)
-
-            this.children.sort(sortChildren(originalChildren))
+            this.sortChildren()
         } else {
             // Locate parent node
             const segments = this.getSegmentsByName(

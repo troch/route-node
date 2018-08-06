@@ -1,6 +1,12 @@
 import RouteNode from './RouteNode'
 
-export default (originalChildren: RouteNode[]) => (
+export default function sortChildren(children: RouteNode[]) {
+    const originalChildren = children.slice(0)
+
+    return children.sort(sortPredicate(originalChildren))
+}
+
+const sortPredicate = (originalChildren: RouteNode[]) => (
     left: RouteNode,
     right: RouteNode
 ): number => {

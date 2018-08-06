@@ -1,3 +1,18 @@
+<a name="3.4.0"></a>
+# [3.4.0](https://github.com/troch/route-node/compare/v3.3.0...v3.4.0) (2018-08-06)
+
+
+### Features
+
+* add a method to sort all descendants ([1e2f4b7](https://github.com/troch/route-node/commit/1e2f4b7))
+
+
+### Performance Improvements
+
+* improve route addition performance by controlling when sorting is performed ([07430f0](https://github.com/troch/route-node/commit/07430f0))
+
+
+
 <a name="3.3.0"></a>
 # [3.3.0](https://github.com/troch/route-node/compare/v3.2.1...v3.3.0) (2018-07-11)
 

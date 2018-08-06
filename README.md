@@ -70,6 +70,9 @@ __node.buildPath(routeName: string, params?: object, options?: BuildOptions): st
 rootNode.buildPath('users.view', {id: 1})     // => "/users/view/1"
 ```
 
+__Performance__
+
+Node children need to be sorted for matching purposes. By default this operation happens after having added all routes.
 
 __matchPath(path: string, options?: MatchOptions): RouteNodeState | null__
 

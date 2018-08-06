@@ -74,7 +74,7 @@ export default class RouteNode {
         childRoutes: Route[] = [],
         cb?: Callback,
         parent?: RouteNode,
-        finalSort?: boolean,
+        finalSort: boolean = true,
         sort?: boolean
     ) {
         this.name = name

@@ -55,7 +55,7 @@ describe('RouteNode', function() {
         i.should.not.equal(0)
     })
 
-    it.only('should perform a final sort all routes after adding them', () => {
+    it('should perform a final sort all routes after adding them', () => {
         const routes = [...Array(10)].map((_, index) => ({
             name: `r${index}`,
             path: `/${index}`,

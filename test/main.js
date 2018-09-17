@@ -763,6 +763,26 @@ describe('RouteNode', function() {
             c: ['1']
         })
     })
+
+    it('should match path with a plus character', () => {
+        const routes = [
+            {
+                name: 'page',
+                path: '/:name<.+>/:id<(\\w{2}[0-9]{4})>.html'
+            }
+        ]
+        const options = {
+            allowNotFound: true,
+            trailingSlashMode: 'never',
+            queryParamsMode: 'loose',
+            queryParams: {nullFormat: 'hidden'}
+        }
+        const node = new RouteNode('', '', routes)
+        node.matchPath('/foo+bar/AB1234.html', options).params.should.eql({
+            id: 'AB1234',
+            name: 'foo+bar'
+        })
+    })
 })
 
 function getRoutes(trailingSlash) {

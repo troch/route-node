@@ -611,7 +611,11 @@
                 if (!strictTrailingSlash && !child.children.length) {
                     consumedPath = consumedPath.replace(/\/$/, '');
                 }
-                remainingPath = segment.replace(new RegExp('^' + consumedPath, 'i'), '');
+                // Can't create a regexp from the path because it might contain a
+                // regexp character.
+                if (segment.toLowerCase().indexOf(consumedPath.toLowerCase()) === 0) {
+                    remainingPath = segment.slice(consumedPath.length);
+                }
                 if (!strictTrailingSlash && !child.children.length) {
                     remainingPath = remainingPath.replace(/^\/\?/, '?');
                 }

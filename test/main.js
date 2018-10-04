@@ -55,7 +55,7 @@ describe('RouteNode', function() {
         i.should.not.equal(0)
     })
 
-    it.only('should perform a final sort all routes after adding them', () => {
+    it('should perform a final sort all routes after adding them', () => {
         const routes = [...Array(10)].map((_, index) => ({
             name: `r${index}`,
             path: `/${index}`,
@@ -761,6 +761,26 @@ describe('RouteNode', function() {
         node.matchPath('/a?b=true&c[]=1', options).params.should.eql({
             b: true,
             c: ['1']
+        })
+    })
+
+    it('should match path with a plus character', () => {
+        const routes = [
+            {
+                name: 'page',
+                path: '/:name<.+>/:id<(\\w{2}[0-9]{4})>.html'
+            }
+        ]
+        const options = {
+            allowNotFound: true,
+            trailingSlashMode: 'never',
+            queryParamsMode: 'loose',
+            queryParams: {nullFormat: 'hidden'}
+        }
+        const node = new RouteNode('', '', routes)
+        node.matchPath('/foo+bar/AB1234.html', options).params.should.eql({
+            id: 'AB1234',
+            name: 'foo+bar'
         })
     })
 })

@@ -775,13 +775,27 @@ describe('RouteNode', function() {
             allowNotFound: true,
             trailingSlashMode: 'never',
             queryParamsMode: 'loose',
-            queryParams: {nullFormat: 'hidden'}
+            queryParams: { nullFormat: 'hidden' }
         }
         const node = new RouteNode('', '', routes)
         node.matchPath('/foo+bar/AB1234.html', options).params.should.eql({
             id: 'AB1234',
             name: 'foo+bar'
         })
+    })
+
+    it('should return null if there is no match', () => {
+        const routes = [
+            {
+                name: 'page',
+                path: '/:name<.+>'
+            }
+        ]
+        const options = {
+            allowNotFound: true
+        }
+        const node = new RouteNode('', '', routes)
+        should(node.matchPath('/foobar%24', options)).be.null()
     })
 })
 

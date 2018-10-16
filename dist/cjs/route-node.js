@@ -156,6 +156,9 @@ var matchChildren = function (nodes, pathSegment, currentMatch, options, consume
             if (segment.toLowerCase().indexOf(consumedPath.toLowerCase()) === 0) {
                 remainingPath = segment.slice(consumedPath.length);
             }
+            else {
+                remainingPath = segment;
+            }
             if (!strictTrailingSlash && !child.children.length) {
                 remainingPath = remainingPath.replace(/^\/\?/, '?');
             }

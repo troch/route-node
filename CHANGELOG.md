@@ -1,3 +1,13 @@
+<a name="3.4.2"></a>
+## [3.4.2](https://github.com/troch/route-node/compare/v3.4.1...v3.4.2) (2018-10-16)
+
+
+### Bug Fixes
+
+* fix TypeError when there is no match for path ([338df8c](https://github.com/troch/route-node/commit/338df8c))
+
+
+
 <a name="3.4.1"></a>
 ## [3.4.1](https://github.com/troch/route-node/compare/v3.4.0...v3.4.1) (2018-10-04)
 

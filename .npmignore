@@ -1,7 +1,0 @@
-**/.*
-node_modules
-npm-debug.log
-test
-*.md
-*.config.js
-yarn.lock

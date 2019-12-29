@@ -1,5 +1,4 @@
-.*/
-node_modules/
-coverage/
-npm-debug.log
-temp/
+*.log
+.DS_Store
+node_modules
+dist

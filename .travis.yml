@@ -1,7 +1,8 @@
 language: node_js
+cache: yarn
 node_js:
-  - '8.0'
+  - '12'
 script:
-  - npm run lint
-  - npm run build
-  - npm run test
+  - yarn lint
+  - yarn build
+  - yarn test

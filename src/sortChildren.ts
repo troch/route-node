@@ -27,10 +27,10 @@ const sortPredicate = (originalChildren: RouteNode[]) => (
     return -1
   }
   // Spat params last
-  if (left.parser.hasSpatParam) {
+  if (left.parser?.hasSpatParam) {
     return 1
   }
-  if (right.parser.hasSpatParam) {
+  if (right.parser?.hasSpatParam) {
     return -1
   }
   // No spat, number of segments (less segments last)
@@ -43,8 +43,8 @@ const sortPredicate = (originalChildren: RouteNode[]) => (
     return -1
   }
   // Same number of segments, number of URL params ascending
-  const leftParamsCount = left.parser.urlParams.length
-  const rightParamsCount = right.parser.urlParams.length
+  const leftParamsCount = left.parser?.urlParams.length ?? 0
+  const rightParamsCount = right.parser?.urlParams.length ?? 0
   if (leftParamsCount < rightParamsCount) {
     return -1
   }

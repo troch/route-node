@@ -37,7 +37,8 @@ const matchChildren = (
       match = child.parser!.test(segment, {
         caseSensitive,
         strictTrailingSlash,
-        queryParams: options.queryParams
+        queryParams: options.queryParams,
+        urlParamsEncoding: options.urlParamsEncoding
       })
     }
 
@@ -45,7 +46,8 @@ const matchChildren = (
       match = child.parser!.partialTest(segment, {
         delimited: strongMatching,
         caseSensitive,
-        queryParams: options.queryParams
+        queryParams: options.queryParams,
+        urlParamsEncoding: options.urlParamsEncoding
       })
     }
 

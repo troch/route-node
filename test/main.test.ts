@@ -51,10 +51,12 @@ describe('RouteNode', function() {
 
     i = 0
 
-    node = new RouteNode('', '', routes, function(route) {
-      i = i + 1
-      if (i === 1) expect(route).toEqual(routeA)
-      if (i === 2) expect(route).toEqual(routeB)
+    node = new RouteNode('', '', routes, {
+      onAdd: route => {
+        i = i + 1
+        if (i === 1) expect(route).toEqual(routeA)
+        if (i === 2) expect(route).toEqual(routeB)
+      }
     })
 
     expect(i).not.toBe(0)
@@ -69,7 +71,9 @@ describe('RouteNode', function() {
         path: `/${childIndex}`
       }))
     }))
-    new RouteNode('', '', routes, undefined, undefined, true)
+    new RouteNode('', '', routes, {
+      finalSort: true
+    })
     // No assertion here, if final sort functionality is broken
     // the test will exceed the 2s timeout and fail
   })
@@ -772,14 +776,15 @@ describe('RouteNode', function() {
 
   it('should pass query parameters options to path-parser', () => {
     const node = new RouteNode('', '', [new RouteNode('a', '/a?b&c')])
-    const options = {
-      queryParams: {
-        booleanFormat: 'string',
-        arrayFormat: 'brackets'
-      }
-    } as const
 
-    expect(node.matchPath('/a?b=true&c[]=1', options)?.params).toEqual({
+    expect(
+      node.matchPath('/a?b=true&c[]=1', {
+        queryParams: {
+          booleanFormat: 'string',
+          arrayFormat: 'brackets'
+        }
+      })?.params
+    ).toEqual({
       b: true,
       c: ['1']
     })

@@ -101,7 +101,8 @@ export const buildPathFromSegments = (
       const segmentPath =
         segment.parser?.build(params, {
           ignoreSearch: true,
-          queryParams: options.queryParams
+          queryParams: options.queryParams,
+          urlParamsEncoding: options.urlParamsEncoding
         }) ?? ''
 
       return segment.absolute ? segmentPath : path + segmentPath
@@ -111,9 +112,9 @@ export const buildPathFromSegments = (
 
   let finalPath = path
 
-  if (options.trailingSlashMode === 'always') {
+  if (trailingSlashMode === 'always') {
     finalPath = /\/$/.test(path) ? path : `${path}/`
-  } else if (options.trailingSlashMode === 'never' && path !== '/') {
+  } else if (trailingSlashMode === 'never' && path !== '/') {
     finalPath = /\/$/.test(path) ? path.slice(0, -1) : path
   }
 

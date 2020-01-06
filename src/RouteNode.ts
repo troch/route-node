@@ -1,4 +1,4 @@
-import { Path } from 'path-parser'
+import { Path, URLParamsEncodingType } from 'path-parser'
 import { IOptions as QueryParamsOptions } from 'search-params'
 
 import {
@@ -20,27 +20,23 @@ export type Callback = (...args: any[]) => void
 export type TrailingSlashMode = 'default' | 'never' | 'always'
 export type QueryParamsMode = 'default' | 'strict' | 'loose'
 
-const defaultBuildOptions = {
-  queryParamsMode: 'default',
-  trailingSlashMode: 'default'
-}
 export interface BuildOptions {
   trailingSlashMode?: TrailingSlashMode
   queryParamsMode?: QueryParamsMode
   queryParams?: QueryParamsOptions
+  urlParamsEncoding?: URLParamsEncodingType
 }
-const defaultMatchOptions = {
-  ...defaultBuildOptions,
-  strongMatching: true
-}
+
 export interface MatchOptions {
+  caseSensitive?: boolean
   trailingSlashMode?: TrailingSlashMode
   queryParamsMode?: QueryParamsMode
   queryParams?: QueryParamsOptions
   strictTrailingSlash?: boolean
   strongMatching?: boolean
-  caseSensitive?: boolean
+  urlParamsEncoding?: URLParamsEncodingType
 }
+
 export { QueryParamsOptions }
 
 export interface MatchResponse {
@@ -60,6 +56,13 @@ export interface RouteNodeState {
   meta: RouteNodeStateMeta
 }
 
+export interface RouteNodeOptions {
+  finalSort?: boolean
+  onAdd?: Callback
+  parent?: RouteNode
+  sort?: boolean
+}
+
 export class RouteNode {
   public name: string
   public absolute: boolean
@@ -72,23 +75,25 @@ export class RouteNode {
     name: string = '',
     path: string = '',
     childRoutes: Route[] = [],
-    cb?: Callback,
-    parent?: RouteNode,
-    finalSort: boolean = true,
-    sort?: boolean
+    options: RouteNodeOptions = {}
   ) {
     this.name = name
     this.absolute = /^~/.test(path)
     this.path = this.absolute ? path.slice(1) : path
+
     this.parser = this.path ? new Path(this.path) : null
     this.children = []
-    this.parent = parent
+    this.parent = options.parent
 
     this.checkParents()
 
-    this.add(childRoutes, cb, finalSort ? false : sort !== false)
+    this.add(
+      childRoutes,
+      options.onAdd,
+      options.finalSort ? false : options.sort !== false
+    )
 
-    if (finalSort) {
+    if (options.finalSort) {
       this.sortDescendants()
     }
 
@@ -139,15 +144,12 @@ export class RouteNode {
         )
       }
 
-      const routeNode = new RouteNode(
-        route.name,
-        route.path,
-        route.children,
-        cb,
-        this,
-        false,
+      const routeNode = new RouteNode(route.name, route.path, route.children, {
+        finalSort: false,
+        onAdd: cb,
+        parent: this,
         sort
-      )
+      })
       const fullName = routeNode
         .getParentSegments([routeNode])
         .map(_ => _.name)
@@ -371,6 +373,7 @@ export class RouteNode {
     }
 
     const finalMatch = matchChildren(startingNodes, path, currentMatch, options)
+
     if (
       finalMatch &&
       finalMatch.segments.length === 1 &&

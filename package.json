@@ -41,7 +41,7 @@
     "typescript": "^3.7.4"
   },
   "dependencies": {
-    "path-parser": "5.1.0",
+    "path-parser": "6.1.0",
     "search-params": "3.0.0",
     "tslib": "^1.10.0"
   },

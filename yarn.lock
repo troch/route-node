@@ -5016,10 +5016,10 @@ path-parse@^1.0.6:
   resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
   integrity sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw==
 
-path-parser@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-5.1.0.tgz#ce62873bfa841faa42b4679250927cdd6bb8cd57"
-  integrity sha512-RTEIFbRIC5DuxbhPckFvH9DJSB9sw/jgrIHqspobZfPnhEDsV//SUIIiw8pu70Mkdq7sGeLTsHTwMOTfDEMhuw==
+path-parser@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/path-parser/-/path-parser-6.1.0.tgz#ee8a1dd7b1ffaf4069f2ddd1c20d1867c8fd3a08"
+  integrity sha512-nAB6J73z2rFcQP+870OHhpkHFj5kO4rPLc2Ol4Y3Ale7F6Hk1/cPKp7cQ8RznKF8FOSvu+YR9Xc6Gafk7DlpYA==
   dependencies:
     search-params "3.0.0"
     tslib "^1.10.0"

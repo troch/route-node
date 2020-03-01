@@ -1,14 +1,13 @@
 {
-    "compilerOptions": {
-        "target": "es5",
-        "declaration": true,
-        "declarationDir": "./typings",
-        "outDir": "./temp",
-        "lib": [
-            "es2015"
-        ]
-    },
-    "include": [
-        "./modules/RouteNode.ts"
-    ]
+  "compilerOptions": {
+    "target": "es5",
+    "declaration": true,
+    "declarationDir": "./dist",
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "lib": ["es2015"],
+    "strict": true,
+    "alwaysStrict": false
+  },
+  "include": ["src", "test"]
 }

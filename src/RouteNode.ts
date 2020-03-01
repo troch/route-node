@@ -200,7 +200,7 @@ export class RouteNode {
     const segments = this.getSegmentsByName(routeName)
 
     if (!segments) {
-      return ''
+      throw new Error(`[route-node][buildPath] '{routeName}' is not defined`)
     }
 
     return buildPathFromSegments(segments, params, options)

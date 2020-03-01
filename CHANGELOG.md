@@ -1,3 +1,9 @@
+# [4.1.0](https://github.com/troch/route-node/compare/v4.0.0...v4.1.0) (2020-03-01)
+
+### Bug Fixes
+
+Fix of previous release, an error is now thrown when calling `buildPath` with a non-existing node.
+
 # [4.0.0](https://github.com/troch/route-node/compare/v3.4.2...v4.0.0) (2020-03-01)
 
 
@@ -9,6 +15,7 @@
 
 ### BREAKING CHANGES
 
+* Default export has been removed, use named import instead: `import { RouteNode } from 'route-node'`
 * Constructor signature has changed to become: `new RouteNode(nodeName, path, children, options)`. See README.
 
 

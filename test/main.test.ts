@@ -820,6 +820,17 @@ describe('RouteNode', function() {
     expect(node.matchPath('/foobar%24')).toBeNull()
   })
 
+  it('should throw when trying to build undefined nodes', () => {
+    const node = new RouteNode('', '', [
+      {
+        name: 'home',
+        path: '/home'
+      }
+    ])
+
+    expect(() => node.buildPath('hom')).toThrow()
+  })
+
   describe('uri encoding', () => {
     const routeNode = new RouteNode('', '', [
       {

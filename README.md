@@ -37,7 +37,7 @@ const rootNode = new RouteNode('', '', [ordersNode, usersNode])
 rootNode.add(new RouteNode('home', '/home'))
 ```
 
-**`/` paths**
+**`/` paths (empty paths)**
 
 When using a deeply nested `/` path, it will automatically be matched when its parent is matched.
 

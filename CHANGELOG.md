@@ -1,3 +1,17 @@
+# [4.0.0](https://github.com/troch/route-node/compare/v3.4.2...v4.0.0) (2020-03-01)
+
+
+### Features
+
+* Maintain project and dependencies ([#28](https://github.com/troch/route-node/issues/28)) ([7637f06](https://github.com/troch/route-node/commit/7637f062e664b18573e0a727d45a2077636cc0e1))
+* New match and build option `urlParamsEncoding` to choose how URL params are encoded and decoded (see README)
+
+
+### BREAKING CHANGES
+
+* Constructor signature has changed to become: `new RouteNode(nodeName, path, children, options)`. See README.
+
+
 <a name="3.4.2"></a>
 ## [3.4.2](https://github.com/troch/route-node/compare/v3.4.1...v3.4.2) (2018-10-16)
 

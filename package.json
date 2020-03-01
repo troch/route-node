@@ -1,6 +1,6 @@
 {
   "name": "route-node",
-  "version": "3.4.2",
+  "version": "4.0.0",
   "description": "A package to create a tree of named routes",
   "main": "dist/index.js",
   "module": "dist/route-node.esm.js",

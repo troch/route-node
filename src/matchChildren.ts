@@ -54,7 +54,8 @@ const matchChildren = (
     if (match) {
       // Remove consumed segment from path
       let consumedPath = child.parser!.build(match, {
-        ignoreSearch: true
+        ignoreSearch: true,
+        urlParamsEncoding: options.urlParamsEncoding
       })
 
       if (!strictTrailingSlash && !child.children.length) {

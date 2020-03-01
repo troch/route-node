@@ -819,6 +819,44 @@ describe('RouteNode', function() {
     const node = new RouteNode('', '', routes)
     expect(node.matchPath('/foobar%24')).toBeNull()
   })
+
+  describe('uri encoding', () => {
+    const routeNode = new RouteNode('', '', [
+      {
+        name: 'route',
+        path: '/:param'
+      }
+    ])
+
+    it('should build with correct encoding', () => {
+      expect(
+        routeNode.buildPath(
+          'route',
+          {
+            param: 'test$@'
+          },
+          {
+            urlParamsEncoding: 'uriComponent'
+          }
+        )
+      ).toBe('/test%24%40')
+    })
+
+    it('should match with correct decoding', () => {
+      expect(
+        withoutMeta(
+          routeNode.matchPath('/test%24%40', {
+            urlParamsEncoding: 'uriComponent'
+          })
+        )
+      ).toEqual({
+        name: 'route',
+        params: {
+          param: 'test$@'
+        }
+      })
+    })
+  })
 })
 
 function getRoutes(trailingSlash?: boolean) {

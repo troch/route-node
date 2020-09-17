@@ -27,7 +27,7 @@ const matchChildren = (
     let remainingPath
     let segment = pathSegment
 
-    if (consumedBefore === '/' && child.path === '/') {
+    if (consumedBefore === '/' && child.path[0] === '/') {
       // when we encounter repeating slashes we add the slash
       // back to the URL to make it de facto pathless
       segment = '/' + pathSegment

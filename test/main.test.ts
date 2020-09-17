@@ -868,6 +868,66 @@ describe('RouteNode', function() {
       })
     })
   })
+
+  describe('lang prefixes', () => {
+    const mainNodes = [
+      new RouteNode('default', '/'),
+      new RouteNode('home', '/home'),
+      new RouteNode('user', '/user', [
+        new RouteNode('default', '/'),
+        new RouteNode('orders', '/orders'),
+        new RouteNode('reviews', '/review/:page')
+      ])
+    ]
+    const enNode = new RouteNode('en', '/', mainNodes)
+    const ruNode = new RouteNode('ru', '/ru', mainNodes)
+    const koNode = new RouteNode('ko', '/ko', mainNodes)
+    const appNodes = new RouteNode('', '', [enNode, ruNode, koNode])
+
+    it('should match prefix-less path (en-lang)', () => {
+      expect(appNodes.matchPath('/')).toEqual({
+        name: 'en.default',
+        params: {},
+        meta: { en: {}, 'en.default': {} }
+      })
+      expect(appNodes.matchPath('/user')).toEqual({
+        name: 'en.user.default',
+        params: {},
+        meta: { en: {}, 'en.user': {}, 'en.user.default': {} }
+      })
+      expect(appNodes.matchPath('/user/')).toEqual({
+        name: 'en.user.default',
+        params: {},
+        meta: { en: {}, 'en.user': {}, 'en.user.default': {} }
+      })
+      expect(
+        appNodes.matchPath('/user/orders/', { strictTrailingSlash: true })
+      ).toEqual(null)
+    })
+
+    it('should match path witl lang prefix (ko-lang)', () => {
+      expect(appNodes.matchPath('/ko')).toEqual({
+        name: 'ko.default',
+        params: {},
+        meta: { ko: {}, 'ko.default': {} }
+      })
+      expect(appNodes.matchPath('/ko/user/orders?page=1')).toEqual({
+        name: 'ko.user.orders',
+        params: { page: '1' },
+        meta: { ko: {}, 'ko.user': {}, 'ko.user.orders': {} }
+      })
+      expect(appNodes.matchPath('/ko/user/orders/?page=1')).toEqual({
+        name: 'ko.user.orders',
+        params: { page: '1' },
+        meta: { ko: {}, 'ko.user': {}, 'ko.user.orders': {} }
+      })
+      expect(
+        appNodes.matchPath('/ko/user/orders/?page=1', {
+          strictTrailingSlash: true
+        })
+      ).toEqual(null)
+    })
+  })
 })
 
 function getRoutes(trailingSlash?: boolean) {
